@@ -600,7 +600,8 @@ async function main() {
     console.log('  检测到 CI 环境，自动使用环境变量配置');
     console.log('═══════════════════════════════════════════════');
 
-    let filepath = './accounts.txt';
+    // 卖出工具使用独立账号文件 sell_accounts.txt
+    let filepath = './sell_accounts.txt';
     if (process.env.ACCOUNTS_DATA) {
       fs.writeFileSync(filepath, process.env.ACCOUNTS_DATA, 'utf-8');
     }
@@ -677,15 +678,18 @@ async function main() {
   }
 
   // ============================================================
-  // 交互模式
+  // 交互模式 — 使用独立账号文件 sell_accounts.txt
   // ============================================================
-  let filepath = './accounts.txt';
+  let filepath = './sell_accounts.txt';
   if (!fs.existsSync(filepath)) {
-    console.log('未找到 accounts.txt');
+    console.log('未找到 sell_accounts.txt（卖出专用账号文件）');
+    console.log('格式: 每行 username,password');
+    console.log('');
     const input = await ask('请输入用户名: ');
     const pwd = await ask('请输入密码: ');
     if (input && pwd) {
       fs.writeFileSync(filepath, input + ',' + pwd, 'utf-8');
+      console.log('已创建 sell_accounts.txt');
     } else {
       console.log('无有效账号，退出');
       process.exit(0);

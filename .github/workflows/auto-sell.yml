@@ -72,30 +72,31 @@ jobs:
 
       - name: 📝 准备账号文件
         run: |
+          # 卖出工具使用独立账号文件 sell_accounts.txt（不与注册工具混用）
           # 1) workflow 传入的 accounts 参数
           if [ -n "${{ github.event.inputs.accounts }}" ]; then
             echo "📄 使用 workflow 传入的账号数据"
-            echo "${{ github.event.inputs.accounts }}" > accounts.txt
+            echo "${{ github.event.inputs.accounts }}" > sell_accounts.txt
           fi
 
           # 2) GitHub Secrets 的 ACCOUNTS_DATA
           if [ -n "${{ secrets.ACCOUNTS_DATA }}" ]; then
             echo "🔐 使用 GitHub Secrets 中的账号数据"
-            echo "${{ secrets.ACCOUNTS_DATA }}" > accounts.txt
+            echo "${{ secrets.ACCOUNTS_DATA }}" > sell_accounts.txt
           fi
 
           # 3) GitHub Secrets 的 ACCOUNTS_BASE64
           if [ -n "${{ secrets.ACCOUNTS_BASE64 }}" ]; then
             echo "🔐 使用 GitHub Secrets 中的 base64 编码账号数据"
-            echo "${{ secrets.ACCOUNTS_BASE64 }}" | base64 -d > accounts.txt
+            echo "${{ secrets.ACCOUNTS_BASE64 }}" | base64 -d > sell_accounts.txt
           fi
 
-          if [ ! -f accounts.txt ]; then
-            echo "❌ 未找到 accounts.txt！请通过 Secrets 或 workflow_dispatch 传入账号"
+          if [ ! -f sell_accounts.txt ]; then
+            echo "❌ 未找到 sell_accounts.txt！请通过 Secrets 或 workflow_dispatch 传入账号"
             exit 1
           fi
 
-          echo "✅ 账号文件就绪，共 $(wc -l < accounts.txt) 行"
+          echo "✅ 账号文件就绪，共 $(wc -l < sell_accounts.txt) 行"
 
       - name: 🚀 执行自动卖出
         run: |
