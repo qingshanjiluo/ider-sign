@@ -149,3 +149,11 @@ User047_v2,qwertyuiop,VBGL2LK4
 User048_v2,qwertyuiop,VBGL2LK4
 User050_v2,qwertyuiop,VBGL2LK4
 Turquoise18_v2,qwertyuiop,MDH9E2DY
+
+# ===== 新注册 2026-07-10 =====
+MistLynx,qwertyuiop,H4K8UWWA  # MistLynx
+StormViper,qwertyuiop,H4K8UWWA  # StormViper
+IronLotus,qwertyuiop,H4K8UWWA  # IronLotus
+WindPhoenix,qwertyuiop,H4K8UWWA  # WindPhoenix
+DarkCrane,qwertyuiop,H4K8UWWA  # DarkCrane
+GoldenEagle,qwertyuiop,H4K8UWWA  # GoldenEagle
