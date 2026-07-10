@@ -1,0 +1,18 @@
+{
+  "totalAccounts": 1,
+  "accounts": [
+    {
+      "username": "黑楼兰",
+      "stats": {
+        "scanned": 38,
+        "skipped": 0,
+        "soldToSystem": 4,
+        "listedOnMarket": 0,
+        "failed": 34,
+        "systemIncome": 317450,
+        "marketListings": []
+      }
+    }
+  ],
+  "timestamp": "2026-07-10T13:39:17.661Z"
+}

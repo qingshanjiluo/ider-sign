@@ -1,0 +1,151 @@
+﻿# 账号文件
+
+#BANNED:同IP多号 AzureDragon7,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 CrimsonFalcon22,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 EmeraldTiger33,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 GoldenEagle44,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 SilverWolf55,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 BronzeBear66,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 PlatinumFox77,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 DiamondHawk88,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 RubyLion99,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 SapphireShark10,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 TopazWhale11,qwertyuiop,MDH9E2DY
+AmberDolphin12,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 CoralSnake13,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 PearlOwl14,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 OnyxRaven15,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 JadeCrow16,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 OpalPigeon17,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 TurquoiseSparrow18,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 MalachiteHawk19,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 AzuriteEagle20,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 CitrineWolf21,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 GarnetTiger22,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 ObsidianBear23,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 MoonstoneFox24,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 SunstoneLion25,qwertyuiop,MDH9E2DY
+BloodstoneShark26,qwertyuiop,MDH9E2DY
+HeliotropeWhale27,qwertyuiop,MDH9E2DY
+JasperDolphin28,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 KyaniteSnake29,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 LarimarFalcon30,qwertyuiop,MDH9E2DY
+MorganiteOwl31,qwertyuiop,MDH9E2DY
+NephriteRaven32,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 PietersiteCrow33,qwertyuiop,MDH9E2DY
+RhodonitePigeon34,qwertyuiop,MDH9E2DY
+SerpentineSparrow35,qwertyuiop,MDH9E2DY
+#BANNED:同IP多号 TigersEyeHawk36,qwertyuiop,MDH9E2DY
+# 新增账号（邀请码分别为 LVHFW9KV 和 966FWUBG）
+CelestialFox8,qwertyuiop,LVHFW9KV
+BlazingEagle9,qwertyuiop,966FWUBG
+#BANNED:同IP多号 QuantumViper4,qwertyuiop,LVHFW9KV
+
+
+User001,qwertyuiop,VBGL2LK4
+User002,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User003,qwertyuiop,VBGL2LK4
+User004,qwertyuiop,VBGL2LK4
+User005,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User006,qwertyuiop,VBGL2LK4
+User007,qwertyuiop,VBGL2LK4
+User008,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User009,qwertyuiop,VBGL2LK4
+User010,qwertyuiop,VBGL2LK4
+User011,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User012,qwertyuiop,VBGL2LK4
+User013,qwertyuiop,VBGL2LK4
+User014,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User015,qwertyuiop,VBGL2LK4
+User016,qwertyuiop,VBGL2LK4
+User017,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User018,qwertyuiop,VBGL2LK4
+User019,qwertyuiop,VBGL2LK4
+User020,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User021,qwertyuiop,VBGL2LK4
+User022,qwertyuiop,VBGL2LK4
+User023,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User024,qwertyuiop,VBGL2LK4
+User025,qwertyuiop,VBGL2LK4
+User026,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User027,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User028,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User029,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User030,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User031,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User032,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User033,qwertyuiop,VBGL2LK4
+User034,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User035,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User036,qwertyuiop,VBGL2LK4
+User037,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User038,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User039,qwertyuiop,VBGL2LK4
+User040,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User041,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User042,qwertyuiop,VBGL2LK4
+User043,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User044,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User045,qwertyuiop,VBGL2LK4
+User046,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User047,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User048,qwertyuiop,VBGL2LK4
+User049,qwertyuiop,VBGL2LK4
+#BANNED:同IP多号 User050,qwertyuiop,VBGL2LK4
+
+# === 重新注册（_v2）替换被封账号 ===
+AzureDragon7_v2,qwertyuiop,MDH9E2DY
+CrimsonFalcon22_v2,qwertyuiop,MDH9E2DY
+EmeraldTiger33_v2,qwertyuiop,MDH9E2DY
+GoldenEagle44_v2,qwertyuiop,MDH9E2DY
+SilverWolf55_v2,qwertyuiop,MDH9E2DY
+BronzeBear66_v2,qwertyuiop,MDH9E2DY
+PlatinumFox77_v2,qwertyuiop,MDH9E2DY
+DiamondHawk88_v2,qwertyuiop,MDH9E2DY
+RubyLion99_v2,qwertyuiop,MDH9E2DY
+SapphireShark10_v2,qwertyuiop,MDH9E2DY
+TopazWhale11_v2,qwertyuiop,MDH9E2DY
+CoralSnake13_v2,qwertyuiop,MDH9E2DY
+PearlOwl14_v2,qwertyuiop,MDH9E2DY
+OnyxRaven15_v2,qwertyuiop,MDH9E2DY
+JadeCrow16_v2,qwertyuiop,MDH9E2DY
+OpalPigeon17_v2,qwertyuiop,MDH9E2DY
+MalachiteHawk19_v2,qwertyuiop,MDH9E2DY
+AzuriteEagle20_v2,qwertyuiop,MDH9E2DY
+CitrineWolf21_v2,qwertyuiop,MDH9E2DY
+GarnetTiger22_v2,qwertyuiop,MDH9E2DY
+ObsidianBear23_v2,qwertyuiop,MDH9E2DY
+MoonstoneFox24_v2,qwertyuiop,MDH9E2DY
+SunstoneLion25_v2,qwertyuiop,MDH9E2DY
+KyaniteSnake29_v2,qwertyuiop,MDH9E2DY
+LarimarFalcon30_v2,qwertyuiop,MDH9E2DY
+PietersiteCrow33_v2,qwertyuiop,MDH9E2DY
+TigersEyeHawk36_v2,qwertyuiop,MDH9E2DY
+QuantumViper4_v2,qwertyuiop,LVHFW9KV
+User003_v2,qwertyuiop,VBGL2LK4
+User006_v2,qwertyuiop,VBGL2LK4
+User009_v2,qwertyuiop,VBGL2LK4
+User012_v2,qwertyuiop,VBGL2LK4
+User015_v2,qwertyuiop,VBGL2LK4
+User018_v2,qwertyuiop,VBGL2LK4
+User021_v2,qwertyuiop,VBGL2LK4
+User024_v2,qwertyuiop,VBGL2LK4
+User027_v2,qwertyuiop,VBGL2LK4
+User028_v2,qwertyuiop,VBGL2LK4
+User029_v2,qwertyuiop,VBGL2LK4
+User030_v2,qwertyuiop,VBGL2LK4
+User031_v2,qwertyuiop,VBGL2LK4
+User032_v2,qwertyuiop,VBGL2LK4
+User033_v2,qwertyuiop,VBGL2LK4
+User035_v2,qwertyuiop,VBGL2LK4
+User036_v2,qwertyuiop,VBGL2LK4
+User038_v2,qwertyuiop,VBGL2LK4
+User039_v2,qwertyuiop,VBGL2LK4
+User041_v2,qwertyuiop,VBGL2LK4
+User042_v2,qwertyuiop,VBGL2LK4
+User044_v2,qwertyuiop,VBGL2LK4
+User045_v2,qwertyuiop,VBGL2LK4
+User047_v2,qwertyuiop,VBGL2LK4
+User048_v2,qwertyuiop,VBGL2LK4
+User050_v2,qwertyuiop,VBGL2LK4
+Turquoise18_v2,qwertyuiop,MDH9E2DY
