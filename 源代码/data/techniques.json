@@ -1,0 +1,666 @@
+[
+  {
+	"id": 1,
+	"name": "吐纳法",
+	"type": "technique",
+	"attribute": "无",
+	"description": "基础的吐纳功法，装配效果每级提升体魄（1级+1，每级翻倍）",
+	"stats": {"constitution": 1},
+	"passiveStatPerLevel": "double",
+	"unlocked": true,
+	"levelCap": 6,
+	"baseExp": 150,
+	"quality": 1
+  },
+  {
+	"id": 2,
+	"name": "春草功",
+	"type": "technique",
+	"attribute": "木",
+	"description": "恢复型功法，战斗胜利后恢复7%最大生命值",
+	"effects": [{"type": "battle_victory_heal", "value": 7}],
+	"unlocked": false,
+	"levelCap": 6,
+	"baseExp": 270,
+	"quality": 1
+  },
+  {
+	"id": 3,
+	"name": "戊土淬炼法",
+	"type": "technique",
+	"attribute": "土",
+	"flavorText": "厚土凝道体,乾坤万象皆可承。",
+	"description": "土属性功法，提升土灵根和土元素亲和（被动灵根为额外值，与丹药独立，总值上限95）",
+	"stats": {"earthAffinity": 4},
+	"passiveEffects": [{"type": "earth_spirit_root", "value": 3}],
+	"unlocked": false,
+	"levelCap": 5,
+	"baseExp": 300,
+	"quality": 3
+  },
+  {
+	"id": 4,
+	"name": "庚金淬炼法",
+	"type": "technique",
+	"attribute": "金",
+	"flavorText": "锐金破仙障,锋刃所向无不摧。",
+	"description": "金属性功法，提升金灵根和金元素亲和（被动灵根为额外值，与丹药独立，总值上限95）",
+	"stats": {"metalAffinity": 4},
+	"passiveEffects": [{"type": "metal_spirit_root", "value": 3}],
+	"unlocked": false,
+	"levelCap": 5,
+	"baseExp": 300,
+	"quality": 3
+  },
+  {
+	"id": 5,
+	"name": "甲木淬炼法",
+	"type": "technique",
+	"attribute": "木",
+	"flavorText": "苍木蕴天机,枯荣之间见长生。",
+	"description": "木属性功法，提升木灵根和木元素亲和（被动灵根为额外值，与丹药独立，总值上限95）",
+	"stats": {"woodAffinity": 4},
+	"passiveEffects": [{"type": "wood_spirit_root", "value": 3}],
+	"unlocked": false,
+	"levelCap": 5,
+	"baseExp": 300,
+	"quality": 3
+  },
+  {
+	"id": 6,
+	"name": "癸水淬炼法",
+	"type": "technique",
+	"attribute": "水",
+	"flavorText": "柔波润仙骨,川流不息利万物。",
+	"description": "水属性功法，提升水灵根和水元素亲和（被动灵根为额外值，与丹药独立，总值上限95）",
+	"stats": {"waterAffinity": 4},
+	"passiveEffects": [{"type": "water_spirit_root", "value": 3}],
+	"unlocked": false,
+	"levelCap": 5,
+	"baseExp": 300,
+	"quality": 3
+  },
+  {
+	"id": 7,
+	"name": "丙火淬炼法",
+	"type": "technique",
+	"attribute": "火",
+	"flavorText": "明火焚浊气,烈焰灼灼照天心。",
+	"description": "火属性功法，提升火灵根和火元素亲和（被动灵根为额外值，与丹药独立，总值上限95）",
+	"stats": {"fireAffinity": 4},
+	"passiveEffects": [{"type": "fire_spirit_root", "value": 3}],
+	"unlocked": false,
+	"levelCap": 5,
+	"baseExp": 300,
+	"quality": 3
+  },
+  {
+	"id": 8,
+	"name": "万象森罗生灭法",
+	"type": "technique",
+	"attribute": "木",
+	"flavorText": "纳万象于一身,悟生灭之玄机。",
+	"description": "木属性功法，提升体魄并具有生命回复和反弹伤害效果",
+	"stats": {"constitution": 15},
+	"effects": [
+	  {"type": "damage_heal", "value": 0.1},
+	  {"type": "heal_damage", "value": 0.2}
+	],
+	"passiveEffects": [{"type": "constitution", "value": 15}],
+	"requirements": {"woodSpiritRoot": 80, "constitution": 750},
+	"unlocked": false,
+	"levelCap": 11,
+	"baseExp": 555,
+	"quality": 4
+  },
+  {
+	"id": 9,
+	"name": "九霄正音谱",
+	"type": "technique",
+	"attribute": "无",
+	"flavorText": "天上之乐，所载曲谱八音克谐，能使神人相和。",
+	"description": "音律功法，提升音律类武器的法术攻击力（每级+2.5%），并使普通攻击按法术攻击力计算（伤害系数95%-115%，不随等级成长）；法术暴击伤害无视10%的法术防御。3级习得清音破云，5级习得不归调，7级习得五音和鸣",
+	"passiveEffects": [
+	  {"type": "weapon_spell_attack_bonus", "value": 1.05, "weaponType": "音律", "coefficientBonus": 0.025}
+	],
+	"effects": [
+	  {"type": "basic_attack_as_spell", "minValue": 0.95, "maxValue": 1.15},
+	  {"type": "spell_crit_ignore_spell_defense", "value": 0.1}
+	],
+	"skillUnlocks": [
+	  {"level": 3, "skillId": 5},
+	  {"level": 5, "skillId": 8},
+	  {"level": 7, "skillId": 7}
+	],
+	"requirements": {"weaponTypes": ["音律"]},
+	"unlocked": false,
+	"levelCap": 9,
+	"baseExp": 750,
+	"quality": 4,
+	"sectId": 2,
+	"sectTier": "advanced",
+	"scriptureLevelReq": 10,
+	"scriptureContribution": 7000
+  },
+  {
+	"id": 10,
+	"name": "青云引气诀",
+	"type": "technique",
+	"attribute": "混元",
+	"description": "混元属性功法，每轮行动结束后回复法力。升级使回复量翻倍",
+	"effects": [{"type": "turn_end_mp", "value": 3}],
+	"unlocked": false,
+	"levelCap": 4,
+	"baseExp": 225,
+	"quality": 2,
+	"sectId": 1,
+	"sectTier": "basic",
+	"transmitLevel": 5
+  },
+  {
+	"id": 11,
+	"name": "太虚养剑术",
+	"type": "technique",
+	"attribute": "混元",
+	"description": "剑道功法，被动提升剑类武器的物理与法术攻击力（每级+6%）；装配时将物理最大攻击力折算至85%并统一最小攻击力至该值（无伤害浮动），再将物攻与法攻对齐至两者中较高的一方",
+	"passiveEffects": [
+	  {"type": "weapon_physical_attack_bonus", "value": 1.05, "weaponType": "剑", "coefficientBonus": 0.06},
+	  {"type": "weapon_spell_attack_bonus", "value": 1.05, "weaponType": "剑", "coefficientBonus": 0.06}
+	],
+	"effects": [
+	  {"type": "phys_damage_equalize"},
+	  {"type": "align_phys_spell_attack"}
+	],
+	"requirements": {"weaponTypes": ["剑"]},
+	"unlocked": false,
+	"levelCap": 7,
+	"baseExp": 375,
+	"quality": 3,
+	"sectId": 1,
+	"sectTier": "intermediate",
+	"hallContribution": 800
+  },
+  {
+	"id": 12,
+	"name": "青云养气御剑真解",
+	"type": "technique",
+	"attribute": "混元",
+	"description": "御剑养气，被动提升真气与体魄，装配时每轮回复法力且造成直接伤害有几率施加凝滞（敌人下一动空转）。每级被动与回复翻倍，凝滞几率+0.5%。5级习得绝学-御剑以心，7级习得绝学-载道以剑",
+	"stats": {"zhenyuan": 10, "constitution": 5},
+	"passiveStats": {"zhenyuan": 10, "constitution": 5},
+	"passiveStatPerLevel": "double",
+	"effects": [
+	  {"type": "turn_end_mp", "value": 3},
+	  {"type": "on_direct_damage_stasis", "chance": 0.07, "levelBonus": 0.005, "duration": 1}
+	],
+	"skillUnlocks": [
+	  {"level": 5, "skillId": 16},
+	  {"level": 7, "skillId": 17}
+	],
+	"requirements": {"weaponTypes": ["剑"]},
+	"unlocked": false,
+	"levelCap": 7,
+	"baseExp": 550,
+	"quality": 4,
+	"sectId": 1,
+	"sectTier": "advanced",
+	"scriptureLevelReq": 10,
+	"scriptureContribution": 2000
+  },
+  {
+	"id": 13,
+	"name": "霓裳曲谱",
+	"type": "technique",
+	"attribute": "无",
+	"description": "音律功法，被动增加真气与法术攻击力，装配时使法术最终伤害提高（需装备音律类武器）。每级被动翻倍，伤害系数+1%",
+	"stats": {"zhenyuan": 2, "spellAttack": 3},
+	"passiveStats": {"zhenyuan": 2, "spellAttack": 3},
+	"passiveStatPerLevel": "double",
+	"effects": [{"type": "spell_final_damage_percent", "value": 0.06, "levelBonus": 0.01}],
+	"requirements": {"weaponTypes": ["音律"]},
+	"unlocked": false,
+	"levelCap": 5,
+	"baseExp": 200,
+	"quality": 2,
+	"sectId": 2,
+	"sectTier": "basic",
+	"transmitLevel": 5
+  },
+  {
+	"id": 14,
+	"name": "瑶池天音",
+	"type": "technique",
+	"attribute": "无",
+	"description": "音律功法，被动提高法术技能暴击率，装配时每轮行动结束回复生命与法力（需装备音律类武器）。每级被动暴击+1%，装配生命回复系数+1%，法力回复系数+0.5%",
+	"passiveEffects": [{"type": "spell_crit_rate_bonus", "value": 0.03, "levelBonus": 0.01}],
+	"effects": [
+	  {
+		"type": "turn_end_hp_mp",
+		"hpPercent": 0.06,
+		"hpLevelBonus": 0.01,
+		"mpPercent": 0.04,
+		"mpLevelBonus": 0.005
+	  }
+	],
+	"requirements": {"weaponTypes": ["音律"]},
+	"unlocked": false,
+	"levelCap": 5,
+	"baseExp": 450,
+	"quality": 3,
+	"sectId": 2,
+	"sectTier": "intermediate",
+	"hallContribution": 800
+  },
+  {
+	"id": 15,
+	"name": "铁血斗战法",
+	"type": "technique",
+	"attribute": "金",
+	"description": "刀功法，被动增加力量、体魄、根骨，装配时造成的物理伤害按比例回复生命（吸血2.5%）。每级被动属性翻倍，吸血系数+0.5%。需装备刀类武器生效。",
+	"stats": {"strength": 3, "constitution": 3, "bone": 3},
+	"passiveStats": {"strength": 3, "constitution": 3, "bone": 3},
+	"passiveStatPerLevel": "double",
+	"effects": [{"type": "phys_damage_lifesteal", "value": 0.025, "levelBonus": 0.005}],
+	"requirements": {"weaponTypes": ["刀"]},
+	"unlocked": false,
+	"levelCap": 6,
+	"baseExp": 200,
+	"quality": 2,
+	"sectId": 3,
+	"sectTier": "basic",
+	"transmitLevel": 5
+  },
+  {
+	"id": 16,
+	"name": "不灭英魂功",
+	"type": "technique",
+	"attribute": "金",
+	"description": "刀功法，被动使刀类武器提供的物理攻击力按105%计算；装配时物理暴击伤害系数提高9%（与断魂碎岩斩等加成加算）。装配需装备刀类武器。每级武器攻击力系数+5%，暴击伤害系数+1.5%。初始经验要求500。",
+	"passiveEffects": [
+	  {"type": "weapon_physical_attack_bonus", "value": 1.05, "weaponType": "刀", "coefficientBonus": 0.05}
+	],
+	"effects": [
+	  {"type": "phys_crit_damage_bonus", "value": 0.09, "levelBonus": 0.015}
+	],
+	"requirements": {"weaponTypes": ["刀"]},
+	"unlocked": false,
+	"levelCap": 5,
+	"baseExp": 500,
+	"quality": 3,
+	"sectId": 3,
+	"sectTier": "intermediate",
+	"hallContribution": 800
+  },
+  {
+	"id": 17,
+	"name": "斗神诀",
+	"type": "technique",
+	"attribute": "金",
+	"description": "刀功法，被动增加力道、体魄；装配时造成的物理伤害8%回复为生命，物理暴击率+10%。每级被动力道体魄翻倍，吸血系数+0.5%。装配需装备刀类武器。初始经验要求600。",
+	"passiveStats": {"strength": 10, "constitution": 10},
+	"passiveStatPerLevel": "double",
+	"effects": [
+	  {"type": "phys_damage_lifesteal", "value": 0.08, "levelBonus": 0.005},
+	  {"type": "phys_crit_rate_bonus", "value": 0.10}
+	],
+	"requirements": {"weaponTypes": ["刀"]},
+	"unlocked": false,
+	"levelCap": 5,
+	"baseExp": 600,
+	"quality": 4,
+	"sectId": 3,
+	"sectTier": "advanced",
+	"scriptureContribution": 6000
+  },
+  {
+	"id": 18,
+	"name": "磐石观想术",
+	"type": "technique",
+	"attribute": "土",
+	"description": "土属性功法，被动体魄与真元各+3；装配时有5%概率无视受到的一次直接伤害（非DOT，多击只无视其中一次）。每级被动属性翻倍。装配需装备长兵类武器。初始经验要求150。",
+	"stats": {"constitution": 3, "zhenyuan": 3},
+	"passiveStats": {"constitution": 3, "zhenyuan": 3},
+	"passiveStatPerLevel": "double",
+	"effects": [{"type": "direct_damage_ignore_chance", "value": 0.05}],
+	"requirements": {"weaponTypes": ["长兵"]},
+	"unlocked": false,
+	"levelCap": 6,
+	"baseExp": 150,
+	"quality": 2,
+	"sectId": 4,
+	"sectTier": "basic",
+	"transmitLevel": 5
+  },
+  {
+	"id": 19,
+	"name": "坤德镇狱功",
+	"type": "technique",
+	"attribute": "土",
+	"description": "土属性功法，被动使物理防御与法术防御提升30%（每级+1%，PVP环境为5%）；装配时受到物理直接伤害后有18%概率反击一次，造成物防19%+物理攻击力20%的土属性物理伤害（每级反击概率+4%，伤害系数+2%，物攻加成仅非PVP生效）。装配需长兵类武器。初始经验900。",
+	"passiveEffects": [{"type": "defense_bonus_percent", "value": 0.30, "pvpValue": 0.05, "levelBonus": 0.01}],
+	"effects": [{"type": "on_direct_damage_counter", "chance": 0.18, "chancePerLevel": 0.04, "damageCoeff": 0.19, "damageCoeffPerLevel": 0.02, "damageType": "physical", "attribute": "土"}],
+	"requirements": {"weaponTypes": ["长兵"]},
+	"unlocked": false,
+	"levelCap": 4,
+	"baseExp": 900,
+	"quality": 3,
+	"sectId": 4,
+	"sectTier": "intermediate",
+	"hallContribution": 800
+  },
+  {
+	"id": 20,
+	"name": "不动明王功",
+	"type": "technique",
+	"attribute": "土",
+	"description": "土属性功法，被动使每点土灵根的减伤系数提高0.005%（每级+0.005%）；装配时使自身物防/法防减伤公式的基准除数降低1000点（公式：减伤率=1-1/(pow(防御/除数,0.42)+1)，除数越低减伤越强）。初始经验950。",
+	"passiveEffects": [{"type": "earth_damage_reduction_per_point_bonus", "value": 0.00005, "levelBonus": 0.00005}],
+	"effects": [{"type": "defense_divisor_reduction", "value": 1000, "levelBonus": 0}],
+	"unlocked": false,
+	"levelCap": 10,
+	"baseExp": 950,
+	"quality": 4,
+	"sectId": 4,
+	"sectTier": "advanced",
+	"scriptureContribution": 6000
+  },
+  {
+	"id": 21,
+	"name": "青木诀",
+	"type": "technique",
+	"attribute": "木",
+	"description": "木属性功法，被动增加真气和灵力，装配时每轮行动结束后回复法力（需装备拳爪类武器）。升级使被动属性和回复量均翻倍",
+	"stats": {"zhenyuan": 3, "lingli": 3},
+	"passiveStats": {"zhenyuan": 3, "lingli": 3},
+	"passiveStatPerLevel": "double",
+	"effects": [{"type": "turn_end_mp", "value": 3}],
+	"requirements": {"weaponTypes": ["拳爪"]},
+	"unlocked": false,
+	"levelCap": 4,
+	"baseExp": 225,
+	"quality": 2,
+	"sectId": 5,
+	"sectTier": "basic",
+	"transmitLevel": 5
+  },
+  {
+	"id": 22,
+	"name": "乙木化生经",
+	"type": "technique",
+	"attribute": "木",
+	"description": "木属性功法，被动使每点木灵根的DEBUFF抗性系数增加0.01%（每级+0.01%）；装配时物理攻击命中延长目标所有负面效果1轮，法术攻击按目标每个负面效果恢复25%法攻生命。需装备拳爪类武器生效。初始经验500。",
+	"passiveEffects": [{"type": "wood_debuff_resistance_per_point_bonus", "value": 0.0001, "levelBonus": 0.0001}],
+	"stats": {},
+	"effects": [{"type": "zhenhunya_effect"}],
+	"requirements": {"weaponTypes": ["拳爪"]},
+	"unlocked": false,
+	"levelCap": 10,
+	"baseExp": 500,
+	"quality": 3,
+	"sectId": 5,
+	"sectTier": "intermediate",
+	"hallContribution": 800
+  },
+  {
+	"id": 23,
+	"name": "句芒经",
+	"type": "technique",
+	"attribute": "木",
+	"description": "木属性功法，被动使法术攻击力增加，增加的值等于真气属性的0.5%（每级+0.5%）；对被寄生的目标造成的所有DOT无视50%法术防御力且总伤害提高15%。装配时每次造成直接伤害都会附带2轮寄生（寄生：受到直接伤害后再受到20%施法者法攻的木属性法术伤害，多击技能仅触发一次）。需装备拳爪。满级时寄生持续+1轮。",
+	"passiveEffects": [{"type": "zhenyuan_to_spell_attack_percent", "value": 0.005, "levelBonus": 0.005}, {"type": "jisheng_dot_mastery", "dot_bonus_pct": 0.15, "spell_def_reduce_pct": 0.5}],
+	"effects": [{"type": "on_direct_damage_apply_jisheng", "duration": 2, "maxLevelDurationBonus": 1, "damagePercent": 0.2}],
+	"requirements": {"weaponTypes": ["拳爪"]},
+	"unlocked": false,
+	"levelCap": 6,
+	"baseExp": 450,
+	"quality": 4,
+	"sectId": 5,
+	"sectTier": "advanced",
+	"scriptureContribution": 6000
+  },
+  {
+	"id": 24,
+	"name": "烛火经",
+	"type": "technique",
+	"attribute": "火",
+	"description": "火属性功法，被动增加灵力和真元（每级翻倍），装配时提升火属性亲和+1（每级+1）。需装备弓类武器生效",
+	"stats": {"fireAffinity": 1},
+	"passiveStats": {"lingli": 3, "zhenyuan": 3},
+	"passiveStatPerLevel": "double",
+	"requirements": {"weaponTypes": ["弓"]},
+	"unlocked": false,
+	"levelCap": 5,
+	"baseExp": 225,
+	"quality": 2,
+	"sectId": 6,
+	"sectTier": "basic",
+	"transmitLevel": 5
+  },
+  {
+	"id": 25,
+	"name": "烈日诀",
+	"type": "technique",
+	"attribute": "火",
+	"description": "火属性功法，被动提升弓类武器的法术攻击力（每级+2.5%）；装配时法术伤害未暴击时法术穿透+10%（每级+1%）。需装备弓类武器生效",
+	"passiveEffects": [
+	  {"type": "weapon_spell_attack_bonus", "value": 1.05, "weaponType": "弓", "coefficientBonus": 0.025}
+	],
+	"effects": [
+	  {"type": "spell_pen_on_noncrit", "value": 0.10, "levelBonus": 0.01}
+	],
+	"requirements": {"weaponTypes": ["弓"]},
+	"unlocked": false,
+	"levelCap": 6,
+	"baseExp": 500,
+	"quality": 3,
+	"sectId": 6,
+	"sectTier": "intermediate",
+	"hallContribution": 800
+  },
+  {
+	"id": 26,
+	"name": "大光明诀",
+	"type": "technique",
+	"attribute": "火",
+	"flavorText": "大光之下，一切浊暗无所遁形。",
+	"description": "火属性功法，被动使每点火灵根的法术伤害提高系数增加0.01%（每级+0.01%）；装配时50%生命值以上法术防御+15%，50%以下法术最终伤害+10%",
+	"passiveEffects": [
+	  {"type": "fire_spell_damage_per_point_bonus", "value": 0.0001, "levelBonus": 0.0001}
+	],
+	"effects": [
+	  {"type": "hp_above_spell_defense_bonus", "threshold": 0.5, "value": 0.15},
+	  {"type": "hp_below_spell_final_damage_bonus", "threshold": 0.5, "value": 0.10}
+	],
+	"unlocked": false,
+	"levelCap": 10,
+	"baseExp": 950,
+	"quality": 4,
+	"sectId": 6,
+	"sectTier": "advanced",
+	"scriptureContribution": 6000
+  },
+  {
+	"id": 27,
+	"name": "正心诚意功",
+	"type": "technique",
+	"attribute": "水",
+	"flavorText": "正其心，诚其意，修其身，而后天下平。",
+	"description": "水属性功法，被动增加力道与体魄（每级翻倍）；装配时每轮行动结束回复1%最大生命值（每级+1%）。需装备节杖类武器生效",
+	"stats": {"strength": 3, "constitution": 3},
+	"passiveStats": {"strength": 3, "constitution": 3},
+	"passiveStatPerLevel": "double",
+	"effects": [{"type": "turn_end_hp_percent", "value": 0.01, "levelBonus": 0.01}],
+	"requirements": {"weaponTypes": ["节杖"]},
+	"unlocked": false,
+	"levelCap": 5,
+	"baseExp": 225,
+	"quality": 2,
+	"sectId": 7,
+	"sectTier": "basic",
+	"transmitLevel": 5
+  },
+  {
+	"id": 28,
+	"name": "格物致知",
+	"type": "technique",
+	"attribute": "水",
+	"flavorText": "致知在格物，物格而后知至。穷理尽性，一杖通神。",
+	"description": "水属性功法，被动使节杖类武器提供的物理攻击力按105%计算（每级+5%）；装配时物理暴击率提高5%。需装备节杖类武器生效。初始经验500",
+	"passiveEffects": [
+	  {"type": "weapon_physical_attack_bonus", "value": 1.05, "weaponType": "节杖", "coefficientBonus": 0.05}
+	],
+	"effects": [
+	  {"type": "phys_crit_rate_bonus", "value": 0.05}
+	],
+	"requirements": {"weaponTypes": ["节杖"]},
+	"unlocked": false,
+	"levelCap": 5,
+	"baseExp": 500,
+	"quality": 3,
+	"sectId": 7,
+	"sectTier": "intermediate",
+	"hallContribution": 800
+  },
+  {
+	"id": 29,
+	"name": "万世太平法",
+	"type": "technique",
+	"attribute": "水",
+	"flavorText": "为天地立心，为生民立命，为往圣继绝学，为万世开太平。",
+	"description": "水属性功法，被动使向非自身角色造成治疗时，自身获得等于该治疗数值25%的治疗；装配时【组队】物理攻击力减半、治疗效果+25%；【非组队】造成的所有物理伤害无视15%防御。需装备节杖类武器生效",
+	"passiveEffects": [
+	  {"type": "heal_others_self_heal", "value": 0.25}
+	],
+	"effects": [
+	  {"type": "phys_attack_multiplier", "value": 0.5, "whenTeam": true},
+	  {"type": "heal_amplification", "value": 0.25, "whenTeam": true},
+	  {"type": "physical_armor_pen", "value": 0.15, "whenSolo": true}
+	],
+	"requirements": {"weaponTypes": ["节杖"]},
+	"unlocked": false,
+	"levelCap": 1,
+	"baseExp": 0,
+	"quality": 4,
+	"sectId": 7,
+	"sectTier": "advanced",
+	"scriptureContribution": 6000
+  },
+  {
+	"id": 30,
+	"name": "与我一决",
+	"type": "technique",
+	"attribute": "无",
+	"flavorText": "既分高下，也决生死。",
+	"description": "公共功法。装配者无法获得治疗；战斗中每损失10%生命，最终伤害提高5%（PVP为3%），最多5层。",
+	"effects": [
+	  {"type": "self_heal_forbid", "value": 1},
+	  {
+		"type": "hp_lost_damage_step_bonus",
+		"stepHpLost": 0.10,
+		"damageBonusPerStep": 0.05,
+		"pvpDamageBonusPerStep": 0.03,
+		"maxSteps": 5
+	  }
+	],
+	"unlocked": false,
+	"levelCap": 1,
+	"baseExp": 0,
+	"quality": 4
+  },
+  {
+	"id": 31,
+	"name": "夺灵法",
+	"type": "technique",
+	"attribute": "无",
+	"flavorText": "灵潮逆转，夺其神炁，反噬其身。",
+	"description": "公共功法。装配后每次造成伤害时，削减主目标最大法力值15%的法力并造成等量绝对伤害；PVP中改为削减最大法力值5%的法力并造成等量法术伤害。",
+	"effects": [
+	  {
+		"type": "on_deal_damage_mana_burn",
+		"value": 0.15,
+		"pvpValue": 0.05,
+		"pvpAsSpell": true
+	  }
+	],
+	"unlocked": false,
+	"levelCap": 1,
+	"baseExp": 0,
+	"quality": 4
+  },
+  {
+	"id": 32,
+	"name": "神象镇狱功",
+	"type": "technique",
+	"attribute": "无",
+	"flavorText": "神象踏狱，镇压八荒。",
+	"description": "公共功法。装配后使力量和灵力中的较高者，提高相当于体魄和真元中较高者10%的数值。",
+	"effects": [
+	  {
+		"type": "boost_higher_of_strength_lingli_by_higher_of_constitution_zhenyuan",
+		"value": 0.1
+	  }
+	],
+	"unlocked": false,
+	"levelCap": 1,
+	"baseExp": 0,
+	"quality": 4
+	},
+	{
+	"id": 33,
+	"name": "目牛术",
+	"type": "technique",
+	"attribute": "无",
+	"flavorText": "凝神入微，洞见破绽，一击制敌。",
+	"description": "公共功法。装配后物理暴击率提高2%，每级额外提高2%。",
+	"effects": [
+	  {"type": "phys_crit_rate_bonus", "value": 0.02, "levelBonus": 0.02}
+	],
+	"unlocked": false,
+	"levelCap": 4,
+	"baseExp": 350,
+	"quality": 4
+	},
+	{
+	"id": 34,
+	"name": "护体神光",
+	"type": "technique",
+	"attribute": "无",
+	"flavorText": "神光覆体，受击返芒，攻守一体。",
+	"description": "公共功法。战斗开始时获得等于法术攻击55%的临时护盾；护盾存在时受击反弹无属性伤害，数值为法术攻击25%（PVP为15%）。",
+	"effects": [
+	  {"type": "battle_start_temp_shield_from_spell_attack_percent", "value": 0.55},
+	  {"type": "on_damaged_reflect_if_temp_shield", "value": 0.25, "pvpValue": 0.15}
+	],
+	"unlocked": false,
+	"levelCap": 1,
+	"baseExp": 0,
+	"quality": 4
+  },
+  {
+	"id": 35,
+	"name": "魔神诀",
+	"type": "technique",
+	"attribute": "无",
+	"flavorText": "魔神临世，舍守求攻，浴血愈战愈狂。",
+	"description": "公共功法。战斗开始时前3回合防御与法防归零，同时攻击力提高25%、物理吸血提高5%；此外任意时刻每损失10%生命，最终伤害提高1%。",
+	"effects": [
+	  {
+		"type": "battle_start_moshen_jue",
+		"rounds": 3,
+		"attackBonusPct": 0.25,
+		"physLifestealBonus": 0.05
+	  },
+	  {
+		"type": "hp_lost_damage_step_bonus",
+		"stepHpLost": 0.10,
+		"damageBonusPerStep": 0.01,
+		"pvpDamageBonusPerStep": 0.01,
+		"maxSteps": 9
+	  }
+	],
+	"unlocked": false,
+	"levelCap": 1,
+	"baseExp": 0,
+	"quality": 4
+  }
+]

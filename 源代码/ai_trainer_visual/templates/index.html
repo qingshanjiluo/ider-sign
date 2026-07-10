@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>艾德尔修仙传 AI 可视化训练系统</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <div class="header-left">
+            <h1>🧠 艾德尔修仙传 · AI 训练系统</h1>
+            <span class="version">v2.0</span>
+        </div>
+        <div class="header-right">
+            <div class="status-indicators">
+                <div class="status-item">
+                    <span class="status-dot" id="serverStatusDot"></span>
+                    <span id="serverStatusText">服务器: 未连接</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-dot" id="trainStatusDot"></span>
+                    <span id="trainStatusText">训练: 未开始</span>
+                </div>
+            </div>
+            <div class="header-time">
+                <span id="currentTime">--:--:--</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主布局 -->
+    <div class="main-layout">
+        <!-- 左侧: 控制面板 -->
+        <aside class="left-panel">
+            <!-- 服务器控制 -->
+            <section class="panel-section">
+                <h3>🖥️ 服务器控制</h3>
+                <div class="btn-group">
+                    <button class="btn btn-success" id="btnStartServer" onclick="sendCommand('start_server')">
+                        ▶ 启动服务器
+                    </button>
+                    <button class="btn btn-danger" id="btnStopServer" onclick="sendCommand('stop_server')" disabled>
+                        ⏹ 停止服务器
+                    </button>
+                </div>
+                <div class="server-info">
+                    <div class="info-row">
+                        <span class="label">状态:</span>
+                        <span id="serverInfoStatus" class="value">未运行</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">运行时间:</span>
+                        <span id="serverInfoUptime" class="value">0s</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 训练控制 -->
+            <section class="panel-section">
+                <h3>🎯 训练控制</h3>
+                <div class="control-row">
+                    <label>AI 数量:</label>
+                    <div class="number-input">
+                        <button onclick="adjustBots(-1)">−</button>
+                        <input type="number" id="numBots" value="2" min="1" max="10" readonly>
+                        <button onclick="adjustBots(1)">+</button>
+                    </div>
+                    <span class="hint">(1-10)</span>
+                </div>
+                <div class="control-row">
+                    <label>每AI轮数:</label>
+                    <input type="number" id="episodesPerBot" value="10" min="1" max="1000" class="small-input">
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="btnStartTrain" onclick="sendCommand('start_training')">
+                        🚀 开始训练
+                    </button>
+                    <button class="btn btn-warning" id="btnPauseTrain" onclick="sendCommand('pause_training')" disabled>
+                        ⏸ 暂停
+                    </button>
+                    <button class="btn btn-danger" id="btnStopTrain" onclick="sendCommand('stop_training')" disabled>
+                        ⏹ 停止
+                    </button>
+                </div>
+            </section>
+
+            <!-- 速度控制 -->
+            <section class="panel-section">
+                <h3>⚡ 速度控制</h3>
+                <div class="speed-control">
+                    <div class="speed-label">
+                        <span>🐢 慢速</span>
+                        <span id="speedValue">1.0x</span>
+                        <span>🚀 极速</span>
+                    </div>
+                    <input type="range" id="speedSlider" min="0.1" max="1000" step="0.1" value="1.0"
+                           oninput="updateSpeed(this.value)" onchange="setSpeed(parseFloat(this.value))">
+                    <div class="speed-presets">
+                        <button onclick="setSpeed(0.5)">0.5x</button>
+                        <button onclick="setSpeed(1.0)">1x</button>
+                        <button onclick="setSpeed(10.0)">10x</button>
+                        <button onclick="setSpeed(100.0)">100x</button>
+                        <button onclick="setSpeed(1000.0)">1000x 🚀</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 奖励权重调节 -->
+            <section class="panel-section">
+                <h3>🎯 奖励权重</h3>
+                <div class="reward-weight-info">
+                    <span class="rw-hint">拖动滑块调整AI训练奖励权重</span>
+                    <button class="btn btn-sm btn-danger" onclick="resetAllRewardWeights()" style="margin-left:8px;background:#e74c3c;color:white;border:none;padding:2px 8px;border-radius:4px;cursor:pointer;font-size:11px">🔄 重置所有</button>
+                </div>
+                <div class="reward-weight-container" id="rewardWeightContainer">
+                    <!-- 由 JS 动态生成 -->
+                </div>
+            </section>
+
+            <!-- 全局统计 -->
+            <section class="panel-section">
+                <h3>📊 全局统计</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="globalEpisodes">0</div>
+                        <div class="stat-label">总轮数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="globalSteps">0</div>
+                        <div class="stat-label">总步数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="globalTime">0s</div>
+                        <div class="stat-label">运行时间</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="activeBots">0</div>
+                        <div class="stat-label">活跃AI</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 模型导出 -->
+            <section class="panel-section">
+                <h3>💾 模型导出</h3>
+                <div class="control-row">
+                    <label>选择Bot:</label>
+                    <select id="exportBotSelect" class="small-select">
+                        <option value="0">Bot 1</option>
+                        <option value="1">Bot 2</option>
+                        <option value="2">Bot 3</option>
+                        <option value="3">Bot 4</option>
+                        <option value="4">Bot 5</option>
+                        <option value="5">Bot 6</option>
+                        <option value="6">Bot 7</option>
+                        <option value="7">Bot 8</option>
+                        <option value="8">Bot 9</option>
+                        <option value="9">Bot 10</option>
+                    </select>
+                </div>
+                <div class="control-row">
+                    <label>格式:</label>
+                    <select id="exportFormatSelect" class="small-select">
+                        <option value="full">完整(含记忆)</option>
+                        <option value="json">仅模型参数</option>
+                        <option value="web">Web可视化</option>
+                        <option value="python">Python格式</option>
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="exportModel()">📤 导出模型</button>
+                </div>
+                <div class="model-info" id="exportResult" style="display:none;"></div>
+            </section>
+
+            <!-- 模型导入 -->
+            <section class="panel-section">
+                <h3>📥 模型导入</h3>
+                <div class="control-row">
+                    <label>目标Bot:</label>
+                    <select id="importBotSelect" class="small-select">
+                        <option value="0">Bot 1</option>
+                        <option value="1">Bot 2</option>
+                        <option value="2">Bot 3</option>
+                        <option value="3">Bot 4</option>
+                        <option value="4">Bot 5</option>
+                        <option value="5">Bot 6</option>
+                        <option value="6">Bot 7</option>
+                        <option value="7">Bot 8</option>
+                        <option value="8">Bot 9</option>
+                        <option value="9">Bot 10</option>
+                    </select>
+                </div>
+                <div class="control-row">
+                    <label>源文件:</label>
+                    <select id="importFileSelect" class="small-select" style="flex:1;">
+                        <option value="">-- 选择导出文件 --</option>
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="refreshImportFiles()">🔄 刷新列表</button>
+                    <button class="btn btn-primary" onclick="importModel()">📥 导入模型</button>
+                </div>
+                <div class="model-info" id="importResult" style="display:none;"></div>
+            </section>
+
+            <!-- 斗法控制 -->
+            <section class="panel-section">
+                <h3>⚔️ 斗法</h3>
+                <div class="control-row">
+                    <label>Bot A:</label>
+                    <select id="duelBot1Select" class="small-select">
+                        <option value="0">Bot 1</option>
+                        <option value="1">Bot 2</option>
+                        <option value="2">Bot 3</option>
+                        <option value="3">Bot 4</option>
+                        <option value="4">Bot 5</option>
+                        <option value="5">Bot 6</option>
+                        <option value="6">Bot 7</option>
+                        <option value="7">Bot 8</option>
+                        <option value="8">Bot 9</option>
+                        <option value="9">Bot 10</option>
+                    </select>
+                </div>
+                <div class="control-row">
+                    <label>Bot B:</label>
+                    <select id="duelBot2Select" class="small-select">
+                        <option value="1">Bot 2</option>
+                        <option value="0">Bot 1</option>
+                        <option value="2">Bot 3</option>
+                        <option value="3">Bot 4</option>
+                        <option value="4">Bot 5</option>
+                        <option value="5">Bot 6</option>
+                        <option value="6">Bot 7</option>
+                        <option value="7">Bot 8</option>
+                        <option value="8">Bot 9</option>
+                        <option value="9">Bot 10</option>
+                    </select>
+                </div>
+                <div class="control-row">
+                    <label>轮数:</label>
+                    <input type="number" id="duelEpisodes" value="5" min="1" max="50" class="small-input">
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="startDuel()">⚔️ 开始斗法</button>
+                    <button class="btn btn-warning" onclick="startTournament()">🏆 循环赛</button>
+                </div>
+                <div class="model-info" id="duelResult" style="display:none;"></div>
+            </section>
+        </aside>
+
+        <!-- 中间: 主训练面板 -->
+        <main class="center-panel">
+            <!-- 训练图表 -->
+            <section class="panel-section charts-section">
+                <h3>📈 训练指标</h3>
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <canvas id="rewardChart"></canvas>
+                        <div class="chart-title">奖励曲线</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="lossChart"></canvas>
+                        <div class="chart-title">损失率</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="epsilonChart"></canvas>
+                        <div class="chart-title">探索率 (ε)</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="levelChart"></canvas>
+                        <div class="chart-title">等级变化</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 机器人面板 (动态生成) -->
+            <section class="panel-section bots-section">
+                <h3>🤖 AI 机器人状态</h3>
+                <div class="bot-tabs" id="botTabs">
+                    <!-- 由 JS 动态生成 -->
+                </div>
+                <div class="bot-panels" id="botPanels">
+                    <!-- 由 JS 动态生成 -->
+                </div>
+            </section>
+        </main>
+
+        <!-- 右侧: 游戏画面和日志 -->
+        <aside class="right-panel">
+            <!-- 游戏画面 -->
+            <section class="panel-section">
+                <h3>🎮 游戏画面</h3>
+                <div class="game-view" id="gameView">
+                    <div class="game-placeholder" id="gamePlaceholder">
+                        <div class="placeholder-icon">🎮</div>
+                        <div class="placeholder-text">等待训练开始...</div>
+                    </div>
+                    <div class="game-content" id="gameContent" style="display:none;">
+                        <!-- 游戏画面标签页 -->
+                        <div class="game-tabs" id="gameTabs">
+                            <button class="game-tab active" data-tab="char">角色</button>
+                            <button class="game-tab" data-tab="inventory">背包</button>
+                            <button class="game-tab" data-tab="equip">装备</button>
+                            <button class="game-tab" data-tab="skills">技能</button>
+                            <button class="game-tab" data-tab="battle">战斗</button>
+                            <button class="game-tab" data-tab="forge">锻造</button>
+                            <button class="game-tab" data-tab="cave">洞府</button>
+                            <button class="game-tab" data-tab="sect">宗门</button>
+                        </div>
+
+                        <!-- 角色面板 -->
+                        <div class="game-tab-content active" id="gameTabChar">
+                            <div class="game-header">
+                                <span class="game-bot-name" id="gameBotName">AI修仙者·壹</span>
+                                <span class="game-level" id="gameLevel">Lv.1</span>
+                            </div>
+                            <div class="game-stats-bars">
+                                <div class="stat-bar">
+                                    <span class="bar-label">❤️ HP</span>
+                                    <div class="bar-track">
+                                        <div class="bar-fill hp-bar" id="hpBar" style="width:100%"></div>
+                                    </div>
+                                    <span class="bar-value" id="hpText">50/50</span>
+                                </div>
+                                <div class="stat-bar">
+                                    <span class="bar-label">💧 MP</span>
+                                    <div class="bar-track">
+                                        <div class="bar-fill mp-bar" id="mpBar" style="width:100%"></div>
+                                    </div>
+                                    <span class="bar-value" id="mpText">30/30</span>
+                                </div>
+                                <div class="stat-bar">
+                                    <span class="bar-label">⭐ EXP</span>
+                                    <div class="bar-track">
+                                        <div class="bar-fill exp-bar" id="expBar" style="width:0%"></div>
+                                    </div>
+                                    <span class="bar-value" id="expText">0/100</span>
+                                </div>
+                            </div>
+                            <div class="game-attr-grid">
+                                <div class="attr-item"><span class="attr-label">攻击</span><span class="attr-value" id="gAttrAttack">0</span></div>
+                                <div class="attr-item"><span class="attr-label">防御</span><span class="attr-value" id="gAttrDefense">0</span></div>
+                                <div class="attr-item"><span class="attr-label">法攻</span><span class="attr-value" id="gAttrSpellAtk">0</span></div>
+                                <div class="attr-item"><span class="attr-label">法防</span><span class="attr-value" id="gAttrSpellDef">0</span></div>
+                                <div class="attr-item"><span class="attr-label">力量</span><span class="attr-value" id="gAttrStrength">0</span></div>
+                                <div class="attr-item"><span class="attr-label">体质</span><span class="attr-value" id="gAttrConstitution">0</span></div>
+                                <div class="attr-item"><span class="attr-label">身法</span><span class="attr-value" id="gAttrAgility">0</span></div>
+                                <div class="attr-item"><span class="attr-label">真元</span><span class="attr-value" id="gAttrZhenyuan">0</span></div>
+                            </div>
+                            <div class="game-info-grid">
+                                <div class="game-info-item">
+                                    <span class="gi-label">灵石</span>
+                                    <span class="gi-value" id="gameStones">0</span>
+                                </div>
+                                <div class="game-info-item">
+                                    <span class="gi-label">境界</span>
+                                    <span class="gi-value" id="gameRealm">凡人</span>
+                                </div>
+                                <div class="game-info-item">
+                                    <span class="gi-label">地图</span>
+                                    <span class="gi-value" id="gameMap">1</span>
+                                </div>
+                                <div class="game-info-item">
+                                    <span class="gi-label">胜率</span>
+                                    <span class="gi-value" id="gameWinRate">0%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 背包面板 -->
+                        <div class="game-tab-content" id="gameTabInventory">
+                            <div class="inv-grid" id="invGrid">
+                                <!-- 由 JS 动态生成 -->
+                            </div>
+                        </div>
+
+                        <!-- 装备面板 -->
+                        <div class="game-tab-content" id="gameTabEquip">
+                            <div class="equip-slots" id="equipSlots">
+                                <!-- 由 JS 动态生成 -->
+                            </div>
+                        </div>
+
+                        <!-- 技能面板 -->
+                        <div class="game-tab-content" id="gameTabSkills">
+                            <div class="skill-list" id="skillList">
+                                <!-- 由 JS 动态生成 -->
+                            </div>
+                        </div>
+
+                        <!-- 战斗面板 -->
+                        <div class="game-tab-content" id="gameTabBattle">
+                            <div class="battle-status">
+                                <div class="battle-info-row">
+                                    <span class="gi-label">当前动作</span>
+                                    <span class="gi-value" id="gameAction">等待中...</span>
+                                </div>
+                                <div class="battle-info-row">
+                                    <span class="gi-label">战斗状态</span>
+                                    <span class="gi-value" id="gameBattleStatus">⚔️ 战斗中</span>
+                                </div>
+                                <div class="battle-info-row">
+                                    <span class="gi-label">ε-探索率</span>
+                                    <span class="gi-value" id="gameEpsilon">1.0</span>
+                                </div>
+                            </div>
+                            <div class="battle-log-box" id="battleLogBox">
+                                <div class="battle-log-placeholder">等待战斗...</div>
+                            </div>
+                            <div class="game-q-values">
+                                <div class="q-title">Q-Values (动作价值)</div>
+                                <div class="q-bars" id="qBars"></div>
+                            </div>
+                        </div>
+
+                        <!-- 锻造面板 -->
+                        <div class="game-tab-content" id="gameTabForge">
+                            <div class="forge-status" id="forgeStatus">
+                                <div class="info-row"><span class="label">锻造状态:</span><span class="value" id="forgeActive">空闲</span></div>
+                                <div class="info-row"><span class="label">炼丹状态:</span><span class="value" id="alchemyActive">空闲</span></div>
+                            </div>
+                        </div>
+
+                        <!-- 洞府面板 -->
+                        <div class="game-tab-content" id="gameTabCave">
+                            <div class="cave-status" id="caveStatus">
+                                <div class="info-row"><span class="label">洞府等级:</span><span class="value" id="caveLevel">0</span></div>
+                                <div class="info-row"><span class="label">资源:</span><span class="value" id="caveResource">0</span></div>
+                                <div class="info-row"><span class="label">阵法:</span><span class="value" id="caveFormation">未激活</span></div>
+                                <div class="info-row"><span class="label">传人:</span><span class="value" id="caveDiscipleCount">0</span></div>
+                            </div>
+                        </div>
+
+                        <!-- 宗门面板 -->
+                        <div class="game-tab-content" id="gameTabSect">
+                            <div class="sect-status" id="sectStatus">
+                                <div class="info-row"><span class="label">宗门:</span><span class="value" id="sectName">无</span></div>
+                                <div class="info-row"><span class="label">贡献:</span><span class="value" id="sectContribution">0</span></div>
+                                <div class="info-row"><span class="label">联盟:</span><span class="value" id="allianceName">无</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NPC 战力排名 -->
+            <section class="panel-section npc-rank-section">
+                <h3>🏆 NPC战力排名</h3>
+                <div class="npc-rank-container" id="npcRankingContainer">
+                    <div class="npc-empty">加载中...</div>
+                </div>
+            </section>
+
+            <!-- 日志 -->
+            <section class="panel-section">
+                <h3>📝 训练日志</h3>
+                <div class="log-container" id="logContainer">
+                    <div class="log-placeholder">等待训练开始...</div>
+                </div>
+            </section>
+        </aside>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/socket.io@4.7.2/client-dist/socket.io.min.js"></script>
+    <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "collectedAt": "2026-05-24T05:06:24.453Z",
+  "results": {},
+  "errors": {
+    "exchangeListings": "未登录",
+    "sectMemberCounts": "未登录",
+    "allianceList": "未登录",
+    "leagueLeaderboard": "未登录",
+    "leagueTeamRank": "未登录",
+    "cityDuelRank": "未登录"
+  }
+}

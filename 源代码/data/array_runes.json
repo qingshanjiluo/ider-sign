@@ -1,0 +1,439 @@
+{
+	"version": 1,
+	"link_rules": {
+		"plate_arrows_enabled": false,
+		"rune_connect_rule": "adjacent_plate",
+		"rune_arrow_rule": "pointed_plate_gets_main_trigger_value"
+	},
+	"main_plate_system": {
+		"enabled": true,
+		"count_mode": "pointed_only",
+		"require_connected_rune": true,
+		"duplicate_arrow_to_same_plate_counts_once": true,
+		"settlement": {
+			"mode": "per_minute_tick",
+			"base_interval_sec": 60,
+			"daily_trigger_cap_per_account": 12,
+			"daily_spirit_cap_per_account": 420,
+			"attenuation_multipliers": [1, 0.75, 0.55, 0.4, 0.3, 0.22, 0.16, 0.12, 0.09, 0.07, 0.05, 0.04]
+		},
+		"main_skills": [
+			{
+				"skill_id": "MAIN_ABADDON_BREACH",
+				"name": "枯荣",
+				"desc": "指向该阵盘的守御=3且铸骨=2时激活。每场野外战斗限一次：消耗200灵石，免疫第一次致命伤害，并回复等于折前伤害的生命；灵石不足则不生效。",
+				"trigger_requires": [
+					{
+						"effect_id": "RUNE_GUARD",
+						"count": 3
+					},
+					{
+						"effect_id": "RUNE_BONE",
+						"count": 2
+					}
+				],
+				"reward": {
+					"spirit_stone_base": 0
+				},
+				"plate_bonus": []
+			},
+			{
+				"skill_id": "MAIN_ASCENSION",
+				"name": "扬升",
+				"desc": "指向该阵盘的攻伐/守御/迅行/聚气/铸骨各=1时激活。激活后可跨级穿戴装备（250级前+10级，250级后快速递减）。计费：开启消耗10000灵石，随后每小时消耗1000灵石；未激活时，超出等级需求的已穿戴装备不生效。",
+				"trigger_requires": [
+					{
+						"effect_id": "RUNE_STRIKE",
+						"count": 1
+					},
+					{
+						"effect_id": "RUNE_GUARD",
+						"count": 1
+					},
+					{
+						"effect_id": "RUNE_SWIFT",
+						"count": 1
+					},
+					{
+						"effect_id": "RUNE_QI",
+						"count": 1
+					},
+					{
+						"effect_id": "RUNE_BONE",
+						"count": 1
+					}
+				],
+				"reward": {
+					"spirit_stone_base": 0
+				},
+				"plate_bonus": []
+			},
+			{
+				"skill_id": "MAIN_SHENWU",
+				"name": "神悟",
+				"desc": "指向该阵盘的迅行/聚气/引流各=1且平衡=2时激活。仅野外战斗生效：战斗经验提高5%。计费：开启消耗5000灵石，随后每小时消耗3000灵石。",
+				"trigger_requires": [
+					{
+						"effect_id": "RUNE_SWIFT",
+						"count": 1
+					},
+					{
+						"effect_id": "RUNE_QI",
+						"count": 1
+					},
+					{
+						"effect_id": "RUNE_MANA_FLOW",
+						"count": 1
+					},
+					{
+						"effect_id": "RUNE_BALANCE",
+						"count": 2
+					}
+				],
+				"reward": {
+					"spirit_stone_base": 0
+				},
+				"plate_bonus": []
+			},
+			{
+				"skill_id": "MAIN_SHENYUN",
+				"name": "神运",
+				"desc": "指向该阵盘的铸骨/聚气/引流/灵锐/锋芒各=1时激活。仅野外战斗生效：掉率提高10%（乘算）。计费：开启消耗5000灵石，随后每小时消耗3000灵石。",
+				"trigger_requires": [
+					{
+						"effect_id": "RUNE_BONE",
+						"count": 1
+					},
+					{
+						"effect_id": "RUNE_QI",
+						"count": 1
+					},
+					{
+						"effect_id": "RUNE_MANA_FLOW",
+						"count": 1
+					},
+					{
+						"effect_id": "RUNE_SPELL_CRIT",
+						"count": 1
+					},
+					{
+						"effect_id": "RUNE_PHYS_CRIT",
+						"count": 1
+					}
+				],
+				"reward": {
+					"spirit_stone_base": 0
+				},
+				"plate_bonus": []
+			},
+			{
+				"skill_id": "MAIN_KUANGYONG",
+				"name": "狂涌",
+				"desc": "指向该阵盘的攻伐=2、聚气=2、引流=2时激活。每次造成伤害时，扣除15%当前法力值，并使该次伤害附加等值伤害。计费：开启消耗5000灵石，随后每小时消耗2000灵石。",
+				"trigger_requires": [
+					{
+						"effect_id": "RUNE_STRIKE",
+						"count": 2
+					},
+					{
+						"effect_id": "RUNE_QI",
+						"count": 2
+					},
+					{
+						"effect_id": "RUNE_MANA_FLOW",
+						"count": 2
+					}
+				],
+				"reward": {
+					"spirit_stone_base": 0
+				},
+				"plate_bonus": []
+			},
+			{
+				"skill_id": "MAIN_YANMIAN",
+				"name": "延绵",
+				"desc": "指向该阵盘的铸骨=2、聚气=2、平衡=2时激活。使单段攻击技能变为2连击，但每次伤害降低30%。计费：开启消耗5000灵石，随后每小时消耗2000灵石。",
+				"trigger_requires": [
+					{
+						"effect_id": "RUNE_BONE",
+						"count": 2
+					},
+					{
+						"effect_id": "RUNE_QI",
+						"count": 2
+					},
+					{
+						"effect_id": "RUNE_BALANCE",
+						"count": 2
+					}
+				],
+				"reward": {
+					"spirit_stone_base": 0
+				},
+				"plate_bonus": []
+			},
+			{
+				"skill_id": "MAIN_FACHAO",
+				"name": "法潮",
+				"desc": "指向该阵盘的聚气=3、平衡=2、引流=1时激活。生效值：根骨压至1点，并将压缩掉的根骨等量转化为真元（不影响基础属性）。计费：开启消耗5000灵石，随后每小时消耗2000灵石。",
+				"trigger_requires": [
+					{
+						"effect_id": "RUNE_QI",
+						"count": 3
+					},
+					{
+						"effect_id": "RUNE_BALANCE",
+						"count": 2
+					},
+					{
+						"effect_id": "RUNE_MANA_FLOW",
+						"count": 1
+					}
+				],
+				"reward": {
+					"spirit_stone_base": 0
+				},
+				"plate_bonus": []
+			},
+			{
+				"skill_id": "MAIN_SHENGUANG",
+				"name": "神光",
+				"desc": "指向该阵盘的聚灵=3、灵锐=2、平衡=1时激活。使造成的法术伤害降为15%，但转为绝对伤害。计费：开启消耗5000灵石，随后每小时消耗2000灵石。",
+				"trigger_requires": [
+					{
+						"effect_id": "RUNE_SPIRIT",
+						"count": 3
+					},
+					{
+						"effect_id": "RUNE_SPELL_CRIT",
+						"count": 2
+					},
+					{
+						"effect_id": "RUNE_BALANCE",
+						"count": 1
+					}
+				],
+				"reward": {
+					"spirit_stone_base": 0
+				},
+				"plate_bonus": []
+			},
+			{
+				"skill_id": "MAIN_GAIWU",
+				"name": "改物",
+				"desc": "指向该阵盘的引流=4、平衡=4时激活。计费：每小时消耗10000灵石；每次因维持该阵形扣费时，获得等量经验。",
+				"trigger_requires": [
+					{
+						"effect_id": "RUNE_MANA_FLOW",
+						"count": 4
+					},
+					{
+						"effect_id": "RUNE_BALANCE",
+						"count": 4
+					}
+				],
+				"reward": {
+					"spirit_stone_base": 0
+				},
+				"plate_bonus": []
+			},
+			{
+				"skill_id": "MAIN_DAOTI",
+				"name": "道体",
+				"desc": "指向该阵盘的聚气/聚灵/迅行/平衡各=1时激活。开启后，溢出的生命恢复转化为可叠加的临时护盾（战斗结束清空）。计费：开启消耗5000灵石，随后每小时消耗2000灵石。",
+				"trigger_requires": [
+					{
+						"effect_id": "RUNE_QI",
+						"count": 1
+					},
+					{
+						"effect_id": "RUNE_SPIRIT",
+						"count": 1
+					},
+					{
+						"effect_id": "RUNE_SWIFT",
+						"count": 1
+					},
+					{
+						"effect_id": "RUNE_BALANCE",
+						"count": 1
+					}
+				],
+				"reward": {
+					"spirit_stone_base": 0
+				},
+				"plate_bonus": []
+			}
+		],
+		"plate_affix_pool": [
+			{
+				"affix_id": "PLATE_AFFIX_POINTED_GUARD_AMP",
+				"name": "守御共鸣",
+				"type": "pointed_effect_amp_pct",
+				"target_effect_id": "RUNE_GUARD",
+				"roll_pct_by_shape": [4, 6, 8, 10, 12]
+			},
+			{
+				"affix_id": "PLATE_AFFIX_POINTED_BONE_AMP",
+				"name": "铸骨共鸣",
+				"type": "pointed_effect_amp_pct",
+				"target_effect_id": "RUNE_BONE",
+				"roll_pct_by_shape": [4, 6, 8, 10, 12]
+			},
+			{
+				"affix_id": "PLATE_AFFIX_POINTED_ALL_AMP",
+				"name": "万象汇流",
+				"type": "pointed_all_effect_amp_pct",
+				"roll_pct_by_shape": [2, 3, 4, 5, 6]
+			}
+		]
+	},
+	"slots": [
+		{
+			"gua_slot": "乾",
+			"name": "乾位",
+			"position": "top",
+			"element": "金",
+			"arrow_dirs": ["S"],
+			"default_effect_id": "RUNE_STRIKE"
+		},
+		{
+			"gua_slot": "坤",
+			"name": "坤位",
+			"position": "bottom",
+			"element": "土",
+			"arrow_dirs": ["N"],
+			"default_effect_id": "RUNE_GUARD"
+		},
+		{
+			"gua_slot": "震",
+			"name": "震位",
+			"position": "left",
+			"element": "木",
+			"arrow_dirs": ["E"],
+			"default_effect_id": "RUNE_SWIFT"
+		},
+		{
+			"gua_slot": "巽",
+			"name": "巽位",
+			"position": "right",
+			"element": "木",
+			"arrow_dirs": ["W"],
+			"default_effect_id": "RUNE_QI"
+		},
+		{
+			"gua_slot": "艮",
+			"name": "艮位",
+			"position": "top_left",
+			"element": "土",
+			"arrow_dirs": ["E", "S"],
+			"default_effect_id": "RUNE_BONE"
+		},
+		{
+			"gua_slot": "兑",
+			"name": "兑位",
+			"position": "top_right",
+			"element": "金",
+			"arrow_dirs": ["W", "S"],
+			"default_effect_id": "RUNE_SPELL_CRIT"
+		},
+		{
+			"gua_slot": "坎",
+			"name": "坎位",
+			"position": "bottom_left",
+			"element": "水",
+			"arrow_dirs": ["E", "N"],
+			"default_effect_id": "RUNE_MANA_FLOW"
+		},
+		{
+			"gua_slot": "离",
+			"name": "离位",
+			"position": "bottom_right",
+			"element": "火",
+			"arrow_dirs": ["W", "N"],
+			"default_effect_id": "RUNE_BALANCE"
+		}
+	],
+	"effects": [
+		{
+			"effect_id": "RUNE_STRIKE",
+			"name": "攻伐",
+			"desc": "strength + (1.5% + 0.6% * linkedPlates)",
+			"flow_cost": 1,
+			"main_trigger_value": 1,
+			"tags": ["pve", "pvp"]
+		},
+		{
+			"effect_id": "RUNE_GUARD",
+			"name": "守御",
+			"desc": "constitution + (1.5% + 0.6% * linkedPlates)",
+			"flow_cost": 1,
+			"main_trigger_value": 1,
+			"tags": ["pve", "pvp"]
+		},
+		{
+			"effect_id": "RUNE_BONE",
+			"name": "铸骨",
+			"desc": "bone + (1.2% + 0.5% * linkedPlates)",
+			"flow_cost": 2,
+			"main_trigger_value": 2,
+			"tags": ["pve", "pvp"]
+		},
+		{
+			"effect_id": "RUNE_SWIFT",
+			"name": "迅行",
+			"desc": "agility + (1.0% + 0.5% * linkedPlates)",
+			"flow_cost": 1,
+			"main_trigger_value": 1,
+			"tags": ["pve", "pvp"]
+		},
+		{
+			"effect_id": "RUNE_QI",
+			"name": "聚气",
+			"desc": "zhenyuan + (1.5% + 0.6% * linkedPlates)",
+			"flow_cost": 1,
+			"main_trigger_value": 1,
+			"tags": ["pve", "pvp"]
+		},
+		{
+			"effect_id": "RUNE_SPIRIT",
+			"name": "聚灵",
+			"desc": "lingli + (1.5% + 0.6% * linkedPlates)",
+			"flow_cost": 1,
+			"main_trigger_value": 1,
+			"tags": ["pve", "pvp"]
+		},
+		{
+			"effect_id": "RUNE_PHYS_CRIT",
+			"name": "锋芒",
+			"desc": "phys_crit_rate_bonus + (0.8% + 0.35% * linkedPlates)",
+			"flow_cost": 2,
+			"main_trigger_value": 2,
+			"tags": ["pve", "pvp"]
+		},
+		{
+			"effect_id": "RUNE_SPELL_CRIT",
+			"name": "灵锐",
+			"desc": "spell_crit_rate_bonus + (0.8% + 0.35% * linkedPlates)",
+			"flow_cost": 2,
+			"main_trigger_value": 2,
+			"tags": ["pve", "pvp"]
+		},
+		{
+			"effect_id": "RUNE_MANA_FLOW",
+			"name": "引流",
+			"desc": "turn_end_mp + (max_mp * (1.2% + 0.6% * linkedPlates))",
+			"flow_cost": 2,
+			"main_trigger_value": 2,
+			"tags": ["pve", "pvp"]
+		},
+		{
+			"effect_id": "RUNE_BALANCE",
+			"name": "平衡",
+			"desc": "对六维最低项按百分比补齐 + (1.0% + 0.4% * linkedPlates)",
+			"flow_cost": 2,
+			"main_trigger_value": 2,
+			"tags": ["pve", "pvp"]
+		}
+	]
+}

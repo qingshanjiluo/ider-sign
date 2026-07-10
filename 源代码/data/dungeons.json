@@ -1,0 +1,12 @@
+[
+  {"id":1,"name":"荒石村试炼","description":"新手副本，适合练气期修士组队挑战","level_min":1,"level_max":30,"monster_ids":[1,2],"daily_limit":2,"token_item_id":0,"quality":1,"waves":1},
+  {"id":2,"name":"竹林秘境","description":"青竹林深处灵气汇聚之地，竹妖与精怪盘踞","level_min":40,"level_max":60,"monster_ids":[3,4,5,6,7],"daily_limit":2,"token_item_id":0,"quality":1,"waves":2},
+  {"id":3,"name":"枯骨墓穴","description":"枯骨林地底的古老墓穴，尸鬼与骸骨游荡","level_min":115,"level_max":130,"monster_ids":[8,9,10,11,12],"daily_limit":2,"token_item_id":0,"quality":2,"waves":2},
+  {"id":4,"name":"烈焰洞窟","description":"烈焰谷深处的熔岩洞窟，入魔修士与炎灵盘踞","level_min":135,"level_max":155,"monster_ids":[13,14,15,16],"daily_limit":2,"token_item_id":0,"quality":2,"waves":2},
+  {"id":5,"name":"万剑禁地","description":"万剑冢核心禁地，剑灵与邪修镇守","level_min":178,"level_max":198,"monster_ids":[17,18,19,20],"daily_limit":2,"token_item_id":0,"quality":3,"waves":2},
+  {"id":6,"name":"古战遗迹","description":"上古战场遗留的废墟，战魂与风雷妖兽盘踞","level_min":218,"level_max":242,"monster_ids":[21,22,23,24],"daily_limit":2,"token_item_id":0,"quality":4,"waves":2},
+  {"id":7,"name":"魔渊裂隙","description":"魔渊入口的裂隙，化神期魔修与深渊怨灵出没","level_min":252,"level_max":272,"monster_ids":[25,26,27],"daily_limit":2,"token_item_id":0,"quality":5,"waves":2},
+  {"id":8,"name":"虚空深渊","description":"虚空裂隙深处的危险地带，炼虚期妖王游荡","level_min":290,"level_max":305,"monster_ids":[28,29],"daily_limit":2,"token_item_id":0,"quality":5,"waves":2},
+  {"id":9,"name":"天穹古墟","description":"合体期大能曾悟道的古老废墟，古妖与天魔镇守","level_min":332,"level_max":352,"monster_ids":[30,31],"daily_limit":2,"token_item_id":0,"quality":5,"waves":2},
+  {"id":10,"name":"飞升禁地","description":"大乘期修士云集的禁地，仙兽与魔灵盘踞","level_min":380,"level_max":400,"monster_ids":[32,33],"daily_limit":2,"token_item_id":0,"quality":5,"waves":2}
+]

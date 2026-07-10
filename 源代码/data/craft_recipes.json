@@ -1,0 +1,253 @@
+[
+  {
+	"id": 1,
+	"name": "造纸",
+	"category": "craft_item",
+	"result": {"id": 159, "count": 1},
+	"ingredients": [{"itemId": 21, "count": 3}],
+	"time": 30,
+	"display_name": "造纸"
+  },
+  {
+	"id": 2,
+	"name": "灵墨",
+	"category": "craft_item",
+	"result": {"id": 161, "count": 1},
+	"ingredients": [{"itemId": 23, "count": 1}, {"itemId": 10, "count": 1}],
+	"time": 30,
+	"display_name": "灵墨"
+  },
+  {
+	"id": 3,
+	"name": "烧制木炭",
+	"category": "craft_item",
+	"result": {"id": 23, "count": 1},
+	"ingredients": [{"itemId": 21, "count": 1}],
+	"time": 20,
+	"display_name": "烧制木炭"
+  },
+  {
+	"id": 4,
+	"name": "烧制木炭2",
+	"category": "craft_item",
+	"result": {"id": 23, "count": 2},
+	"ingredients": [{"itemId": 26, "count": 1}],
+	"time": 20,
+	"display_name": "烧制木炭2"
+  },
+  {
+	"id": 5,
+	"name": "一品沉沼符",
+	"category": "talisman",
+	"result": {"id": 162, "count": 1},
+	"ingredients": [{"itemId": 159, "count": 1}, {"itemId": 161, "count": 1}, {"itemId": 20, "count": 1}],
+	"time": 30,
+	"display_name": "一品沉沼符"
+  },
+  {
+	"id": 7,
+	"name": "一阶锐兵符",
+	"category": "talisman",
+	"result": {"id": 163, "count": 1},
+	"ingredients": [{"itemId": 159, "count": 1}, {"itemId": 161, "count": 1}, {"itemId": 24, "count": 1}],
+	"time": 30,
+	"display_name": "一阶锐兵符"
+  },
+  {
+	"id": 8,
+	"name": "一阶柔水符",
+	"category": "talisman",
+	"result": {"id": 164, "count": 1},
+	"ingredients": [{"itemId": 159, "count": 1}, {"itemId": 161, "count": 1}, {"itemId": 22, "count": 1}],
+	"time": 30,
+	"display_name": "一阶柔水符"
+  },
+  {
+	"id": 9,
+	"name": "一阶缠绕符",
+	"category": "talisman",
+	"result": {"id": 165, "count": 1},
+	"ingredients": [{"itemId": 159, "count": 1}, {"itemId": 161, "count": 1}, {"itemId": 7, "count": 1}],
+	"time": 30,
+	"display_name": "一阶缠绕符"
+  },
+  {
+	"id": 10,
+	"name": "一阶烈火符",
+	"category": "talisman",
+	"result": {"id": 166, "count": 1},
+	"ingredients": [{"itemId": 159, "count": 1}, {"itemId": 161, "count": 1}, {"itemId": 8, "count": 1}],
+	"time": 30,
+	"display_name": "一阶烈火符"
+  },
+  {
+	"id": 6,
+	"name": "演化万物之形",
+	"category": "craft_item",
+	"result": {"id": 160, "count": 1},
+	"ingredients": [
+	  {"itemId": 152, "count": 10},
+	  {"itemId": 153, "count": 10},
+	  {"itemId": 154, "count": 10},
+	  {"itemId": 155, "count": 10},
+	  {"itemId": 156, "count": 10},
+	  {"itemId": 157, "count": 10},
+	  {"itemId": 158, "count": 10}
+	],
+	"time": 900,
+	"display_name": "演化万物之形"
+  },
+  {
+	"id": 11,
+	"name": "阵盘坯",
+	"category": "array_plate",
+	"result": {"id": 199, "count": 1},
+	"ingredients": [{"itemId": 24, "count": 2}, {"itemId": 21, "count": 2}, {"itemId": 161, "count": 1}],
+	"time": 45,
+	"display_name": "阵盘坯"
+  },
+  {
+	"id": 12,
+	"name": "定形点阵盘",
+	"category": "array_plate",
+	"result": {"id": 200, "count": 1},
+	"ingredients": [{"itemId": 199, "count": 1}, {"itemId": 20, "count": 1}, {"itemId": 161, "count": 1}],
+	"time": 40,
+	"display_name": "定形点阵盘"
+  },
+  {
+	"id": 13,
+	"name": "定形长二阵盘",
+	"category": "array_plate",
+	"result": {"id": 201, "count": 1},
+	"ingredients": [{"itemId": 199, "count": 1}, {"itemId": 21, "count": 1}, {"itemId": 161, "count": 1}],
+	"time": 40,
+	"display_name": "定形长二阵盘"
+  },
+  {
+	"id": 14,
+	"name": "定形直三阵盘",
+	"category": "array_plate",
+	"result": {"id": 202, "count": 1},
+	"ingredients": [{"itemId": 199, "count": 1}, {"itemId": 22, "count": 1}, {"itemId": 161, "count": 1}],
+	"time": 40,
+	"display_name": "定形直三阵盘"
+  },
+  {
+	"id": 15,
+	"name": "定形L三阵盘",
+	"category": "array_plate",
+	"result": {"id": 203, "count": 1},
+	"ingredients": [{"itemId": 199, "count": 1}, {"itemId": 23, "count": 1}, {"itemId": 161, "count": 1}],
+	"time": 40,
+	"display_name": "定形L三阵盘"
+  },
+  {
+	"id": 16,
+	"name": "定形直四阵盘",
+	"category": "array_plate",
+	"result": {"id": 204, "count": 1},
+	"ingredients": [{"itemId": 199, "count": 1}, {"itemId": 24, "count": 1}, {"itemId": 161, "count": 1}],
+	"time": 45,
+	"display_name": "定形直四阵盘"
+  },
+  {
+	"id": 17,
+	"name": "定形L四阵盘",
+	"category": "array_plate",
+	"result": {"id": 205, "count": 1},
+	"ingredients": [{"itemId": 199, "count": 1}, {"itemId": 20, "count": 1}, {"itemId": 21, "count": 1}, {"itemId": 161, "count": 1}],
+	"time": 45,
+	"display_name": "定形L四阵盘"
+  },
+  {
+	"id": 18,
+	"name": "定形T四阵盘",
+	"category": "array_plate",
+	"result": {"id": 206, "count": 1},
+	"ingredients": [{"itemId": 199, "count": 1}, {"itemId": 22, "count": 1}, {"itemId": 23, "count": 1}, {"itemId": 161, "count": 1}],
+	"time": 45,
+	"display_name": "定形T四阵盘"
+  },
+  {
+	"id": 19,
+	"name": "定形Z四阵盘",
+	"category": "array_plate",
+	"result": {"id": 207, "count": 1},
+	"ingredients": [{"itemId": 199, "count": 1}, {"itemId": 24, "count": 1}, {"itemId": 21, "count": 1}, {"itemId": 161, "count": 1}],
+	"time": 45,
+	"display_name": "定形Z四阵盘"
+  },
+  {
+	"id": 20,
+	"name": "乾位阵纹",
+	"category": "array_rune",
+	"result": {"id": 208, "count": 1},
+	"ingredients": [{"itemId": 159, "count": 1}, {"itemId": 161, "count": 1}, {"itemId": 24, "count": 1}],
+	"time": 35,
+	"display_name": "乾位阵纹"
+  },
+  {
+	"id": 21,
+	"name": "坤位阵纹",
+	"category": "array_rune",
+	"result": {"id": 209, "count": 1},
+	"ingredients": [{"itemId": 159, "count": 1}, {"itemId": 161, "count": 1}, {"itemId": 20, "count": 1}],
+	"time": 35,
+	"display_name": "坤位阵纹"
+  },
+  {
+	"id": 22,
+	"name": "震位阵纹",
+	"category": "array_rune",
+	"result": {"id": 210, "count": 1},
+	"ingredients": [{"itemId": 159, "count": 1}, {"itemId": 161, "count": 1}, {"itemId": 21, "count": 1}],
+	"time": 35,
+	"display_name": "震位阵纹"
+  },
+  {
+	"id": 23,
+	"name": "巽位阵纹",
+	"category": "array_rune",
+	"result": {"id": 211, "count": 1},
+	"ingredients": [{"itemId": 159, "count": 1}, {"itemId": 161, "count": 1}, {"itemId": 21, "count": 1}],
+	"time": 35,
+	"display_name": "巽位阵纹"
+  },
+  {
+	"id": 24,
+	"name": "艮位阵纹",
+	"category": "array_rune",
+	"result": {"id": 212, "count": 1},
+	"ingredients": [{"itemId": 159, "count": 1}, {"itemId": 161, "count": 1}, {"itemId": 20, "count": 1}, {"itemId": 21, "count": 1}],
+	"time": 40,
+	"display_name": "艮位阵纹"
+  },
+  {
+	"id": 25,
+	"name": "兑位阵纹",
+	"category": "array_rune",
+	"result": {"id": 213, "count": 1},
+	"ingredients": [{"itemId": 159, "count": 1}, {"itemId": 161, "count": 1}, {"itemId": 24, "count": 1}, {"itemId": 30, "count": 1}],
+	"time": 40,
+	"display_name": "兑位阵纹"
+  },
+  {
+	"id": 26,
+	"name": "坎位阵纹",
+	"category": "array_rune",
+	"result": {"id": 214, "count": 1},
+	"ingredients": [{"itemId": 159, "count": 1}, {"itemId": 161, "count": 1}, {"itemId": 22, "count": 1}],
+	"time": 35,
+	"display_name": "坎位阵纹"
+  },
+  {
+	"id": 27,
+	"name": "离位阵纹",
+	"category": "array_rune",
+	"result": {"id": 215, "count": 1},
+	"ingredients": [{"itemId": 159, "count": 1}, {"itemId": 161, "count": 1}, {"itemId": 23, "count": 1}],
+	"time": 35,
+	"display_name": "离位阵纹"
+  }
+]

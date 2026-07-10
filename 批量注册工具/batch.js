@@ -100,21 +100,26 @@ class Account {
 // ============================================================
 // 加载账号文件
 // ============================================================
+// ============================================================
+// 加载账号文件（同时记录原始行索引，用于注册后标记完成）
+// ============================================================
 function loadAccounts(filepath) {
   if (!fs.existsSync(filepath)) {
     warn('加载', '文件不存在: ' + filepath);
     return [];
   }
-  const lines = fs.readFileSync(filepath, 'utf-8')
-    .split('\n')
-    .map(l => l.trim())
-    .filter(l => l && !l.startsWith('#') && !l.startsWith('//'));
+  const rawLines = fs.readFileSync(filepath, 'utf-8').split('\n');
+  const trimmedLines = rawLines.map(l => l.trim());
   const accounts = [];
-  for (const line of lines) {
+  for (let i = 0; i < trimmedLines.length; i++) {
+    const line = trimmedLines[i];
+    if (!line || line.startsWith('#') || line.startsWith('//')) continue;
     const parts = line.split(',').map(s => s.trim());
     if (parts.length >= 2) {
       const acc = new Account(parts[0], parts[1], parts[2] || '');
       if (acc.isValid()) {
+        acc._lineIndex = i;     // 记录在文件中的原始行号
+        acc._rawLine = rawLines[i]; // 保留原始行内容
         accounts.push(acc);
       } else {
         warn('加载', '跳过无效账号(用户名>=2字符,密码>=6位): ' + parts[0]);
@@ -133,6 +138,7 @@ function loadAccounts(filepath) {
 class BatchEngine {
   constructor(accounts, options) {
     this.accounts = accounts;
+    this.accountFilePath = (options && options.accountFilePath) || './accounts.txt';
     this.options = Object.assign({
       mapId: 1,                      // 荒石村
       techniqueId: 1,                // 吐纳法
@@ -148,6 +154,29 @@ class BatchEngine {
   }
 
   stop() { this.shouldStop = true; }
+
+  /**
+   * 在 accounts.txt 中将已注册成功的账号行前面加上 # 注释
+   * 这样下次运行不会重复注册
+   */
+  markAccountDone(acc) {
+    if (acc._lineIndex === undefined || acc._lineIndex < 0) return;
+    try {
+      const content = fs.readFileSync(this.accountFilePath, 'utf-8');
+      const lines = content.split('\n');
+      const idx = acc._lineIndex;
+      if (idx < lines.length) {
+        const trimmed = lines[idx].trim();
+        if (!trimmed.startsWith('#') && !trimmed.startsWith('//')) {
+          lines[idx] = '# ' + lines[idx];
+          fs.writeFileSync(this.accountFilePath, lines.join('\n'), 'utf-8');
+          info('标记', acc.username + ' 已标记完成（行首加#）');
+        }
+      }
+    } catch (e) {
+      warn('标记', '标记账号完成失败: ' + e.message);
+    }
+  }
 
   async delay(ms) {
     if (ms <= 0 || this.shouldStop) return;
@@ -394,7 +423,13 @@ class BatchEngine {
       // 使用序号作为玩家名
       acc.playerName = acc.username;
       const result = await this.processAccount(acc);
-      if (result) this.stats.success++; else this.stats.fail++;
+      if (result) {
+        this.stats.success++;
+        // 注册成功后，在 accounts.txt 中注释掉该行，防止下次重复注册
+        this.markAccountDone(acc);
+      } else {
+        this.stats.fail++;
+      }
       // 账号间延迟
       if (i < accounts.length - 1 && !this.shouldStop) {
         info('引擎', '等待 ' + this.options.delayBetweenAccounts + 'ms 后处理下一个账号...');
@@ -520,7 +555,8 @@ async function main() {
       techniqueId,
       autoBattle,
       autoRestart,
-      delayBetweenAccounts: delay
+      delayBetweenAccounts: delay,
+      accountFilePath: filepath
     });
 
     // CI 中捕获 SIGTERM（GitHub Actions 超时时会发）
@@ -543,6 +579,31 @@ async function main() {
         playerName: a.playerName
       }))
     });
+
+    // CI 模式下：git commit & push 已更新的 accounts.txt 到仓库
+    if (engine.stats.success > 0) {
+      console.log('');
+      console.log('📤 正在提交已完成的账号记录到仓库...');
+      try {
+        const execSync = require('child_process').execSync;
+
+        execSync('git config user.name "github-actions[bot]"', { stdio: 'pipe' });
+        execSync('git config user.email "github-actions[bot]@users.noreply.github.com"', { stdio: 'pipe' });
+
+        execSync('git add "' + filepath + '"', { stdio: 'pipe' });
+
+        const status = execSync('git status --porcelain', { stdio: 'pipe', encoding: 'utf-8' }).toString().trim();
+        if (status) {
+          execSync('git commit -m "chore: 标记已完成注册的账号 #开头的行 [skip ci]"', { stdio: 'pipe' });
+          execSync('git push', { stdio: 'pipe' });
+          info('推送', '✅ accounts.txt 已更新并推送到远程仓库');
+        } else {
+          info('推送', 'accounts.txt 无变更，跳过提交');
+        }
+      } catch (e) {
+        warn('推送', 'git 推送失败（非致命）: ' + e.message);
+      }
+    }
 
     // CI 模式下直接退出，不等待按键
     console.log('');
@@ -639,7 +700,8 @@ async function main() {
     techniqueId,
     autoBattle,
     autoRestart,
-    delayBetweenAccounts: delay
+    delayBetweenAccounts: delay,
+    accountFilePath: filepath
   });
 
   // 捕获 Ctrl+C

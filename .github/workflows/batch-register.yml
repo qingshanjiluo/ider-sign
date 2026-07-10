@@ -1,35 +1,55 @@
-name: 批量注册工具
+# ════════════════════════════════════════════════════════════
+#  艾德尔修仙传 - 批量注册工具 📝
+# ════════════════════════════════════════════════════════════
+#  📂 账号文件指向说明
+#  ════════════════════════════════════════════════════════════
+#  本工作流使用「accounts.txt」作为注册专用账号文件
+#   （与卖出工具 auto-sell.yml 的 sell_accounts.txt 分开管理！）
+#  账号来源（优先级由低到高）：
+#    1. 仓库中的 accounts.txt（需提前提交到仓库）
+#    2. workflow_dispatch 传入的 accounts 参数
+#    3. GitHub Secrets 中的 ACCOUNTS_DATA
+#    4. GitHub Secrets 中的 ACCOUNTS_BASE64（base64编码）
+#  ════════════════════════════════════════════════════════════
+#  📝 账号文件格式
+#  ════════════════════════════════════════════════════════════
+#  每行：username,password,invite_code
+#  例：myuser,mypassword123,INVITE888
+#  注册成功后，该行前会自动添加「#」标记完成
+#  ════════════════════════════════════════════════════════════
+
+name: 📝 批量注册工具
 
 on:
   # 手动触发（最常用）
   workflow_dispatch:
     inputs:
       accounts:
-        description: '账号列表（每行: username,password,invite_code），留空则读取仓库中的 accounts.txt'
+        description: '📂 账号列表（每行: username,password,invite_code），留空则使用仓库中的 accounts.txt'
         required: false
         default: ''
       map_id:
-        description: '地图ID [1=荒石村]'
+        description: '🗺️ 地图ID [1=荒石村]'
         required: false
         default: '1'
       technique_id:
-        description: '功法ID [1=吐纳法]'
+        description: '📖 功法ID [1=吐纳法]'
         required: false
         default: '1'
       auto_battle:
-        description: '自动战斗 [true/false]'
+        description: '⚔️ 自动战斗 [true=开启 / false=关闭]'
         required: false
         default: 'true'
       auto_restart:
-        description: '自动刷怪 [true/false]'
+        description: '🔄 自动刷怪 [true=开启 / false=关闭]'
         required: false
         default: 'true'
       delay_between_accounts:
-        description: '账号间隔(ms)'
+        description: '⏱️ 账号间隔（毫秒，如3000=每个账号间隔3秒）'
         required: false
         default: '3000'
       batch_index:
-        description: '批次序号（用于日志文件命名）'
+        description: '🔢 批次序号（用于区分多次运行的结果文件）'
         required: false
         default: '1'
 
@@ -40,16 +60,24 @@ on:
 
 jobs:
   batch-register:
+    name: 📝 执行批量注册
     runs-on: ubuntu-latest
+    # 需要写入权限才能推送已更新的 accounts.txt 回仓库
+    permissions:
+      contents: write
 
     defaults:
       run:
-        # 所有步骤默认在 批量注册工具 目录下执行
+        # ⚠️ 所有步骤默认在「批量注册工具」目录下执行
+        #    因为 batch.js 和 accounts.txt 都在该目录
         working-directory: 批量注册工具
 
     steps:
       - name: 🔄 检出代码
         uses: actions/checkout@v4
+        with:
+          # 需要完整历史用于 git push（注册标记后推送 accounts.txt）
+          fetch-depth: 0
 
       - name: ⚙️ 设置 Node.js
         uses: actions/setup-node@v4
@@ -63,8 +91,13 @@ jobs:
         env:
           NODE_ENV: production
 
-      - name: 📝 准备账号文件
+      - name: 📝 准备账号文件（accounts.txt）
         run: |
+          echo "═══════════════════════════════════════════════"
+          echo "  准备注册账号文件 accounts.txt"
+          echo "  （注册完成后已处理的账号自动标记 #）"
+          echo "═══════════════════════════════════════════════"
+
           # 1) 如果 workflow 传入了 accounts 参数，写入 accounts.txt
           if [ -n "${{ github.event.inputs.accounts }}" ]; then
             echo "📄 使用 workflow 传入的账号数据"
@@ -85,28 +118,33 @@ jobs:
 
           # 检查最终是否有 accounts.txt
           if [ ! -f accounts.txt ]; then
-            echo "❌ 未找到 accounts.txt！请通过以下方式之一提供账号："
-            echo "  1) 修改仓库中的 accounts.txt 文件并提交"
-            echo "  2) 在 GitHub Secrets 中设置 ACCOUNTS_DATA"
-            echo "  3) 在 GitHub Secrets 中设置 ACCOUNTS_BASE64（base64 编码）"
-            echo "  4) 通过 workflow_dispatch 传入 accounts 参数"
+            echo "❌ 未找到 accounts.txt！"
+            echo ""
+            echo "请通过以下方式之一提供账号："
+            echo "  1) 将 accounts.txt 提交到仓库（参考 accounts_example.txt 格式）"
+            echo "  2) 在 GitHub Secrets → Actions 中设置 ACCOUNTS_DATA"
+            echo "  3) 在 GitHub Secrets → Actions 中设置 ACCOUNTS_BASE64（base64 编码）"
+            echo "  4) 在 workflow_dispatch 的 accounts 参数中直接传入"
             exit 1
           fi
 
-          echo "✅ 账号文件就绪，内容预览（前 5 行，隐藏密码）:"
-          awk -F',' '{ if(NR<=5) { if($2!="") $2="******"; print $0 } }' accounts.txt
-          echo "... 共 $(wc -l < accounts.txt) 行（含注释）"
+          echo "✅ 账号文件就绪！"
+          echo "   文件: accounts.txt"
+          echo "   有效账号数: $(grep -cE '^[^#,/]' accounts.txt 2>/dev/null || echo 0)"
+          echo "   总行数: $(wc -l < accounts.txt)"
 
       - name: 🚀 执行批量注册
         run: |
-          echo "⏱️ 开始时间: $(date '+%Y-%m-%d %H:%M:%S')"
           echo "═══════════════════════════════════════════════"
-          echo "配置:"
-          echo "  地图ID:      ${{ github.event.inputs.map_id || '1' }}"
-          echo "  功法ID:      ${{ github.event.inputs.technique_id || '1' }}"
-          echo "  自动战斗:    ${{ github.event.inputs.auto_battle || 'true' }}"
-          echo "  自动刷怪:    ${{ github.event.inputs.auto_restart || 'true' }}"
-          echo "  账号间隔:    ${{ github.event.inputs.delay_between_accounts || '3000' }}ms"
+          echo "  ⏱️  开始时间: $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "  📂  账号文件: accounts.txt"
+          echo "═══════════════════════════════════════════════"
+          echo "  配置:"
+          echo "    地图ID:      ${{ github.event.inputs.map_id || '1' }}"
+          echo "    功法ID:      ${{ github.event.inputs.technique_id || '1' }}"
+          echo "    自动战斗:    ${{ github.event.inputs.auto_battle || 'true' }}"
+          echo "    自动刷怪:    ${{ github.event.inputs.auto_restart || 'true' }}"
+          echo "    账号间隔:    ${{ github.event.inputs.delay_between_accounts || '3000' }}ms"
           echo "═══════════════════════════════════════════════"
 
           CI=true \
@@ -137,14 +175,16 @@ jobs:
         if: always()
         run: |
           echo "═══════════════════════════════════════════════"
-          echo "⏱️ 结束时间: $(date '+%Y-%m-%d %H:%M:%S')"
-          echo "📋 运行结果摘要"
+          echo "  ⏱️  结束时间: $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "  📋  注册结果摘要"
           echo "═══════════════════════════════════════════════"
 
           LATEST_RESULT=$(ls -t result_*.json 2>/dev/null | head -1)
           if [ -n "$LATEST_RESULT" ]; then
-            echo "结果文件: $LATEST_RESULT"
-            cat "$LATEST_RESULT" | python3 -m json.tool 2>/dev/null || cat "$LATEST_RESULT"
+            echo "  结果文件: $LATEST_RESULT"
+            echo ""
+            # 显示各账号注册状态
+            node -e "const d=require('./$LATEST_RESULT');(d.accounts||[]).forEach(a=>{console.log('  ['+(a.username||'?')+'] '+(a.success?'✅ 成功':'❌ 失败'+(a.error?': '+a.error:'')))})"
           else
-            echo "未找到结果文件，请查看控制台输出或日志"
+            echo "  未找到结果文件，请查看控制台输出或日志"
           fi

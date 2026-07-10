@@ -1,0 +1,2586 @@
+[
+	{
+		"id": 1,
+		"name": "重击",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "无",
+		"description": "造成物理攻击力115%伤害。每级使伤害系数提升5%",
+		"mpCost": 10,
+		"cooldown": 0,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.15,
+				"coefficientBonus": 0.05
+			}
+		],
+		"unlocked": true,
+		"levelCap": 6,
+		"baseExp": 150,
+		"quality": 1
+	},
+	{
+		"id": 2,
+		"name": "火球术",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "火",
+		"description": "造成105%火属性法术伤害。每级使伤害系数提升5%",
+		"mpCost": 15,
+		"cooldown": 1,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.05,
+				"coefficientBonus": 0.05
+			}
+		],
+		"unlocked": true,
+		"levelCap": 6,
+		"baseExp": 225,
+		"quality": 1
+	},
+	{
+		"id": 3,
+		"name": "治疗术",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "水",
+		"description": "恢复10%最大生命值。每级使治疗系数提升1%",
+		"mpCost": 20,
+		"cooldown": 2,
+		"effects": [
+			{
+				"type": "heal_max_hp_percent",
+				"value": 0.1,
+				"coefficientBonus": 0.01
+			}
+		],
+		"unlocked": true,
+		"levelCap": 6,
+		"baseExp": 225,
+		"quality": 1
+	},
+	{
+		"id": 4,
+		"name": "青魔手",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "木",
+		"flavorText": "以淬毒的拳爪打击敌人,其毒甚烈,难以医治。",
+		"description": "造成95%物理攻击力的木属性物理伤害，命中后施加青魔毒，敌人每次行动后受到35%法术攻击力的木属性法术伤害，持续3次敌人行动。每级使伤害系数和毒伤系数各提高2%",
+		"mpCost": 20,
+		"cooldown": 2,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 0.95,
+				"coefficientBonus": 0.02,
+				"damageType": "physical"
+			},
+			{
+				"type": "apply_debuff",
+				"debuffType": "qingmo_poison",
+				"stacks": 3,
+				"damagePercent": 0.35,
+				"attribute": "spell_attack",
+				"coefficientBonus": 0.02
+			}
+		],
+		"unlocked": false,
+		"levelCap": 6,
+		"baseExp": 240,
+		"quality": 2,
+		"requirements": {
+			"weaponTypes": [
+				"拳爪"
+			]
+		},
+		"sectId": 5,
+		"sectTier": "basic",
+		"transmitLevel": 5
+	},
+	{
+		"id": 5,
+		"name": "清音破云",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "无",
+		"flavorText": "声如金石,铮铮如清音破云。",
+		"description": "造成法术攻击力95%至115%的无属性法术伤害，无视40%的法术防御。每级使最终伤害提高5%。【团战】对其他敌人溅射20%-40%伤害",
+		"mpCost": 25,
+		"cooldown": 2,
+		"effects": [
+			{
+				"type": "damage_percent_range",
+				"minValue": 0.95,
+				"maxValue": 1.15,
+				"ignoreSpellDefense": 0.4,
+				"coefficientBonus": 0.05
+			}
+		],
+		"unlocked": false,
+		"levelCap": 8,
+		"baseExp": 330,
+		"quality": 3,
+		"requirements": {
+			"weaponTypes": [
+				"音律"
+			]
+		},
+		"sectId": 2,
+		"sectTier": "basic",
+		"transmitLevel": 7
+	},
+	{
+		"id": 6,
+		"name": "巽风斩",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "木",
+		"flavorText": "以速度抢占上风的二连击,相应地,每次攻击的力道会减弱些许。",
+		"description": "造成77%物理伤害两次。每级使伤害系数提升5%",
+		"mpCost": 25,
+		"cooldown": 2,
+		"effects": [
+			{
+				"type": "damage_percent_range_multi",
+				"minValue": 0.77,
+				"maxValue": 0.77,
+				"count": 2,
+				"coefficientBonus": 0.05
+			}
+		],
+		"unlocked": false,
+		"levelCap": 7,
+		"baseExp": 255,
+		"quality": 2
+	},
+	{
+		"id": 7,
+		"name": "五音和鸣",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "无",
+		"flavorText": "五音流转相和鸣,荡尽八方邪祟。",
+		"description": "造成40%至45%法术攻击力的无属性法术伤害5次。每级使最终伤害提高5%。冷却4轮",
+		"mpCost": 30,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "damage_percent_range_multi",
+				"minValue": 0.4,
+				"maxValue": 0.45,
+				"count": 5,
+				"coefficientBonus": 0.05
+			}
+		],
+		"unlocked": false,
+		"levelCap": 8,
+		"baseExp": 405,
+		"quality": 4,
+		"requirements": {
+			"weaponTypes": [
+				"音律"
+			]
+		},
+		"sectId": 2,
+		"sectTier": "advanced",
+		"scriptureContribution": 5000
+	},
+	{
+		"id": 8,
+		"name": "不归调",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "无",
+		"flavorText": "一曲不归声渐消,念之断人肠。",
+		"description": "对一个敌人造成迟缓效果，从下一次行动开始使行动条速度减慢至原值的70%，持续1轮次。每级使迟缓时间和冷却时间均加1轮次",
+		"mpCost": 20,
+		"cooldown": 2,
+		"cooldownPerLevel": 1,
+		"effects": [
+			{
+				"type": "apply_slow",
+				"duration": 1,
+				"durationPerLevel": 1,
+				"speedMultiplier": 0.7
+			}
+		],
+		"unlocked": false,
+		"levelCap": 4,
+		"baseExp": 225,
+		"quality": 4,
+		"requirements": {
+			"weaponTypes": [
+				"音律"
+			]
+		},
+		"sectId": 2,
+		"sectTier": "intermediate",
+		"hallContribution": 600
+	},
+	{
+		"id": 9,
+		"name": "流云快剑",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "混元",
+		"description": "造成102%物理攻击力伤害，并对自身施加2回合乘风（下一次行动速度加快30%）。冷却2轮，每级使伤害系数提升3%",
+		"mpCost": 15,
+		"cooldown": 2,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.02,
+				"coefficientBonus": 0.03
+			},
+			{
+				"type": "apply_chengfeng_self",
+				"duration": 2,
+				"speedBonus": 0.3
+			}
+		],
+		"unlocked": false,
+		"levelCap": 6,
+		"baseExp": 225,
+		"quality": 2,
+		"requirements": {
+			"weaponTypes": [
+				"剑"
+			]
+		},
+		"sectId": 1,
+		"sectTier": "basic",
+		"transmitLevel": 7
+	},
+	{
+		"id": 10,
+		"name": "归元返照",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "混元",
+		"description": "回复20%最大生命值，并对自身附加3轮精准（物理暴击率+25%）和3轮专注（法术暴击率+25%）。不可升级",
+		"mpCost": 25,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "heal_max_hp_percent",
+				"value": 0.2
+			},
+			{
+				"type": "apply_jingzhun_self",
+				"duration": 3
+			},
+			{
+				"type": "apply_zhuanzhu_self",
+				"duration": 3
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 2,
+		"sectId": 1,
+		"sectTier": "intermediate",
+		"hallContribution": 600
+	},
+	{
+		"id": 11,
+		"name": "叠云刺",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "无",
+		"description": "造成45%物理攻击力物理伤害3次，并对敌人施加3轮流血（行动后受到流血系数的无属性物理伤害）。每级使伤害系数+8%，流血系数40%每级+4%",
+		"mpCost": 20,
+		"cooldown": 2,
+		"effects": [
+			{
+				"type": "damage_percent_range_multi",
+				"minValue": 0.45,
+				"maxValue": 0.45,
+				"count": 3,
+				"coefficientBonus": 0.08
+			},
+			{
+				"type": "apply_debuff",
+				"debuffType": "bleed",
+				"stacks": 3,
+				"damagePercent": 0.4,
+				"coefficientBonus": 0.04,
+				"attribute": "max_attack",
+				"ignoreDefense": true
+			}
+		],
+		"unlocked": false,
+		"levelCap": 4,
+		"baseExp": 300,
+		"quality": 3,
+		"requirements": {
+			"weaponTypes": [
+				"剑"
+			]
+		},
+		"sectId": 1,
+		"sectTier": "intermediate",
+		"hallContribution": 600
+	},
+	{
+		"id": 12,
+		"name": "天地有情剑",
+		"type": "active",
+		"damageType": "hybrid",
+		"attribute": "混元",
+		"description": "造成77%至99%物攻的物理伤害，随后再造成一次77%至99%法术攻击力的法术伤害，并为敌人附加三轮绝脉效果（绝脉：下一轮行动必然使用普通攻击），为自己附加三轮勃发效果（勃发：下一轮行动必然不会出现普通攻击）。每级使最终伤害提升7%，满级时冷却时间减少一轮。【PVP】绝脉和勃发持续2轮。【团战】每段命中2个目标",
+		"mpCost": 0,
+		"cooldown": 5,
+		"maxLevelCooldownReduction": 1,
+		"effects": [
+			{
+				"type": "damage_dual_physical_then_magic",
+				"minValue": 0.77,
+				"maxValue": 0.99,
+				"levelBonus": 0.07,
+				"noMultiHitDecay": true
+			},
+			{
+				"type": "apply_juemai",
+				"duration": 3,
+				"pvpDuration": 2
+			},
+			{
+				"type": "apply_bofa_self",
+				"duration": 3,
+				"pvpDuration": 2
+			}
+		],
+		"unlocked": false,
+		"levelCap": 7,
+		"baseExp": 500,
+		"quality": 4,
+		"sectId": 1,
+		"sectTier": "advanced",
+		"scriptureContribution": 5000,
+		"requirements": {
+			"weaponTypes": [
+				"剑"
+			]
+		}
+	},
+	{
+		"id": 13,
+		"name": "广陵曲",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "无",
+		"description": "造成115%法术攻击力的法术伤害，为自己附加1轮次绝唱（绝唱：持续期间造成法术伤害时必定暴击）。每级使伤害系数提高5%，满级时绝唱轮次+1。需装备音律类武器",
+		"mpCost": 20,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.15,
+				"coefficientBonus": 0.05
+			},
+			{
+				"type": "apply_juechang_self",
+				"duration": 1,
+				"maxLevelBonus": 1
+			}
+		],
+		"unlocked": false,
+		"levelCap": 6,
+		"baseExp": 240,
+		"quality": 2,
+		"requirements": {
+			"weaponTypes": [
+				"音律"
+			]
+		},
+		"sectId": 2,
+		"sectTier": "basic",
+		"transmitLevel": 7
+	},
+	{
+		"id": 14,
+		"name": "回春曲",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "无",
+		"description": "使自身回复20%最大生命值，并为自身附加2轮乘风效果（速度加快30%）。需装备音律类武器。冷却2轮",
+		"mpCost": 25,
+		"cooldown": 2,
+		"effects": [
+			{
+				"type": "heal_max_hp_percent",
+				"value": 0.2
+			},
+			{
+				"type": "apply_chengfeng_self",
+				"duration": 2,
+				"speedBonus": 0.3
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 3,
+		"requirements": {
+			"weaponTypes": [
+				"音律"
+			]
+		},
+		"sectId": 2,
+		"sectTier": "intermediate",
+		"hallContribution": 600
+	},
+	{
+		"id": 15,
+		"name": "落雁曲",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "无",
+		"description": "造成65%法术攻击力的法术伤害，使敌人获得1轮绝脉效果。每级使伤害系数提高5%。需装备音律类武器。冷却1轮",
+		"mpCost": 15,
+		"cooldown": 1,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 0.65,
+				"coefficientBonus": 0.05
+			},
+			{
+				"type": "apply_juemai",
+				"duration": 1
+			}
+		],
+		"unlocked": false,
+		"levelCap": 5,
+		"baseExp": 200,
+		"quality": 3,
+		"requirements": {
+			"weaponTypes": [
+				"音律"
+			]
+		},
+		"sectId": 2,
+		"sectTier": "intermediate",
+		"hallContribution": 600
+	},
+	{
+		"id": 16,
+		"name": "绝学-御剑以心",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "混元",
+		"description": "使当前处于冷却中的所有其他技能立即冷却完毕（不包含本身）。若清除了2个及以上技能冷却，则下次释放本技能时视为额外释放一次其他已装配技能（该次释放不进入冷却）。需装备剑类武器。冷却3轮",
+		"mpCost": 0,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "clear_other_skill_cooldowns"
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4,
+		"requirements": {
+			"weaponTypes": [
+				"剑"
+			]
+		},
+		"sectId": 1,
+		"sectTier": "advanced",
+		"scriptureContribution": 0
+	},
+	{
+		"id": 17,
+		"name": "绝学-载道以剑",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "混元",
+		"description": "进入剑心状态，持续至战斗结束。剑心状态下，对自身施加的乘风持续时间增加1轮；若自身拥有精准，则每次物理伤害命中时追加一次25%系数的法术伤害（PVP中15%）；若自身拥有专注，则每次法术伤害命中时追加一次25%系数的物理伤害（PVP中15%），多段伤害每段各触发。再次释放时，改为释放另一个已装配的技能。需装备剑类武器。冷却5轮",
+		"mpCost": 0,
+		"cooldown": 5,
+		"effects": [
+			{
+				"type": "apply_jianxin_self"
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4,
+		"requirements": {
+			"weaponTypes": [
+				"剑"
+			]
+		},
+		"sectId": 1,
+		"sectTier": "advanced",
+		"scriptureContribution": 0
+	},
+	{
+		"id": 18,
+		"name": "万圣龙王破",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "金",
+		"description": "造成4次物理攻击力25%的风压伤害（无衰减），随后清除自身所有状态，按清除数量依次执行：0个再造成一次85%物攻伤害；1个该伤害必定暴击；2个该伤害无视40%防御；3个及以上为敌人施加2轮绝脉。每级使风压和终结的物理攻击力系数增加5%。需装备刀类武器。【团战】风压波及全体敌人，且对波及目标无视防御并且不触发反击",
+		"mpCost": 30,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "wansheng_longwang_po",
+				"value": 0.25,
+				"count": 4,
+				"coefficientBonus": 0.05,
+				"extraHitValue": 0.85,
+				"extraIgnoreDefense": 0.4,
+				"extraJuemaiDuration": 2,
+				"extraJuemaiMinCleared": 3
+			}
+		],
+		"unlocked": false,
+		"levelCap": 6,
+		"baseExp": 300,
+		"quality": 4,
+		"requirements": {
+			"weaponTypes": [
+				"刀"
+			]
+		},
+		"sectId": 3,
+		"sectTier": "advanced",
+		"scriptureContribution": 5000
+	},
+	{
+		"id": 19,
+		"name": "狂龙穿心破",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "金",
+		"description": "造成105%物理攻击力的物理伤害，对敌人施加2轮穿心（穿心：防御力降低40%）。生效条件为当前装配的武器类型为刀类。每级使攻击力系数增加5%，满级时使穿心持续时间加一轮。初始经验要求为250，冷却时间3轮",
+		"mpCost": 20,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.05,
+				"coefficientBonus": 0.05
+			},
+			{
+				"type": "apply_chuanxin",
+				"duration": 2,
+				"maxLevelBonus": 1
+			}
+		],
+		"unlocked": false,
+		"levelCap": 5,
+		"baseExp": 250,
+		"quality": 3,
+		"requirements": {
+			"weaponTypes": [
+				"刀"
+			]
+		},
+		"sectId": 3,
+		"sectTier": "intermediate",
+		"hallContribution": 600
+	},
+	{
+		"id": 20,
+		"name": "最终一战",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "金",
+		"description": "对自身施加3轮背水（背水：造成和受到的任何伤害均无视防御/法防且提高20%）",
+		"mpCost": 0,
+		"cooldown": 5,
+		"effects": [
+			{
+				"type": "apply_beishui_self",
+				"duration": 3
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4
+	},
+	{
+		"id": 21,
+		"name": "断魂碎岩斩",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "金",
+		"target": "all",
+		"description": "对所有敌人造成120%至145%物理攻击力的物理伤害，该伤害有20%几率暴击；若本次本应暴击则改为使暴击伤害系数增加10%。需装备刀类武器。冷却3轮。每级伤害系数+3%，暴伤增强系数+1%。【群攻】1v1和团战中均攻击全体敌人",
+		"mpCost": 25,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_percent_range_physical_crit",
+				"minValue": 1.2,
+				"maxValue": 1.45,
+				"coefficientBonus": 0.03,
+				"critDamageBonus": 0.01,
+				"skillCritChance": 0.2,
+				"naturalCritBonus": 0.1
+			}
+		],
+		"unlocked": false,
+		"levelCap": 6,
+		"baseExp": 300,
+		"quality": 3,
+		"requirements": {
+			"weaponTypes": [
+				"刀"
+			]
+		},
+		"sectId": 3,
+		"sectTier": "intermediate",
+		"hallContribution": 600
+	},
+	{
+		"id": 22,
+		"name": "长河吟",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "金",
+		"description": "造成115%物理攻击力的物理伤害，为自己附加1轮次搦战（搦战：持续期间造成物理伤害时必定暴击，每溢出1%暴击率转化为1%最终伤害加成）。需装备刀类武器。冷却3轮，每级使伤害系数提高8%，满级时搦战轮次+1。初始经验要求350",
+		"mpCost": 18,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.15,
+				"coefficientBonus": 0.08
+			},
+			{
+				"type": "apply_nuozhan_self",
+				"duration": 1,
+				"maxLevelBonus": 1
+			}
+		],
+		"unlocked": false,
+		"levelCap": 3,
+		"baseExp": 350,
+		"quality": 2,
+		"requirements": {
+			"weaponTypes": [
+				"刀"
+			]
+		},
+		"sectId": 3,
+		"sectTier": "basic",
+		"transmitLevel": 7
+	},
+	{
+		"id": 23,
+		"name": "爪击",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "无",
+		"description": "造成物理攻击力135%的物理伤害。仅怪物使用",
+		"mpCost": 0,
+		"cooldown": 2,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.35
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 24,
+		"name": "怒击",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "无",
+		"description": "造成120%物理伤害，无视40%护甲。每级使伤害系数提高5%。仅怪物使用",
+		"mpCost": 0,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.2,
+				"coefficientBonus": 0.05,
+				"ignoreDefense": 0.4
+			}
+		],
+		"unlocked": false,
+		"levelCap": 3,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 26,
+		"name": "撕裂",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "无",
+		"description": "造成45%物理攻击力物理伤害3次，并对敌人施加3轮流血。流血系数20%，每级+2%。仅怪物使用",
+		"mpCost": 20,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_percent_range_multi",
+				"minValue": 0.45,
+				"maxValue": 0.45,
+				"count": 3,
+				"coefficientBonus": 0.02
+			},
+			{
+				"type": "apply_debuff",
+				"debuffType": "bleed",
+				"stacks": 3,
+				"damagePercent": 0.2,
+				"coefficientBonus": 0.02,
+				"attribute": "max_attack",
+				"ignoreDefense": true
+			}
+		],
+		"unlocked": false,
+		"levelCap": 3,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 25,
+		"name": "风雷吼",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "金",
+		"description": "造成100%法术攻击力的法术伤害，附加1轮迟缓。仅怪物使用",
+		"mpCost": 15,
+		"cooldown": 2,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1
+			},
+			{
+				"type": "apply_slow",
+				"duration": 1,
+				"speedMultiplier": 0.7
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 27,
+		"name": "困兽",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "无",
+		"description": "造成131%法术伤害，自损12%最大生命值（可致命）。每级使伤害系数增加10%。仅怪物使用",
+		"mpCost": 0,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.31,
+				"coefficientBonus": 0.1
+			},
+			{
+				"type": "enemy_self_damage_max_hp_percent",
+				"value": 0.12
+			}
+		],
+		"unlocked": false,
+		"levelCap": 6,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 28,
+		"name": "夺魂魔念",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "无",
+		"description": "随机释放对手已装配的一个技能；若为伤害类则最终伤害提高10%。仅怪物使用",
+		"mpCost": 0,
+		"cooldown": 2,
+		"effects": [
+			{
+				"type": "mimic_opponent_skill",
+				"damageBonus": 0.1
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 29,
+		"name": "疯狂",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "无",
+		"description": "造成131%物理伤害。每级使伤害系数增加10%。仅怪物使用",
+		"mpCost": 0,
+		"cooldown": 0,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.31,
+				"coefficientBonus": 0.1
+			}
+		],
+		"unlocked": false,
+		"levelCap": 5,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 30,
+		"name": "恐惧蔓延",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "无",
+		"description": "为对手施加3轮恐惧（物理伤害取最小值；每轮恐惧抵消一轮蓄锐）。仅怪物使用",
+		"mpCost": 0,
+		"cooldown": 0,
+		"effects": [
+			{
+				"type": "apply_fear",
+				"duration": 3
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 31,
+		"name": "破坏光束",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "无",
+		"description": "造成40%法术伤害4次。每级使伤害系数提高4%。仅怪物使用",
+		"mpCost": 0,
+		"cooldown": 6,
+		"effects": [
+			{
+				"type": "damage_percent_range_multi",
+				"minValue": 0.4,
+				"maxValue": 0.4,
+				"count": 4,
+				"damageType": "magic",
+				"coefficientBonus": 0.04
+			}
+		],
+		"unlocked": false,
+		"levelCap": 4,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 32,
+		"name": "以守为攻",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "土",
+		"description": "造成物理防御力125%的土属性物理伤害，并获得2轮待发（受到物理直接伤害后必定反击一次，反击伤害系数等于坤德镇狱功）。需装备长兵且已习得坤德镇狱功。冷却3轮。【PVP】伤害系数降为60%",
+		"mpCost": 0,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_own_phys_def_percent",
+				"value": 1.25,
+				"pvpValue": 0.6
+			},
+			{
+				"type": "apply_daifa_self",
+				"duration": 2
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 3,
+		"requirements": {
+			"weaponTypes": [
+				"长兵"
+			],
+			"learnedTechniqueId": 19
+		},
+		"sectId": 4,
+		"sectTier": "intermediate",
+		"hallContribution": 800
+	},
+	{
+		"id": 33,
+		"name": "千峰叠障",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "土",
+		"description": "造成法术防御力125%的土属性法术伤害，并获得3轮坚固（坚固：使物理和法术防御力提高，物理防御+15%，法术防御+7.5%）。需装备长兵。每级使坚固系数分别提升2.5%（物理）和1.25%（法术）。冷却3轮。初始经验300。【PVP】伤害系数降为60%",
+		"mpCost": 0,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_own_spell_def_percent",
+				"value": 1.25,
+				"pvpValue": 0.6
+			},
+			{
+				"type": "apply_jiangu_self",
+				"duration": 3,
+				"physCoeff": 0.15,
+				"physCoeffPerLevel": 0.025,
+				"spellCoeff": 0.075,
+				"spellCoeffPerLevel": 0.0125
+			}
+		],
+		"unlocked": false,
+		"levelCap": 3,
+		"baseExp": 300,
+		"quality": 2,
+		"requirements": {
+			"weaponTypes": [
+				"长兵"
+			]
+		},
+		"sectId": 4,
+		"sectTier": "basic",
+		"transmitLevel": 5
+	},
+	{
+		"id": 34,
+		"name": "五岳伏魔印",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "土",
+		"description": "造成攻击力100%+物理防御力35%的土属性物理伤害，并附加3轮伏魔（伏魔：使用法术攻击技能时，将伤害目标改为自身，随后清除此状态）。需装备长兵。每级使伤害中受物理防御力影响的系数增加4%。冷却4轮。初始经验550。【PVP】伏魔效果不生效，物理防御力系数降为15%",
+		"mpCost": 25,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "damage_percent_plus_phys_def",
+				"value": 1,
+				"physDefCoeff": 0.35,
+				"pvpPhysDefCoeff": 0.15,
+				"physDefCoeffPerLevel": 0.04
+			},
+			{
+				"type": "apply_fumo",
+				"duration": 3
+			}
+		],
+		"unlocked": false,
+		"levelCap": 6,
+		"baseExp": 550,
+		"quality": 4,
+		"requirements": {
+			"weaponTypes": [
+				"长兵"
+			]
+		},
+		"sectId": 4,
+		"sectTier": "advanced",
+		"scriptureContribution": 7000
+	},
+	{
+		"id": 35,
+		"name": "归元纳气",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "土",
+		"description": "回复20%最大生命值。冷却3轮",
+		"mpCost": 15,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "heal_max_hp_percent",
+				"value": 0.2
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 2,
+		"sectId": 4,
+		"sectTier": "basic",
+		"transmitLevel": 5
+	},
+	{
+		"id": 36,
+		"name": "黄泉葬仙阵",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "土",
+		"description": "自损13%生命值，对敌人造成30%物理防御和20%自损生命值数值的土属性法术伤害，无视50%法术防御。需装备长兵。每级使物防系数+3%、自损生命值伤害系数+2.5%。冷却3轮。初始经验600。【PVP】物理防御力系数降为18%。【团战】攻击全体敌人（额外目标不消耗生命值）",
+		"mpCost": 30,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_spell_phys_def_plus_self_hp_lost",
+				"selfHpPercent": 0.13,
+				"physDefCoeff": 0.3,
+				"pvpPhysDefCoeff": 0.18,
+				"physDefCoeffPerLevel": 0.03,
+				"selfDmgCoeff": 0.2,
+				"selfDmgCoeffPerLevel": 0.025,
+				"ignoreSpellDefense": 0.5
+			}
+		],
+		"unlocked": false,
+		"levelCap": 5,
+		"baseExp": 600,
+		"quality": 4,
+		"requirements": {
+			"weaponTypes": [
+				"长兵"
+			]
+		},
+		"sectId": 4,
+		"sectTier": "advanced",
+		"scriptureContribution": 7000
+	},
+	{
+		"id": 37,
+		"name": "千丝万缠",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "木",
+		"description": "造成76%至89%法术攻击力的法术伤害，并附带4轮缠缚（缠缚：敏捷降低20%，行动前受到16%法攻的木属性法术伤害，施加者回复等量生命值）。每级使伤害系数+2%，缠缚法攻系数+3%。需装备拳爪。初始经验350。【PVP】缠缚不回复生命",
+		"mpCost": 25,
+		"cooldown": 2,
+		"effects": [
+			{
+				"type": "damage_percent_range",
+				"minValue": 0.76,
+				"maxValue": 0.89,
+				"coefficientBonus": 0.02
+			},
+			{
+				"type": "apply_debuff",
+				"debuffType": "chanfu",
+				"stacks": 4,
+				"damagePercent": 0.16,
+				"damagePercentPerLevel": 0.03,
+				"agilityReducePercent": 0.2,
+				"attribute": "spell_attack"
+			}
+		],
+		"unlocked": false,
+		"levelCap": 4,
+		"baseExp": 350,
+		"quality": 3,
+		"requirements": {
+			"weaponTypes": [
+				"拳爪"
+			]
+		},
+		"sectId": 5,
+		"sectTier": "intermediate",
+		"hallContribution": 800
+	},
+	{
+		"id": 38,
+		"name": "猛烈生长",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "木",
+		"description": "造成98%至127%法术攻击力的法术伤害，并施加2轮猛毒（猛毒：行动后受到33%法攻的木属性法术伤害，无视法术防御）。需装备拳爪。",
+		"mpCost": 20,
+		"cooldown": 1,
+		"effects": [
+			{
+				"type": "damage_percent_range",
+				"minValue": 0.98,
+				"maxValue": 1.27
+			},
+			{
+				"type": "apply_debuff",
+				"debuffType": "mengdu",
+				"stacks": 2,
+				"damagePercent": 0.33,
+				"ignoreSpellDefense": true,
+				"attribute": "spell_attack"
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 3,
+		"requirements": {
+			"weaponTypes": [
+				"拳爪"
+			]
+		},
+		"sectId": 5,
+		"sectTier": "intermediate",
+		"hallContribution": 800
+	},
+	{
+		"id": 39,
+		"name": "绽放",
+		"type": "active",
+		"damageType": "hybrid",
+		"attribute": "木",
+		"description": "造成70%物理攻击力的物理伤害，随后再造成70%法术攻击力的法术伤害。并引爆目标身上所有持续伤害状态（立即结算剩余伤害并清除），以此法引爆的状态每有一种，使本技能直接伤害提高35%。需装备拳爪。【团战】对其他敌人溅射20%-40%伤害",
+		"mpCost": 35,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "blossom",
+				"physPercent": 0.7,
+				"spellPercent": 0.7,
+				"bonusPerDotType": 0.35
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4,
+		"requirements": {
+			"weaponTypes": [
+				"拳爪"
+			]
+		},
+		"sectId": 5,
+		"sectTier": "advanced",
+		"scriptureContribution": 7000
+	},
+	{
+		"id": 40,
+		"name": "毒牙",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "木",
+		"description": "造成90%物理伤害，施加2轮青魔毒（行动后受到30%法攻木属性伤害）。仅怪物使用",
+		"mpCost": 15,
+		"cooldown": 2,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 0.9
+			},
+			{
+				"type": "apply_debuff",
+				"debuffType": "qingmo_poison",
+				"stacks": 2,
+				"damagePercent": 0.3,
+				"attribute": "spell_attack"
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 41,
+		"name": "尾鞭",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "无",
+		"description": "造成55%物理伤害两次，施加2轮迟缓。仅怪物使用",
+		"mpCost": 15,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_percent_range_multi",
+				"minValue": 0.55,
+				"maxValue": 0.55,
+				"count": 2
+			},
+			{
+				"type": "apply_slow",
+				"duration": 2,
+				"speedMultiplier": 0.75
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 42,
+		"name": "怨念噬咬",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "无",
+		"description": "造成115%法术伤害，无视30%法防。每级使伤害系数+5%。仅怪物使用",
+		"mpCost": 25,
+		"cooldown": 2,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.15,
+				"coefficientBonus": 0.05,
+				"ignoreSpellDefense": 0.3
+			}
+		],
+		"unlocked": false,
+		"levelCap": 3,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 43,
+		"name": "骨刺连击",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "无",
+		"description": "造成40%物理伤害4次，施加2轮流血（20%法攻/行动）。仅怪物使用",
+		"mpCost": 20,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_percent_range_multi",
+				"minValue": 0.4,
+				"maxValue": 0.4,
+				"count": 4
+			},
+			{
+				"type": "apply_debuff",
+				"debuffType": "bleed",
+				"stacks": 2,
+				"damagePercent": 0.2,
+				"attribute": "spell_attack",
+				"ignoreDefense": true
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 44,
+		"name": "震地",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "土",
+		"description": "造成130%物理伤害，施加1轮迟缓（速度降至65%）。仅怪物使用",
+		"mpCost": 0,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.3
+			},
+			{
+				"type": "apply_slow",
+				"duration": 1,
+				"speedMultiplier": 0.65
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 45,
+		"name": "妖火术",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "火",
+		"description": "造成35%法术伤害3次。每级使伤害系数+3%。仅怪物使用",
+		"mpCost": 20,
+		"cooldown": 2,
+		"effects": [
+			{
+				"type": "damage_percent_range_multi",
+				"minValue": 0.35,
+				"maxValue": 0.35,
+				"count": 3,
+				"damageType": "magic",
+				"coefficientBonus": 0.03
+			}
+		],
+		"unlocked": false,
+		"levelCap": 3,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 46,
+		"name": "灭世雷劫",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "金",
+		"description": "造成155%法术伤害，无视50%法防，施加2轮迟缓（速度降至60%）。仅怪物使用",
+		"mpCost": 50,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.55,
+				"coefficientBonus": 0.08,
+				"ignoreSpellDefense": 0.5
+			},
+			{
+				"type": "apply_slow",
+				"duration": 2,
+				"speedMultiplier": 0.6
+			}
+		],
+		"unlocked": false,
+		"levelCap": 4,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 47,
+		"name": "血祭",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "无",
+		"description": "自损15%最大生命值，造成180%物理伤害，无视35%护甲。每级使伤害系数+8%。仅怪物使用",
+		"mpCost": 0,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.8,
+				"coefficientBonus": 0.08,
+				"ignoreDefense": 0.35
+			},
+			{
+				"type": "enemy_self_damage_max_hp_percent",
+				"value": 0.15
+			}
+		],
+		"unlocked": false,
+		"levelCap": 4,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 48,
+		"name": "蚀魂毒瘴",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "木",
+		"description": "造成120%法术伤害，施加4轮青魔毒（行动后受到40%法攻木属性伤害）。仅怪物使用",
+		"mpCost": 40,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.2,
+				"coefficientBonus": 0.05
+			},
+			{
+				"type": "apply_debuff",
+				"debuffType": "qingmo_poison",
+				"stacks": 4,
+				"damagePercent": 0.4,
+				"attribute": "spell_attack",
+				"coefficientBonus": 0.03
+			}
+		],
+		"unlocked": false,
+		"levelCap": 3,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 49,
+		"name": "天崩地裂",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "土",
+		"description": "造成170%物理伤害，无视45%护甲，施加3轮迟缓（速度降至55%）。仅怪物使用",
+		"mpCost": 0,
+		"cooldown": 5,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.7,
+				"ignoreDefense": 0.45
+			},
+			{
+				"type": "apply_slow",
+				"duration": 3,
+				"speedMultiplier": 0.55
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 50,
+		"name": "万魂噬体",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "无",
+		"description": "造成30%法术伤害5次，施加2轮恐惧。每级使伤害系数+4%。仅怪物使用",
+		"mpCost": 60,
+		"cooldown": 5,
+		"effects": [
+			{
+				"type": "damage_percent_range_multi",
+				"minValue": 0.3,
+				"maxValue": 0.3,
+				"count": 5,
+				"damageType": "magic",
+				"coefficientBonus": 0.04
+			},
+			{
+				"type": "apply_fear",
+				"duration": 2
+			}
+		],
+		"unlocked": false,
+		"levelCap": 3,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 51,
+		"name": "裂魂斩",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "无",
+		"description": "造成50%物理伤害5次，施加4轮流血（25%法攻/行动）。每级使伤害系数+4%。仅怪物使用",
+		"mpCost": 35,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "damage_percent_range_multi",
+				"minValue": 0.5,
+				"maxValue": 0.5,
+				"count": 5,
+				"coefficientBonus": 0.04
+			},
+			{
+				"type": "apply_debuff",
+				"debuffType": "bleed",
+				"stacks": 4,
+				"damagePercent": 0.25,
+				"attribute": "spell_attack",
+				"ignoreDefense": true
+			}
+		],
+		"unlocked": false,
+		"levelCap": 3,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 52,
+		"name": "冠世一战",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "无",
+		"description": "对自身施加2轮标记（标记：所有角色行动时只会选择有标记的敌方为目标）",
+		"mpCost": 0,
+		"cooldown": 0,
+		"effects": [
+			{
+				"type": "apply_mark_self",
+				"duration": 2
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4
+	},
+	{
+		"id": 53,
+		"name": "心能链接",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "无",
+		"description": "造成70%物理伤害，并对目标施加2轮标记（标记：所有角色行动时只会选择有标记的敌方为目标）。冷却3回合",
+		"mpCost": 0,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 0.7,
+				"coefficientBonus": 0
+			},
+			{
+				"type": "apply_mark_target",
+				"duration": 2
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4
+	},
+	{
+		"id": 54,
+		"name": "威光箭",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "火",
+		"flavorText": "焰箭穿空，灼人心魂，受创者疗伤不济。",
+		"description": "造成105%火属性法术伤害，使目标在3回合内受到的治疗效率减少40%（PVP2回合）。每级使伤害系数+4%。需装备弓。冷却3回合",
+		"mpCost": 20,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.05,
+				"coefficientBonus": 0.04
+			},
+			{
+				"type": "apply_zhuohun",
+				"duration": 3,
+				"pvpDuration": 2,
+				"healReduction": 0.4
+			}
+		],
+		"unlocked": false,
+		"levelCap": 5,
+		"baseExp": 250,
+		"quality": 2,
+		"requirements": {
+			"weaponTypes": [
+				"弓"
+			]
+		},
+		"sectId": 6,
+		"sectTier": "basic",
+		"transmitLevel": 5
+	},
+	{
+		"id": 55,
+		"name": "镇魂箭",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "火",
+		"flavorText": "此箭非伤肉身，而破魂中一切加持。",
+		"description": "清除目标身上所有正面状态。需装备弓。冷却3回合（PVP5回合）",
+		"mpCost": 15,
+		"cooldown": 3,
+		"pvpCooldown": 5,
+		"effects": [
+			{
+				"type": "clear_target_buffs"
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 2,
+		"requirements": {
+			"weaponTypes": [
+				"弓"
+			]
+		},
+		"sectId": 6,
+		"sectTier": "basic",
+		"transmitLevel": 5
+	},
+	{
+		"id": 56,
+		"name": "定阴阳",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "火",
+		"flavorText": "一箭分阴阳，破防或必暴，交替而发。",
+		"description": "造成78%至120%火属性法术伤害，每次释放切换效果。阴：该次伤害无视40%法术防御；阳：该次伤害必定暴击。每级使伤害系数+5%。需装备弓。冷却2回合",
+		"mpCost": 20,
+		"cooldown": 2,
+		"effects": [
+			{
+				"type": "damage_percent_range",
+				"minValue": 0.78,
+				"maxValue": 1.2,
+				"coefficientBonus": 0.05
+			},
+			{
+				"type": "yinyang_toggle"
+			}
+		],
+		"unlocked": false,
+		"levelCap": 5,
+		"baseExp": 300,
+		"quality": 3,
+		"requirements": {
+			"weaponTypes": [
+				"弓"
+			]
+		},
+		"sectId": 6,
+		"sectTier": "intermediate",
+		"hallContribution": 600
+	},
+	{
+		"id": 57,
+		"name": "归元净魂",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "火",
+		"flavorText": "以内火净化己身，归元培本。",
+		"description": "回复20%最大生命值，附带1回合养精（法术伤害取最大值）。需装备弓。冷却3回合",
+		"mpCost": 25,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "heal_max_hp_percent",
+				"value": 0.2
+			},
+			{
+				"type": "apply_yangjing_self",
+				"duration": 1
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 3,
+		"requirements": {
+			"weaponTypes": [
+				"弓"
+			]
+		},
+		"sectId": 6,
+		"sectTier": "intermediate",
+		"hallContribution": 600
+	},
+	{
+		"id": 58,
+		"name": "射天狼",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "火",
+		"flavorText": "连矢射星，震慑敌魂，法力防御尽皆瓦解。",
+		"description": "造成2次65%火属性法术伤害，施加2回合震荡（PVP1回合。震荡：使法术攻击和法术防御降低30%）。满级时多造成一次伤害。需装备弓。冷却3回合",
+		"mpCost": 30,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_percent_range_multi",
+				"minValue": 0.65,
+				"maxValue": 0.65,
+				"count": 2,
+				"coefficientBonus": 0,
+				"maxLevelExtraCount": 1
+			},
+			{
+				"type": "apply_zhendang",
+				"duration": 2,
+				"pvpDuration": 1,
+				"reductionPercent": 0.3
+			}
+		],
+		"unlocked": false,
+		"levelCap": 9,
+		"baseExp": 450,
+		"quality": 4,
+		"requirements": {
+			"weaponTypes": [
+				"弓"
+			]
+		},
+		"sectId": 6,
+		"sectTier": "advanced",
+		"scriptureContribution": 5000
+	},
+	{
+		"id": 59,
+		"name": "混沌天地一灯照",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "火",
+		"flavorText": "混沌初开，一灯照破天地，万物归于烈焰。",
+		"description": "施放后进入蓄力（需2次自身行动），完成时释放，造成310%至440%的火属性法术伤害，无视30%法术防御。每级使伤害系数+10%。需装备弓。蓄力期间默认不行动（持有EX弓「荒」时可行动），不会被绝脉打断，会被凝滞拖延。冷却6回合",
+		"mpCost": 40,
+		"cooldown": 6,
+		"chargeRounds": 2,
+		"effects": [
+			{
+				"type": "damage_percent_range",
+				"minValue": 3.1,
+				"maxValue": 4.4,
+				"ignoreSpellDefense": 0.3,
+				"coefficientBonus": 0.1
+			}
+		],
+		"unlocked": false,
+		"levelCap": 11,
+		"baseExp": 550,
+		"quality": 4,
+		"requirements": {
+			"weaponTypes": [
+				"弓"
+			]
+		},
+		"sectId": 6,
+		"sectTier": "advanced",
+		"scriptureContribution": 7000
+	},
+	{
+		"id": 60,
+		"name": "仁者爱人",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "水",
+		"flavorText": "仁者无敌，非无敌手，乃无人敢敌也。",
+		"description": "造成80%至110%物理攻击力的水属性物理伤害，回复自身35%最大生命值（PVP环境为20%）。副本与PVP下改为回复一名血量最低的友方角色。需装备节杖。冷却3轮，每级使伤害系数提高5%",
+		"mpCost": 20,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_percent_range",
+				"minValue": 0.8,
+				"maxValue": 1.1,
+				"coefficientBonus": 0.05
+			},
+			{
+				"type": "heal_max_hp_percent",
+				"value": 0.35,
+				"pvpValue": 0.2,
+				"targetMode": "self_or_lowest_ally"
+			}
+		],
+		"unlocked": false,
+		"levelCap": 4,
+		"baseExp": 250,
+		"quality": 2,
+		"requirements": {
+			"weaponTypes": [
+				"节杖"
+			]
+		},
+		"sectId": 7,
+		"sectTier": "basic",
+		"transmitLevel": 5
+	},
+	{
+		"id": 61,
+		"name": "以德服人",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "水",
+		"flavorText": "德不孤，必有邻。以德化人，人自归心。",
+		"description": "使自身或一名友方角色获得缓冲（缓冲：抵消一次受到的伤害，面对多击类技能和DOT仅抵消其中一次）。需装备节杖。冷却3轮",
+		"mpCost": 15,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "apply_hunchong",
+				"target": "self_or_ally"
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 2,
+		"requirements": {
+			"weaponTypes": [
+				"节杖"
+			]
+		},
+		"sectId": 7,
+		"sectTier": "basic",
+		"transmitLevel": 7
+	},
+	{
+		"id": 62,
+		"name": "大德广润",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "水",
+		"target": "all",
+		"flavorText": "大德如水，润泽万物而不争功。",
+		"description": "造成100%物理攻击力的水属性物理伤害（AOE），回复所有友方角色25%最大生命值（PVP环境为15%）。只对一个目标造成伤害时总伤害提高40%（非PVP）。需装备节杖。冷却4轮，每级使伤害系数提高4%",
+		"mpCost": 30,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1,
+				"coefficientBonus": 0.04
+			},
+			{
+				"type": "heal_team_max_hp_percent",
+				"value": 0.25,
+				"pvpValue": 0.15
+			}
+		],
+		"unlocked": false,
+		"levelCap": 5,
+		"baseExp": 350,
+		"quality": 3,
+		"requirements": {
+			"weaponTypes": [
+				"节杖"
+			]
+		},
+		"sectId": 7,
+		"sectTier": "intermediate",
+		"hallContribution": 600
+	},
+	{
+		"id": 63,
+		"name": "润物无声",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "水",
+		"flavorText": "好雨知时节，随风潜入夜，润物细无声。",
+		"description": "回复自身相当于施法者119%物理攻击力的生命值。副本或PVP下改为回复一名血量最低的友方角色。需装备节杖。冷却3轮，每级使系数提高5%",
+		"mpCost": 25,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "heal_phys_attack_percent",
+				"value": 1.19,
+				"coefficientBonus": 0.05,
+				"targetMode": "self_or_lowest_ally"
+			}
+		],
+		"unlocked": false,
+		"levelCap": 5,
+		"baseExp": 300,
+		"quality": 3,
+		"requirements": {
+			"weaponTypes": [
+				"节杖"
+			]
+		},
+		"sectId": 7,
+		"sectTier": "intermediate",
+		"hallContribution": 800
+	},
+	{
+		"id": 64,
+		"name": "天下归仁",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "水",
+		"flavorText": "克己复礼，天下归仁焉。",
+		"description": "为全队所有角色施加1层缓冲（缓冲：抵消一次受到的伤害）。需装备节杖。冷却4轮",
+		"mpCost": 0,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "apply_team_hunchong"
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4,
+		"requirements": {
+			"weaponTypes": [
+				"节杖"
+			]
+		},
+		"sectId": 7,
+		"sectTier": "advanced",
+		"scriptureContribution": 5000
+	},
+	{
+		"id": 65,
+		"name": "杀身成仁",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "水",
+		"flavorText": "杀身以成仁，舍生以取义，虽千万人吾往矣。",
+		"description": "将自身生命值扣除当前生命的一半，对目标造成等于扣血量165%的绝对伤害（无视防御，PVP环境改为100%），随后获得一层缓冲。需装备节杖。冷却4轮",
+		"mpCost": 0,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "self_sacrifice_damage",
+				"hpReduceRatio": 0.5,
+				"value": 1.65,
+				"pvpValue": 1
+			},
+			{
+				"type": "apply_hunchong"
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4,
+		"requirements": {
+			"weaponTypes": [
+				"节杖"
+			]
+		},
+		"sectId": 7,
+		"sectTier": "advanced",
+		"scriptureContribution": 7000
+	},
+	{
+		"id": 66,
+		"name": "暗转乾坤",
+		"type": "active",
+		"damageType": "hybrid",
+		"attribute": "无",
+		"flavorText": "借彼之势，为我所用，阴阳翻覆于一念之间。",
+		"description": "造成80%自适应伤害（自动按物攻/法攻较高者判定伤害类型），优先夺取目标1个正面状态；若无可夺取，则转移自身1个负面状态给目标。仅当两者都无法执行时无事发生。冷却3回合",
+		"mpCost": 25,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_percent_adaptive_higher_attack",
+				"value": 0.8
+			},
+			{
+				"type": "steal_target_positive_status",
+				"count": 1,
+				"chance": 0.5
+			},
+			{
+				"type": "transfer_self_negative_to_target",
+				"count": 1,
+				"chance": 0.5
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4
+	},
+	{
+		"id": 67,
+		"name": "归元纳形",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "无",
+		"flavorText": "外相尽敛，归于真元；一念形散，一念形生。",
+		"description": "自我凝滞1回合（期间免疫所有伤害且免疫负面状态），下次行动恢复10%生命值。冷却3回合",
+		"mpCost": 20,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "apply_stasis_self",
+				"duration": 1,
+				"immuneDamage": true,
+				"immuneDebuff": true
+			},
+			{
+				"type": "set_next_action_heal_self",
+				"value": 0.1
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4
+	},
+	{
+		"id": 68,
+		"name": "脱身法",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "无",
+		"flavorText": "借影遁形，留祸于敌，片叶不沾身。",
+		"description": "解除自身2个负面状态。冷却4回合",
+		"mpCost": 18,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "cleanse_self_negative",
+				"count": 2
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4
+	},
+	{
+		"id": 69,
+		"name": "死生大矣",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "无",
+		"flavorText": "生死一线，向死而生。",
+		"description": "清空自身所有法力值，并恢复该值65%的生命（PVP为35%）。冷却4回合",
+		"mpCost": 0,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "clear_mp_heal_percent",
+				"value": 0.65,
+				"pvpValue": 0.35
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4
+	},
+	{
+		"id": 70,
+		"name": "寂灭",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "无",
+		"flavorText": "万法归寂，一念湮灭。",
+		"description": "施放后进入蓄力（需1次自身行动），完成时释放，造成240%至290%法术伤害，无视30%法术防御。冷却4轮，每级使伤害系数各提高5%。",
+		"mpCost": 35,
+		"cooldown": 4,
+		"chargeRounds": 1,
+		"effects": [
+			{
+				"type": "damage_percent_range",
+				"minValue": 2.4,
+				"maxValue": 2.9,
+				"ignoreSpellDefense": 0.3,
+				"coefficientBonus": 0.05
+			}
+		],
+		"unlocked": false,
+		"levelCap": 9,
+		"baseExp": 520,
+		"quality": 4
+	},
+	{
+		"id": 71,
+		"name": "狂澜",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "无",
+		"flavorText": "怒潮叠起，后浪更胜前浪。",
+		"description": "造成（25%物攻+15%身法）的物理直接伤害三次，不应用多击衰减；每一击比前一击提高10%。冷却5回合。每级使身法伤害系数提高2%。",
+		"mpCost": 28,
+		"cooldown": 5,
+		"effects": [
+			{
+				"type": "damage_percent_plus_agility_multi",
+				"value": 0.25,
+				"agilityCoeff": 0.15,
+				"agilityCoeffPerLevel": 0.02,
+				"count": 3,
+				"perHitGrowth": 0.1
+			}
+		],
+		"unlocked": false,
+		"levelCap": 6,
+		"baseExp": 420,
+		"quality": 4
+	},
+	{
+		"id": 72,
+		"name": "御天之气",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "无",
+		"flavorText": "引天机护体，百邪难侵。",
+		"description": "获得相当于最大生命25%的护盾（PVP中为10%），冷却3轮。不可升级。",
+		"mpCost": 20,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "gain_temp_shield_max_hp_percent",
+				"value": 0.25,
+				"pvpValue": 0.1
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4
+	},
+	{
+		"id": 73,
+		"name": "岿然",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "无",
+		"flavorText": "山岳可移，我身不动。",
+		"description": "临时使自身物理防御和法术防御各提高50%，持续2轮，冷却5轮。不可升级。",
+		"mpCost": 24,
+		"cooldown": 5,
+		"effects": [
+			{
+				"type": "apply_kuiran",
+				"duration": 2,
+				"physCoeff": 0.5,
+				"spellCoeff": 0.5
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4
+	},
+	{
+		"id": 74,
+		"name": "荡魔",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "无",
+		"flavorText": "魔念一荡，反噬其身。",
+		"description": "使目标获得2轮紊乱（紊乱：造成的回复改为受到50%该数额的伤害），PVP中改为1轮。冷却3轮。不可升级。",
+		"mpCost": 26,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "apply_wenluan",
+				"duration": 2,
+				"pvpDuration": 1,
+				"ratio": 0.5
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4
+	},
+	{
+		"id": 75,
+		"name": "命之法则",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "无",
+		"flavorText": "命线昭昭，一裁生灭。",
+		"description": "对目标造成其当前生命值25%的绝对伤害（PVP中为8%），冷却4轮。不可升级。",
+		"mpCost": 36,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "deal_target_current_hp_true_damage",
+				"value": 0.25,
+				"pvpValue": 0.08
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4
+	},
+	{
+		"id": 76,
+		"name": "逆命法则",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "无",
+		"flavorText": "逆转命盘，以缺为刃。",
+		"description": "对目标造成其已损失生命值25%的绝对伤害，冷却4轮。不可升级。",
+		"mpCost": 36,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "deal_target_lost_hp_true_damage",
+				"value": 0.25
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4
+	},
+	{
+		"id": 77,
+		"name": "体之法则",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "无",
+		"flavorText": "以身为秤，血魄为锋。",
+		"description": "造成自身当前生命值25%的物理伤害（PVP中为8%），冷却4轮。不可升级。",
+		"mpCost": 30,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "deal_self_current_hp_physical_damage",
+				"value": 0.25,
+				"pvpValue": 0.08
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4
+	},
+	{
+		"id": 78,
+		"name": "灵之法则",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "无",
+		"flavorText": "灵潮倾泻，化念成锋。",
+		"description": "造成自身当前法力值25%的法术伤害（PVP中为8%），冷却4轮。不可升级。",
+		"mpCost": 30,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "deal_self_current_mp_spell_damage",
+				"value": 0.25,
+				"pvpValue": 0.08
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4
+	},
+	{
+		"id": 79,
+		"name": "落星指",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "土",
+		"flavorText": "星芒坠指，覆岳成垒。",
+		"description": "造成113%土属性法术伤害，并将该伤害的20%转化为临时护盾（PVP为10%）。冷却3轮，每级提高伤害系数5%。",
+		"mpCost": 24,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.13,
+				"coefficientBonus": 0.05
+			},
+			{
+				"type": "gain_temp_shield_from_skill_damage_percent",
+				"value": 0.2,
+				"pvpValue": 0.1
+			}
+		],
+		"unlocked": false,
+		"levelCap": 9,
+		"baseExp": 520,
+		"quality": 4
+	},
+	{
+		"id": 80,
+		"name": "爆燃术",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "火",
+		"flavorText": "火意引爆，余烬蚀骨。",
+		"description": "造成103%法术伤害，并对目标施加2轮爆燃（每回合受到施法者最高属性的25%至55%伤害）。冷却4轮，不可升级。",
+		"mpCost": 24,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.03
+			},
+			{
+				"type": "apply_debuff",
+				"debuffType": "baoran",
+				"stacks": 2,
+				"damagePercentMin": 0.25,
+				"damagePercentMax": 0.55,
+				"attribute": "highest_attr"
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4
+	},
+	{
+		"id": 81,
+		"name": "镇岳",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "土",
+		"flavorText": "山岳在前，百击不移。",
+		"description": "开启后进入两回合镇岳状态（每次受伤叠加1层山魄）；镇岳结束时，每层山魄触发一次反击。反击伤害等同于当前等级坤德镇狱功的反击伤害；未习得坤德镇狱功时不生效。冷却3回合。",
+		"mpCost": 20,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "apply_zhenyue_self",
+				"duration": 2
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4
+	},
+	{
+		"id": 82,
+		"name": "波涛意",
+		"type": "active",
+		"damageType": "none",
+		"attribute": "水",
+		"flavorText": "潮起三叠，浪尽一决。",
+		"description": "若目标无叠浪：造成3次物理伤害，每次伤害=50%真元+50%体魄，并为目标附加叠浪至战斗结束；若目标已有叠浪：消耗叠浪，本次改为造成200%真元的法术伤害。不可升级。",
+		"mpCost": 30,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "botaoyi_flow"
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 4
+	},
+	{
+		"id": 83,
+		"name": "裂潮连斩",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "水",
+		"description": "造成45%物理伤害4次。仅怪物使用",
+		"mpCost": 24,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "damage_percent_range_multi",
+				"minValue": 0.45,
+				"maxValue": 0.45,
+				"count": 4,
+				"coefficientBonus": 0.03
+			}
+		],
+		"unlocked": false,
+		"levelCap": 3,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 84,
+		"name": "碎雷骤雨",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "金",
+		"description": "造成34%法术伤害5次。仅怪物使用",
+		"mpCost": 28,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "damage_percent_range_multi",
+				"minValue": 0.34,
+				"maxValue": 0.34,
+				"count": 5,
+				"damageType": "magic",
+				"coefficientBonus": 0.03
+			}
+		],
+		"unlocked": false,
+		"levelCap": 3,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 85,
+		"name": "蚀骨灼炎",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "火",
+		"description": "造成95%法术伤害，并施加3轮爆燃。仅怪物使用",
+		"mpCost": 24,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 0.95
+			},
+			{
+				"type": "apply_debuff",
+				"debuffType": "baoran",
+				"stacks": 3,
+				"damagePercentMin": 0.22,
+				"damagePercentMax": 0.45,
+				"attribute": "highest_attr"
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 86,
+		"name": "腐脉毒雾",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "木",
+		"description": "造成90%法术伤害，并施加3轮青魔毒。仅怪物使用",
+		"mpCost": 22,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 0.9
+			},
+			{
+				"type": "apply_debuff",
+				"debuffType": "qingmo_poison",
+				"stacks": 3,
+				"damagePercent": 0.32,
+				"attribute": "spell_attack"
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 87,
+		"name": "断筋血咒",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "无",
+		"description": "造成88%物理伤害，并施加4轮流血。仅怪物使用",
+		"mpCost": 20,
+		"cooldown": 3,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 0.88
+			},
+			{
+				"type": "apply_debuff",
+				"debuffType": "bleed",
+				"stacks": 4,
+				"damagePercent": 0.24,
+				"attribute": "max_attack",
+				"ignoreDefense": true
+			}
+		],
+		"unlocked": false,
+		"levelCap": 1,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 88,
+		"name": "穿岳崩枪",
+		"type": "active",
+		"damageType": "physical",
+		"attribute": "土",
+		"description": "造成128%物理伤害，无视55%护甲。仅怪物使用",
+		"mpCost": 22,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.28,
+				"coefficientBonus": 0.05,
+				"ignoreDefense": 0.55
+			}
+		],
+		"unlocked": false,
+		"levelCap": 3,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	},
+	{
+		"id": 89,
+		"name": "湮灵蚀刻",
+		"type": "active",
+		"damageType": "magic",
+		"attribute": "暗",
+		"description": "造成128%法术伤害，无视55%法防。仅怪物使用",
+		"mpCost": 26,
+		"cooldown": 4,
+		"effects": [
+			{
+				"type": "damage_percent",
+				"value": 1.28,
+				"coefficientBonus": 0.05,
+				"ignoreSpellDefense": 0.55
+			}
+		],
+		"unlocked": false,
+		"levelCap": 3,
+		"baseExp": 0,
+		"quality": 1,
+		"tags": [
+			"enemySkill"
+		]
+	}
+]

@@ -1,0 +1,158 @@
+[
+	{
+		"shape_id": "PLATE_DOT",
+		"name": "点阵",
+		"cells": [[0, 0]],
+		"default_ports": [
+			{"x": 0, "y": 0, "dir": "N", "io": "both"},
+			{"x": 0, "y": 0, "dir": "E", "io": "both"},
+			{"x": 0, "y": 0, "dir": "S", "io": "both"},
+			{"x": 0, "y": 0, "dir": "W", "io": "both"}
+		],
+		"base_flow_supply": 2,
+		"launch_phase": "P1"
+	},
+	{
+		"shape_id": "PLATE_DOMINO",
+		"name": "长二",
+		"cells": [[0, 0], [1, 0]],
+		"default_ports": [
+			{"x": 0, "y": 0, "dir": "W", "io": "both"},
+			{"x": 1, "y": 0, "dir": "E", "io": "both"},
+			{"x": 0, "y": 0, "dir": "N", "io": "both"},
+			{"x": 1, "y": 0, "dir": "S", "io": "both"}
+		],
+		"base_flow_supply": 3,
+		"launch_phase": "P1"
+	},
+	{
+		"shape_id": "PLATE_TRI_LINE",
+		"name": "直三",
+		"cells": [[0, 0], [1, 0], [2, 0]],
+		"default_ports": [
+			{"x": 0, "y": 0, "dir": "W", "io": "both"},
+			{"x": 2, "y": 0, "dir": "E", "io": "both"},
+			{"x": 1, "y": 0, "dir": "N", "io": "both"},
+			{"x": 1, "y": 0, "dir": "S", "io": "both"}
+		],
+		"base_flow_supply": 4,
+		"launch_phase": "P1"
+	},
+	{
+		"shape_id": "PLATE_TRI_L",
+		"name": "L三",
+		"cells": [[0, 0], [0, 1], [1, 1]],
+		"default_ports": [
+			{"x": 0, "y": 0, "dir": "N", "io": "both"},
+			{"x": 0, "y": 1, "dir": "W", "io": "both"},
+			{"x": 1, "y": 1, "dir": "E", "io": "both"},
+			{"x": 1, "y": 1, "dir": "S", "io": "both"}
+		],
+		"base_flow_supply": 4,
+		"launch_phase": "P1"
+	},
+	{
+		"shape_id": "PLATE_I4",
+		"name": "直四",
+		"cells": [[0, 0], [1, 0], [2, 0], [3, 0]],
+		"default_ports": [
+			{"x": 0, "y": 0, "dir": "W", "io": "both"},
+			{"x": 3, "y": 0, "dir": "E", "io": "both"},
+			{"x": 1, "y": 0, "dir": "N", "io": "both"},
+			{"x": 2, "y": 0, "dir": "S", "io": "both"}
+		],
+		"base_flow_supply": 5,
+		"launch_phase": "P1"
+	},
+	{
+		"shape_id": "PLATE_L4",
+		"name": "L四",
+		"cells": [[0, 0], [0, 1], [0, 2], [1, 2]],
+		"default_ports": [
+			{"x": 0, "y": 0, "dir": "N", "io": "both"},
+			{"x": 0, "y": 1, "dir": "W", "io": "both"},
+			{"x": 1, "y": 2, "dir": "E", "io": "both"},
+			{"x": 1, "y": 2, "dir": "S", "io": "both"}
+		],
+		"base_flow_supply": 5,
+		"launch_phase": "P1"
+	},
+	{
+		"shape_id": "PLATE_T4",
+		"name": "T四",
+		"cells": [[0, 0], [1, 0], [2, 0], [1, 1]],
+		"default_ports": [
+			{"x": 0, "y": 0, "dir": "W", "io": "both"},
+			{"x": 2, "y": 0, "dir": "E", "io": "both"},
+			{"x": 1, "y": 0, "dir": "N", "io": "both"},
+			{"x": 1, "y": 1, "dir": "S", "io": "both"}
+		],
+		"base_flow_supply": 5,
+		"launch_phase": "P1"
+	},
+	{
+		"shape_id": "PLATE_Z4",
+		"name": "Z四",
+		"cells": [[0, 0], [1, 0], [1, 1], [2, 1]],
+		"default_ports": [
+			{"x": 0, "y": 0, "dir": "W", "io": "both"},
+			{"x": 2, "y": 1, "dir": "E", "io": "both"},
+			{"x": 1, "y": 0, "dir": "N", "io": "both"},
+			{"x": 1, "y": 1, "dir": "S", "io": "both"}
+		],
+		"base_flow_supply": 5,
+		"launch_phase": "P1"
+	},
+	{
+		"shape_id": "PLATE_U5",
+		"name": "U五",
+		"cells": [[0, 0], [2, 0], [0, 1], [1, 1], [2, 1]],
+		"default_ports": [
+			{"x": 0, "y": 0, "dir": "N", "io": "both"},
+			{"x": 2, "y": 0, "dir": "N", "io": "both"},
+			{"x": 0, "y": 1, "dir": "W", "io": "both"},
+			{"x": 2, "y": 1, "dir": "E", "io": "both"}
+		],
+		"base_flow_supply": 6,
+		"launch_phase": "P2"
+	},
+	{
+		"shape_id": "PLATE_L5",
+		"name": "L五",
+		"cells": [[0, 0], [0, 1], [0, 2], [0, 3], [1, 3]],
+		"default_ports": [
+			{"x": 0, "y": 0, "dir": "N", "io": "both"},
+			{"x": 0, "y": 2, "dir": "W", "io": "both"},
+			{"x": 1, "y": 3, "dir": "E", "io": "both"},
+			{"x": 1, "y": 3, "dir": "S", "io": "both"}
+		],
+		"base_flow_supply": 6,
+		"launch_phase": "P2"
+	},
+	{
+		"shape_id": "PLATE_T5",
+		"name": "T五",
+		"cells": [[0, 0], [1, 0], [2, 0], [1, 1], [1, 2]],
+		"default_ports": [
+			{"x": 0, "y": 0, "dir": "W", "io": "both"},
+			{"x": 2, "y": 0, "dir": "E", "io": "both"},
+			{"x": 1, "y": 0, "dir": "N", "io": "both"},
+			{"x": 1, "y": 2, "dir": "S", "io": "both"}
+		],
+		"base_flow_supply": 6,
+		"launch_phase": "P2"
+	},
+	{
+		"shape_id": "PLATE_X5",
+		"name": "X五",
+		"cells": [[0, 0], [2, 0], [1, 1], [0, 2], [2, 2]],
+		"default_ports": [
+			{"x": 0, "y": 0, "dir": "N", "io": "both"},
+			{"x": 2, "y": 0, "dir": "N", "io": "both"},
+			{"x": 0, "y": 2, "dir": "S", "io": "both"},
+			{"x": 2, "y": 2, "dir": "S", "io": "both"}
+		],
+		"base_flow_supply": 7,
+		"launch_phase": "P2"
+	}
+]

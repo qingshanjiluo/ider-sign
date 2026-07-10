@@ -1,62 +1,98 @@
-name: 自动卖出工具
+# ════════════════════════════════════════════════════════════
+#  艾德尔修仙传 - 自动卖出工具 🏪
+# ════════════════════════════════════════════════════════════
+#  📂 账号文件指向说明
+#  ════════════════════════════════════════════════════════════
+#  本工作流使用「sell_accounts.txt」作为出售专用账号文件
+#    （与注册工具 batch-register.yml 的 accounts.txt 分开管理！）
+#   账号来源（优先级由低到高）：
+#     1. 仓库中的 sell_accounts.txt（需提前提交到仓库）
+#     2. workflow_dispatch 传入的 accounts 参数
+#     3. GitHub Secrets 中的 ACCOUNTS_DATA
+#     4. GitHub Secrets 中的 ACCOUNTS_BASE64（base64编码）
+#  ════════════════════════════════════════════════════════════
+#  🏷️ 物品类型（支持中文/英文）
+#  ════════════════════════════════════════════════════════════
+#   材料/material    消耗品/consumable  药材/medicine
+#   草药/herb        装备/equipment    武器/weapon
+#   防具/armor       饰品/accessory    丹方/recipe
+#   宝物/treasure    阵法/formation    魂魄/soul
+#  ════════════════════════════════════════════════════════════
+#  ⭐ 品质范围
+#  ════════════════════════════════════════════════════════════
+#   1阶(凡品)  2阶(下品)  3阶(中品)  4阶(上品)
+#   5阶(极品)  6阶(绝品)  7阶(仙品)  8阶(神品)
+#  ════════════════════════════════════════════════════════════
+
+name: 🏪 自动卖出工具
 
 on:
   # 手动触发（最常用）
   workflow_dispatch:
     inputs:
       accounts:
-        description: '账号列表（每行: username,password），留空则读取仓库中的 accounts.txt'
+        description: '📂 账号列表（每行: username,password），留空则使用仓库中的 sell_accounts.txt'
         required: false
         default: ''
       sell_types:
-        description: '物品类型（逗号分隔，如: material,consumable,medicine，留空=全部）'
+        description: '🏷️ 物品类型（逗号分隔，支持中文/英文，如: 材料,消耗品,药材 或 material,consumable，留空=全部）'
         required: false
-        default: 'material,consumable'
+        default: '材料,消耗品'
       sell_min_quality:
-        description: '最低品质 [1-8, 0=不限]'
+        description: '⭐ 最低品质（1~8阶，0=不限）'
         required: false
         default: '0'
       sell_max_quality:
-        description: '最高品质 [1-8, 0=不限]'
+        description: '⭐ 最高品质（1~8阶，0=不限）'
         required: false
         default: '0'
       sell_min_count:
-        description: '最少数量（>=此值才卖，0=不限）'
+        description: '🔢 最少数量（数量>=此值才卖出，0=不限）'
         required: false
         default: '10'
       sell_percent:
-        description: '卖出比例 [1-100]'
+        description: '📊 卖出比例（1~100，如50=每种物品只卖一半）'
         required: false
         default: '100'
       sell_unit_price:
-        description: '交易所单价（灵石），0=系统回收'
+        description: '💰 交易所单价（灵石/个），0=系统回收（卖给NPC）'
         required: false
         default: '0'
       sell_prioritize_more:
-        description: '先卖数量多的 [true/false]'
+        description: '📈 先卖数量多的（true=是 / false=否）'
         required: false
         default: 'true'
       batch_index:
-        description: '批次序号'
+        description: '🔢 批次序号（用于区分多次运行的结果文件）'
         required: false
         default: '1'
 
-  # 定时触发（可选）
+  # 定时触发（可选，取消注释即可启用）
   # schedule:
   #   # 每天 UTC 2:30 运行（北京时间 10:30）
   #   - cron: '30 2 * * *'
 
 jobs:
   auto-sell:
+    name: 🏪 执行自动卖出
     runs-on: ubuntu-latest
+
+    # 需要写入权限（后续可推送已标记的 sell_accounts.txt 回仓库）
+    permissions:
+      contents: write
 
     defaults:
       run:
+        # ⚠️ 所有步骤默认在「批量注册工具」目录下执行
+        #    因为 auto_sell.js 和 sell_accounts.txt 都在该目录
         working-directory: 批量注册工具
 
     steps:
       - name: 🔄 检出代码
         uses: actions/checkout@v4
+        with:
+          # 需要完整历史用于 git push（标记已处理账号后推送）
+          fetch-depth: 0
 
       - name: ⚙️ 设置 Node.js
         uses: actions/setup-node@v4
@@ -70,9 +106,13 @@ jobs:
         env:
           NODE_ENV: production
 
-      - name: 📝 准备账号文件
+      - name: 📝 准备账号文件（sell_accounts.txt）
         run: |
-          # 卖出工具使用独立账号文件 sell_accounts.txt（不与注册工具混用）
+          echo "═══════════════════════════════════════════════"
+          echo "  准备卖出专用账号文件 sell_accounts.txt"
+          echo "  （本工具与注册工具使用不同账号文件）"
+          echo "═══════════════════════════════════════════════"
+
           # 1) workflow 传入的 accounts 参数
           if [ -n "${{ github.event.inputs.accounts }}" ]; then
             echo "📄 使用 workflow 传入的账号数据"
@@ -91,16 +131,28 @@ jobs:
             echo "${{ secrets.ACCOUNTS_BASE64 }}" | base64 -d > sell_accounts.txt
           fi
 
+          # 检查账号文件是否存在
           if [ ! -f sell_accounts.txt ]; then
-            echo "❌ 未找到 sell_accounts.txt！请通过 Secrets 或 workflow_dispatch 传入账号"
+            echo "❌ 未找到 sell_accounts.txt！"
+            echo ""
+            echo "请通过以下方式之一提供账号："
+            echo "  1) 将 sell_accounts.txt 提交到仓库（参考 sell_accounts_example.txt 格式）"
+            echo "  2) 在 GitHub Secrets → Actions 中设置 ACCOUNTS_DATA"
+            echo "  3) 在 GitHub Secrets → Actions 中设置 ACCOUNTS_BASE64（base64 编码）"
+            echo "  4) 在 workflow_dispatch 的 accounts 参数中直接传入"
             exit 1
           fi
 
-          echo "✅ 账号文件就绪，共 $(wc -l < sell_accounts.txt) 行"
+          echo "✅ 账号文件就绪！"
+          echo "   文件: sell_accounts.txt"
+          echo "   有效账号数: $(grep -cE '^[^#,/]' sell_accounts.txt 2>/dev/null || echo 0)"
+          echo "   总行数: $(wc -l < sell_accounts.txt)"
 
       - name: 🚀 执行自动卖出
         run: |
-          echo "⏱️ 开始时间: $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "═══════════════════════════════════════════════"
+          echo "  ⏱️  开始时间: $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "  📂  账号文件: sell_accounts.txt"
           echo "═══════════════════════════════════════════════"
 
           CI=true \
@@ -133,18 +185,18 @@ jobs:
         if: always()
         run: |
           echo "═══════════════════════════════════════════════"
-          echo "⏱️ 结束时间: $(date '+%Y-%m-%d %H:%M:%S')"
-          echo "📋 结果摘要"
+          echo "  ⏱️  结束时间: $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "  📋  卖出结果摘要"
           echo "═══════════════════════════════════════════════"
 
           RESULT_FILE=$(ls -t sell_result_*.json 2>/dev/null | head -1)
           if [ -z "$RESULT_FILE" ]; then
-            echo "未找到结果文件"
+            echo "  未找到结果文件"
             exit 0
           fi
 
-          echo "结果文件: $RESULT_FILE"
+          echo "  结果文件: $RESULT_FILE"
           echo ""
 
           # 使用 node 解析 JSON 摘要（单行命令避免 YAML 多行问题）
-          node -e "const d=require('./$RESULT_FILE');(d.accounts||[]).forEach(a=>{const s=a.stats||{};console.log('  ['+a.username+'] '+'扫描:'+(s.scanned||0)+' '+'上架:'+(s.listedOnMarket||0)+' '+'回收:'+(s.soldToSystem||0)+' '+'失败:'+(s.failed||0)+' '+'回收收入:'+(s.systemIncome||0))})"
+          node -e "const d=require('./$RESULT_FILE');console.log('账号数: '+d.totalAccounts);(d.accounts||[]).forEach(a=>{const s=a.stats||{};console.log('  ['+a.username+'] '+'扫描:'+(s.scanned||0)+'格 '+'上架:'+(s.listedOnMarket||0)+'项 '+'回收:'+(s.soldToSystem||0)+'项 '+'失败:'+(s.failed||0)+'项 '+'回收收入:'+(s.systemIncome||0)+'灵石')})"

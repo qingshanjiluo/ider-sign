@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "艾德尔修仙传 · AI 自动挂机",
+  "version": "1.0.0",
+  "description": "基于DQN强化学习的AI自动挂机插件，自动提升战力、打怪升级",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "webRequest"
+  ],
+  "host_permissions": [
+    "http://*/",
+    "https://*/"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/", "https://*/"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["dqn_inference.js", "models/*.json"],
+      "matches": ["http://*/", "https://*/"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}

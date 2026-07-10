@@ -1,0 +1,296 @@
+[
+	{
+		"id": 1,
+		"name": "荒石村",
+		"level": 10,
+		"enemies": [
+			1,
+			2
+		],
+		"description": "修仙者的起点"
+	},
+	{
+		"id": 2,
+		"name": "青竹林",
+		"level": 50,
+		"enemies": [
+			3,
+			4
+		],
+		"description": "充满灵气的竹林"
+	},
+	{
+		"id": 3,
+		"name": "黑风山",
+		"level": 100,
+		"enemies": [
+			5,
+			6
+		],
+		"description": "危险的山峰"
+	},
+	{
+		"id": 4,
+		"name": "乱石滩",
+		"level": 110,
+		"enemies": [
+			7,
+			8
+		],
+		"description": "乱石堆积的险滩，常有盗匪出没"
+	},
+	{
+		"id": 5,
+		"name": "枯骨林",
+		"level": 120,
+		"enemies": [
+			9,
+			10,
+			24
+		],
+		"description": "阴森恐怖的枯骨之地，游魂与腐尸徘徊"
+	},
+	{
+		"id": 12,
+		"name": "雷云峰",
+		"level": 130,
+		"enemies": [
+			30
+		],
+		"description": "雷电交加的山峰，雷纹虎在此栖息"
+	},
+	{
+		"id": 6,
+		"name": "烈焰谷",
+		"level": 140,
+		"enemies": [
+			11,
+			12,
+			25
+		],
+		"description": "烈火燃烧的山谷，怨灵与入魔修士出没"
+	},
+	{
+		"id": 7,
+		"name": "坠龙崖",
+		"level": 160,
+		"enemies": [
+			13,
+			14,
+			26
+		],
+		"description": "传说曾有真龙坠落于此的悬崖，尸妖盘踞"
+	},
+	{
+		"id": 8,
+		"name": "万剑冢",
+		"level": 180,
+		"enemies": [
+			15,
+			16,
+			27
+		],
+		"description": "无数残剑堆积的剑冢，邪修与妖兽盘踞"
+	},
+	{
+		"id": 9,
+		"name": "归墟",
+		"level": 200,
+		"enemies": [
+			17,
+			18,
+			28
+		],
+		"description": "万物归寂的虚无之地，心魔与骨魔游荡"
+	},
+	{
+		"id": 10,
+		"name": "古战场",
+		"level": 220,
+		"enemies": [
+			19,
+			20,
+			29
+		],
+		"description": "上古大战遗留的战场，魔尊与怨魂盘踞"
+	},
+	{
+		"id": 11,
+		"name": "无尽风域",
+		"level": 240,
+		"enemies": [
+			21,
+			22,
+			23
+		],
+		"description": "狂风永不停息的神秘领域"
+	},
+	{
+		"id": 13,
+		"name": "魔渊",
+		"level": 250,
+		"enemies": [
+			31,
+			32,
+			33,
+			34
+		],
+		"description": "化神期修士与妖兽盘踞的深渊"
+	},
+	{
+		"id": 14,
+		"name": "虚空裂隙",
+		"level": 290,
+		"enemies": [
+			36,
+			37,
+			38,
+			39
+		],
+		"description": "炼虚期生灵游荡的虚空裂缝"
+	},
+	{
+		"id": 15,
+		"name": "天穹古墟",
+		"level": 330,
+		"enemies": [
+			40,
+			41,
+			42,
+			43
+		],
+		"description": "合体期大能曾在此悟道的古老废墟"
+	},
+	{
+		"id": 16,
+		"name": "飞升台",
+		"level": 370,
+		"enemies": [
+			44,
+			45,
+			46,
+			47
+		],
+		"description": "大乘期修士云集，距飞升仅一步之遥"
+	},
+	{
+		"id": 201,
+		"name": "灵界·逆势天幕",
+		"level": 280,
+		"realm": "lingjie",
+		"is_lingjie": true,
+		"lingjie_env": "inverse_field",
+		"enemies": [
+			501,
+			502,
+			503,
+			519
+		],
+		"description": "灵界裂面垂落逆势天幕，前段爆发被强行压低，灼烧与毒蚀却会越滚越凶。",
+		"environment_desc": "前3次行动内，双方直接伤害降低35%。",
+		"reward_bonus": {
+			"exp_mult": 1.3
+		},
+		"reward_desc": "怪物经验提高30%（灵界基础掉落提高25%）。"
+	},
+	{
+		"id": 202,
+		"name": "灵界·裂甲风蚀",
+		"level": 280,
+		"realm": "lingjie",
+		"is_lingjie": true,
+		"lingjie_env": "crack_armor",
+		"enemies": [
+			504,
+			505,
+			506,
+			520
+		],
+		"description": "风蚀如刀，专斩防线薄弱之人。这里的灵界守军防御极高，惯于把对手拖入硬碰硬。",
+		"environment_desc": "行动后若物防与法防合计过低，将受到裂甲反噬。",
+		"reward_bonus": {
+			"exp_mult": 1.2
+		},
+		"reward_desc": "怪物经验提高20%（灵界基础掉落提高25%）。"
+	},
+	{
+		"id": 203,
+		"name": "灵界·过载雷海",
+		"level": 280,
+		"realm": "lingjie",
+		"is_lingjie": true,
+		"lingjie_env": "overload_sea",
+		"enemies": [
+			507,
+			508,
+			509,
+			521
+		],
+		"description": "雷海拒绝一锤定音，修士若打出过高单段爆发会被雷海反噬，因此更适合以多击与连段稳压。",
+		"environment_desc": "修士单段伤害过高会触发过载，后续两次行动伤害与速度下降。",
+		"reward_bonus": {
+			"rune_drop_mult": 3
+		},
+		"reward_desc": "阵纹掉落概率变为三倍（并享灵界基础经验+15%、掉落+25%）。"
+	},
+	{
+		"id": 204,
+		"name": "灵界·碎盾潮汐",
+		"level": 280,
+		"realm": "lingjie",
+		"is_lingjie": true,
+		"lingjie_env": "shield_break",
+		"enemies": [
+			510,
+			511,
+			512,
+			522
+		],
+		"description": "潮汐专门碾碎临时护体，靠护盾硬顶会被反复拆穿，此地怪物也几乎不依赖护盾续命。",
+		"environment_desc": "每次行动后叠加破势，按层数持续侵蚀生命并压低输出。",
+		"reward_bonus": {
+			"spirit_stone_mult": 1.35
+		},
+		"reward_desc": "怪物灵石提高35%（并享灵界基础经验+15%、掉落+25%）。"
+	},
+	{
+		"id": 205,
+		"name": "灵界·衰荣旷野",
+		"level": 280,
+		"realm": "lingjie",
+		"is_lingjie": true,
+		"lingjie_env": "attrition_field",
+		"enemies": [
+			513,
+			514,
+			515,
+			523
+		],
+		"description": "旷野吞噬久战者。越往后拖，灵界本身越像一张慢慢收紧的绞索。",
+		"environment_desc": "战斗开始即生效，行动者每次行动后承受15%最大生命的衰荣侵蚀。",
+		"reward_bonus": {
+			"drop_mult": 1.25
+		},
+		"reward_desc": "通用掉落概率提高25%乘算（并享灵界基础经验+15%）。"
+	},
+	{
+		"id": 206,
+		"name": "灵界·迟滞泥沼",
+		"level": 280,
+		"realm": "lingjie",
+		"is_lingjie": true,
+		"lingjie_env": "mire_swamp",
+		"enemies": [
+			516,
+			517,
+			518,
+			524
+		],
+		"description": "泥沼让所有快攻都显得笨重，而擅长控制与持续压制的怪物会在这里越发棘手。",
+		"environment_desc": "每次行动后会被抽离法力并承受侵蚀伤害，低法力时惩罚加重。",
+		"reward_bonus": {
+			"tier6_drop_mult": 1.5
+		},
+		"reward_desc": "炼虚期六阶及以上材料掉率提高50%乘算（并享灵界基础经验+15%、掉落+25%）。"
+	}
+]

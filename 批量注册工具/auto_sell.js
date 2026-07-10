@@ -1,11 +1,22 @@
 /**
  * 艾德尔修仙传 - 自动卖出工具
  *
+ * ════════════════════════════════════════════════════════════
+ *  📂 文件指向说明
+ *  ════════════════════════════════════════════════════════════
+ *  - 本工具使用「sell_accounts.txt」作为独立账号文件
+ *    （与注册工具 batch.js 的 accounts.txt 分开管理）
+ *  - 账号文件格式：每行一个账号，username,password
+ *     例：myuser,mypassword123
+ *  - 默认路径：./sell_accounts.txt（与本工具同目录）
+ *  - 可参考 sell_accounts_example.txt 格式
+ *  ════════════════════════════════════════════════════════════
+ *
  * 功能：
  *   自动遍历背包 → 按条件筛选物品 → 上架交易所 / 系统回收
  *
  * 筛选条件：
- *   - 物品类型（material, consumable, medicine, herb, equipment 等）
+ *   - 物品类型（支持中文/英文，如：材料/material, 消耗品/consumable 等）
  *   - 物品品质（1~8阶）
  *   - 数量大于 N 个才卖
  *   - 可选先卖数量多的
@@ -204,10 +215,37 @@ function isTradable(item) {
 /**
  * 物品类型匹配
  */
+/**
+ * 中文类型名 → 英文类型名映射（用于输入兼容）
+ */
+const TYPE_ALIASES = {
+  '材料': 'material',
+  '消耗品': 'consumable',
+  '药材': 'medicine',
+  '草药': 'herb',
+  '装备': 'equipment',
+  '武器': 'weapon',
+  '防具': 'armor',
+  '饰品': 'accessory',
+  '丹方': 'recipe',
+  '宝物': 'treasure',
+  '阵法': 'formation',
+  '魂魄': 'soul',
+  '其他': 'other'
+};
+
 function matchesType(item, typePatterns) {
   if (!typePatterns || typePatterns.length === 0) return true;
   const t = String(item.type || '').toLowerCase();
-  return typePatterns.some(p => t === p.toLowerCase());
+  return typePatterns.some(p => {
+    const lower = p.toLowerCase();
+    // 直接匹配英文
+    if (t === lower) return true;
+    // 中文别名 → 英文
+    const mapped = TYPE_ALIASES[lower];
+    if (mapped && t === mapped) return true;
+    return false;
+  });
 }
 
 /**
@@ -561,28 +599,49 @@ function ask(question) {
 
 function showBanner() {
   console.log('');
-  console.log('╔══════════════════════════════════════════════════╗');
-  console.log('║   艾德尔修仙传 - 自动卖出工具 v1.0             ║');
-  console.log('║   功能: 按条件筛选背包物品，自动卖出            ║');
-  console.log('║   支持: 类型/品质/数量过滤 → 交易所/系统回收    ║');
-  console.log('╚══════════════════════════════════════════════════╝');
+  console.log('╔══════════════════════════════════════════════════════════╗');
+  console.log('║         艾德尔修仙传 - 自动卖出工具 v1.0               ║');
+  console.log('╠══════════════════════════════════════════════════════════╣');
+  console.log('║  📂 账号文件：./sell_accounts.txt                      ║');
+  console.log('║     格式：每行 username,password                       ║');
+  console.log('║     参考：sell_accounts_example.txt                    ║');
+  console.log('║                                                         ║');
+  console.log('║  🔧 功能：按条件筛选背包物品 → 自动卖出               ║');
+  console.log('║     支持：按类型/品质/数量过滤，交易所/系统回收        ║');
+  console.log('╚══════════════════════════════════════════════════════════╝');
   console.log('');
 }
 
 function showHelp() {
-  console.log('可用物品类型:');
-  console.log('  equipment  - 装备');
-  console.log('  weapon     - 武器');
-  console.log('  armor      - 防具');
-  console.log('  accessory  - 饰品');
-  console.log('  consumable - 消耗品');
-  console.log('  medicine   - 药材');
-  console.log('  herb       - 草药');
-  console.log('  material   - 材料');
-  console.log('  recipe     - 丹方');
-  console.log('  treasure   - 宝物');
   console.log('');
-  console.log('品质范围: 1~8 阶');
+  console.log('══════════════ 可用物品类型 ══════════════');
+  console.log('  英文代码         中文名称    说明');
+  console.log('  ────────────────────────────────────────');
+  console.log('  material         材料        锻造/炼丹材料');
+  console.log('  consumable       消耗品      丹药/符箓等');
+  console.log('  medicine         药材        灵药/药草');
+  console.log('  herb             草药        低阶药草');
+  console.log('  equipment        装备        通用装备');
+  console.log('  weapon           武器        攻击装备');
+  console.log('  armor            防具        防御装备');
+  console.log('  accessory        饰品        戒指/项链等');
+  console.log('  recipe           丹方        炼制配方');
+  console.log('  treasure         宝物        灵宝/法器');
+  console.log('  formation        阵法        阵盘/阵旗');
+  console.log('  soul             魂魄        神魂类物品');
+  console.log('  ────────────────────────────────────────');
+  console.log('  提示：输入中文或英文均可，如 材料 或 material');
+  console.log('');
+  console.log('══════════════ 品质范围 ══════════════');
+  console.log('  1阶（凡品）  2阶（下品）  3阶（中品）');
+  console.log('  4阶（上品）  5阶（极品）  6阶（绝品）');
+  console.log('  7阶（仙品）  8阶（神品）');
+  console.log('  0 = 不限品质');
+  console.log('');
+  console.log('══════════════ 配置说明 ══════════════');
+  console.log('  📂 sell_accounts.txt  ← 账号文件（与本工具同目录）');
+  console.log('  每行一个账号：username,password');
+  console.log('  以 # 或 // 开头的行被忽略（注释）');
   console.log('');
 }
 
@@ -622,14 +681,16 @@ async function main() {
     const unitPrice = getEnvInt('SELL_UNIT_PRICE', 0);
     const prioritizeMore = getEnvBool('SELL_PRIORITIZE_MORE', true);
 
-    console.log('配置:');
-    console.log('  账号: ' + accounts.length + ' 个');
-    console.log('  物品类型: ' + (types.length > 0 ? types.join(', ') : '全部'));
-    console.log('  品质范围: ' + (minQuality || '不限') + ' ~ ' + (maxQuality || '不限'));
-    console.log('  最小数量: ' + (minCount || '不限'));
-    console.log('  卖出比例: ' + sellPercent + '%');
-    console.log('  单价: ' + (unitPrice > 0 ? unitPrice + ' 灵石' : '系统回收'));
-    console.log('  先卖多的: ' + prioritizeMore);
+    console.log('');
+    console.log('══════════════ 运行配置 ══════════════');
+    console.log('  📂 账号文件:    sell_accounts.txt（' + accounts.length + ' 个账号）');
+    console.log('  🏷️ 物品类型:    ' + (types.length > 0 ? types.map(t => getTypeName(t)).join('、') : '全部'));
+    console.log('  ⭐ 品质范围:    ' + (minQuality ? minQuality + '阶' : '不限') + ' ~ ' + (maxQuality ? maxQuality + '阶' : '不限'));
+    console.log('  🔢 最小数量:    ' + (minCount || '不限') + ' 个');
+    console.log('  📊 卖出比例:    ' + sellPercent + '%');
+    console.log('  💰 单价:        ' + (unitPrice > 0 ? unitPrice + ' 灵石/个（交易所上架）' : '系统回收（卖给NPC）'));
+    console.log('  📈 先卖多的:    ' + (prioritizeMore ? '是' : '否'));
+    console.log('═══════════════════════════════════════════════');
     console.log('═══════════════════════════════════════════════');
 
     const overallStats = { totalAccounts: accounts.length, accounts: [] };
@@ -723,13 +784,16 @@ async function main() {
   const prioritizeMore = prioritizeInput.toLowerCase() !== 'n';
 
   console.log('');
-  console.log('确认配置:');
-  console.log('  物品类型: ' + (types.length > 0 ? types.join(', ') : '全部'));
-  console.log('  品质范围: ' + (minQuality || '不限') + ' ~ ' + (maxQuality || '不限'));
-  console.log('  最少数量: ' + (minCount || '不限'));
-  console.log('  卖出比例: ' + sellPercent + '%');
-  console.log('  卖出方式: ' + (unitPrice > 0 ? '交易所(单价' + unitPrice + '灵石)' : '系统回收'));
-  console.log('  先卖多的: ' + prioritizeMore);
+  console.log('');
+  console.log('══════════════ 确认配置 ══════════════');
+  console.log('  📂 账号文件:    sell_accounts.txt');
+  console.log('  🏷️ 物品类型:    ' + (types.length > 0 ? types.map(t => getTypeName(t)).join('、') : '全部'));
+  console.log('  ⭐ 品质范围:    ' + (minQuality ? minQuality + '阶' : '不限') + ' ~ ' + (maxQuality ? maxQuality + '阶' : '不限'));
+  console.log('  🔢 最少数量:    ' + (minCount || '不限') + ' 个');
+  console.log('  📊 卖出比例:    ' + sellPercent + '%');
+  console.log('  💰 卖出方式:    ' + (unitPrice > 0 ? '交易所上架（单价' + unitPrice + '灵石/个）' : '系统回收（卖给NPC）'));
+  console.log('  📈 先卖多的:    ' + (prioritizeMore ? '是' : '否'));
+  console.log('═══════════════════════════════════════════════');
   console.log('');
 
   const confirm = await ask('是否开始? (Y/n): ');

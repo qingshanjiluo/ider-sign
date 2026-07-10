@@ -1,0 +1,33 @@
+{
+  "name": "aider-server",
+  "version": "1.1.6",
+  "description": "艾德尔修仙传 网游化服务端",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test:battle-command": "node scripts/battle_command_service_test.js",
+    "diag:league-missing-reports": "node scripts/league_missing_reports_diag.js",
+    "repair:league-regrant-missing": "node scripts/league_regrant_missing_points.js",
+    "migrate:sqlite-to-mysql": "node scripts/migrate_sqlite_to_mysql.js",
+    "mysql:async-smoke": "node scripts/mysql_async_smoke.js",
+    "mysql:cutover-gate": "node scripts/mysql_cutover_gate.js",
+    "redis:diag": "node scripts/redis_diag.js",
+    "bench:league-routes": "node scripts/league_route_bench.js",
+    "go:build-compute": "cd go-compute && go build -o combat-calc.exe ."
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.10.0",
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.20.0",
+    "nodemailer": "^8.0.1",
+    "redis": "^5.11.0",
+    "sync-mysql": "^3.0.1",
+    "tencentcloud-sdk-nodejs-ses": "^4.1.188",
+    "ws": "^8.19.0"
+  }
+}

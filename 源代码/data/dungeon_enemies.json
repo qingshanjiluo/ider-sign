@@ -1,0 +1,707 @@
+[
+  {
+    "id": 1,
+    "name": "副本小野猪",
+    "type": "beast",
+    "level": 10,
+    "hp": 60,
+    "attack": 12,
+    "defense": 6,
+    "agility": 15,
+    "exp": 9,
+    "drops": [],
+    "skills": [
+      1
+    ],
+    "mp": 100
+  },
+  {
+    "id": 2,
+    "name": "副本野兔",
+    "type": "beast",
+    "level": 20,
+    "hp": 80,
+    "attack": 10,
+    "defense": 5,
+    "agility": 25,
+    "exp": 9,
+    "drops": [],
+    "skills": [
+      23
+    ],
+    "mp": 100
+  },
+  {
+    "id": 3,
+    "name": "竹妖",
+    "type": "beast",
+    "level": 45,
+    "hp": 240,
+    "attack": 32,
+    "defense": 14,
+    "agility": 16,
+    "spellAttack": 28,
+    "exp": 33,
+    "drops": [],
+    "skills": [
+      24,
+      40
+    ],
+    "mp": 140
+  },
+  {
+    "id": 4,
+    "name": "青竹精",
+    "type": "beast",
+    "level": 50,
+    "hp": 280,
+    "attack": 38,
+    "defense": 18,
+    "agility": 14,
+    "spellAttack": 32,
+    "exp": 39,
+    "drops": [],
+    "skills": [
+      23,
+      41
+    ],
+    "mp": 160
+  },
+  {
+    "id": 5,
+    "name": "碧叶蛇",
+    "type": "beast",
+    "level": 52,
+    "hp": 260,
+    "attack": 35,
+    "defense": 16,
+    "agility": 18,
+    "spellAttack": 30,
+    "exp": 42,
+    "drops": [],
+    "skills": [
+      24,
+      40
+    ],
+    "mp": 155
+  },
+  {
+    "id": 6,
+    "name": "藤蔓怪",
+    "type": "beast",
+    "level": 48,
+    "hp": 320,
+    "attack": 28,
+    "defense": 22,
+    "agility": 10,
+    "spellAttack": 25,
+    "exp": 36,
+    "drops": [],
+    "skills": [
+      41,
+      40
+    ],
+    "mp": 150
+  },
+  {
+    "id": 7,
+    "name": "竹灵",
+    "type": "spirit",
+    "level": 55,
+    "hp": 300,
+    "attack": 40,
+    "defense": 20,
+    "agility": 20,
+    "spellAttack": 42,
+    "exp": 45,
+    "drops": [],
+    "skills": [
+      24,
+      25
+    ],
+    "mp": 180
+  },
+  {
+    "id": 8,
+    "name": "墓穴腐尸",
+    "type": "undead",
+    "level": 118,
+    "hp": 1100,
+    "attack": 115,
+    "defense": 55,
+    "agility": 16,
+    "spellAttack": 90,
+    "exp": 72,
+    "drops": [],
+    "skills": [
+      23,
+      40,
+      43
+    ],
+    "mp": 280
+  },
+  {
+    "id": 9,
+    "name": "枯骨游魂",
+    "type": "spirit",
+    "level": 122,
+    "hp": 950,
+    "attack": 100,
+    "defense": 58,
+    "agility": 38,
+    "spellAttack": 155,
+    "exp": 75,
+    "drops": [],
+    "skills": [
+      23,
+      42
+    ],
+    "mp": 300
+  },
+  {
+    "id": 10,
+    "name": "守墓尸兵",
+    "type": "undead",
+    "level": 125,
+    "hp": 1300,
+    "attack": 130,
+    "defense": 65,
+    "agility": 18,
+    "spellAttack": 95,
+    "exp": 78,
+    "drops": [],
+    "skills": [
+      24,
+      26
+    ],
+    "mp": 290
+  },
+  {
+    "id": 11,
+    "name": "骸骨法师",
+    "type": "undead",
+    "level": 120,
+    "hp": 850,
+    "attack": 85,
+    "defense": 45,
+    "agility": 28,
+    "spellAttack": 165,
+    "exp": 70,
+    "drops": [],
+    "skills": [
+      42,
+      25
+    ],
+    "mp": 320
+  },
+  {
+    "id": 12,
+    "name": "墓穴蛛",
+    "type": "beast",
+    "level": 123,
+    "hp": 720,
+    "attack": 95,
+    "defense": 42,
+    "agility": 42,
+    "spellAttack": 110,
+    "exp": 73,
+    "drops": [],
+    "skills": [
+      40,
+      41
+    ],
+    "mp": 260
+  },
+  {
+    "id": 13,
+    "name": "炎魔傀儡",
+    "type": "construct",
+    "level": 142,
+    "hp": 2800,
+    "attack": 195,
+    "defense": 155,
+    "agility": 14,
+    "spellAttack": 160,
+    "exp": 168,
+    "drops": [],
+    "skills": [
+      24,
+      44,
+      45
+    ],
+    "mp": 400
+  },
+  {
+    "id": 14,
+    "name": "入魔狂徒",
+    "type": "human",
+    "level": 145,
+    "hp": 2100,
+    "attack": 230,
+    "defense": 105,
+    "agility": 42,
+    "spellAttack": 260,
+    "exp": 174,
+    "drops": [],
+    "skills": [
+      23,
+      27,
+      42
+    ],
+    "mp": 450
+  },
+  {
+    "id": 15,
+    "name": "怨火灵",
+    "type": "spirit",
+    "level": 138,
+    "hp": 1650,
+    "attack": 175,
+    "defense": 88,
+    "agility": 48,
+    "spellAttack": 230,
+    "exp": 162,
+    "drops": [],
+    "skills": [
+      42,
+      45
+    ],
+    "mp": 400
+  },
+  {
+    "id": 16,
+    "name": "熔岩守卫",
+    "type": "construct",
+    "level": 148,
+    "hp": 3400,
+    "attack": 180,
+    "defense": 170,
+    "agility": 12,
+    "exp": 180,
+    "drops": [],
+    "skills": [
+      24,
+      44
+    ],
+    "mp": 380
+  },
+  {
+    "id": 17,
+    "name": "剑灵",
+    "type": "spirit",
+    "level": 185,
+    "hp": 5200,
+    "attack": 500,
+    "defense": 310,
+    "agility": 72,
+    "spellAttack": 420,
+    "exp": 492,
+    "drops": [],
+    "skills": [
+      24,
+      26,
+      27
+    ],
+    "mp": 680
+  },
+  {
+    "id": 18,
+    "name": "邪剑修",
+    "type": "human",
+    "level": 188,
+    "hp": 4200,
+    "attack": 420,
+    "defense": 265,
+    "agility": 68,
+    "spellAttack": 450,
+    "exp": 498,
+    "drops": [],
+    "skills": [
+      27,
+      24
+    ],
+    "skill_levels": {
+      "27": {
+        "level": 2
+      }
+    },
+    "mp": 700
+  },
+  {
+    "id": 19,
+    "name": "噬魂兽",
+    "type": "beast",
+    "level": 182,
+    "hp": 4800,
+    "attack": 460,
+    "defense": 290,
+    "agility": 75,
+    "spellAttack": 400,
+    "exp": 480,
+    "drops": [],
+    "skills": [
+      1,
+      24,
+      26,
+      28
+    ],
+    "mp": 650
+  },
+  {
+    "id": 20,
+    "name": "怨念魔影",
+    "type": "spirit",
+    "level": 192,
+    "hp": 6000,
+    "attack": 580,
+    "defense": 350,
+    "agility": 78,
+    "spellAttack": 550,
+    "exp": 540,
+    "drops": [],
+    "skills": [
+      28,
+      30,
+      42
+    ],
+    "mp": 750
+  },
+  {
+    "id": 21,
+    "name": "古战场英灵",
+    "type": "spirit",
+    "level": 225,
+    "hp": 10200,
+    "attack": 960,
+    "defense": 600,
+    "agility": 100,
+    "spellAttack": 920,
+    "exp": 990,
+    "drops": [],
+    "skills": [
+      29,
+      30,
+      46
+    ],
+    "skill_levels": {
+      "29": {
+        "level": 3
+      }
+    },
+    "mp": 1200
+  },
+  {
+    "id": 22,
+    "name": "风雷战将",
+    "type": "human",
+    "level": 228,
+    "hp": 9600,
+    "attack": 920,
+    "defense": 580,
+    "agility": 105,
+    "spellAttack": 880,
+    "exp": 1008,
+    "drops": [],
+    "skills": [
+      25,
+      29,
+      44
+    ],
+    "skill_levels": {
+      "29": {
+        "level": 3
+      }
+    },
+    "mp": 1180
+  },
+  {
+    "id": 23,
+    "name": "雷云兽",
+    "type": "beast",
+    "level": 222,
+    "hp": 8800,
+    "attack": 860,
+    "defense": 540,
+    "agility": 110,
+    "spellAttack": 780,
+    "exp": 972,
+    "drops": [],
+    "skills": [
+      25,
+      24,
+      26
+    ],
+    "mp": 1150
+  },
+  {
+    "id": 24,
+    "name": "怨魂龙影",
+    "type": "spirit",
+    "level": 235,
+    "hp": 11000,
+    "attack": 1050,
+    "defense": 650,
+    "agility": 95,
+    "spellAttack": 1000,
+    "exp": 1260,
+    "drops": [],
+    "skills": [
+      29,
+      30,
+      50
+    ],
+    "skill_levels": {
+      "29": {
+        "level": 4
+      }
+    },
+    "mp": 1300
+  },
+  {
+    "id": 25,
+    "name": "魔渊守卫",
+    "type": "human",
+    "level": 255,
+    "hp": 42000,
+    "attack": 3200,
+    "defense": 1950,
+    "agility": 205,
+    "spellAttack": 3400,
+    "exp": 1800,
+    "drops": [],
+    "skills": [
+      27,
+      28,
+      29,
+      30
+    ],
+    "skill_levels": {
+      "27": {
+        "level": 4
+      },
+      "29": {
+        "level": 4
+      }
+    },
+    "mp": 4000
+  },
+  {
+    "id": 26,
+    "name": "深渊怨灵",
+    "type": "spirit",
+    "level": 258,
+    "hp": 38000,
+    "attack": 3000,
+    "defense": 1850,
+    "agility": 215,
+    "spellAttack": 3600,
+    "exp": 1860,
+    "drops": [],
+    "skills": [
+      27,
+      28,
+      42,
+      50
+    ],
+    "skill_levels": {
+      "27": {
+        "level": 4
+      }
+    },
+    "mp": 4100
+  },
+  {
+    "id": 27,
+    "name": "虚空兽",
+    "type": "beast",
+    "level": 265,
+    "hp": 48000,
+    "attack": 3500,
+    "defense": 2100,
+    "agility": 230,
+    "spellAttack": 3700,
+    "exp": 1980,
+    "drops": [],
+    "skills": [
+      27,
+      24,
+      26,
+      31
+    ],
+    "skill_levels": {
+      "27": {
+        "level": 4
+      },
+      "31": {
+        "level": 2
+      }
+    },
+    "mp": 4200
+  },
+  {
+    "id": 28,
+    "name": "炼虚妖王",
+    "type": "beast",
+    "level": 295,
+    "hp": 64000,
+    "attack": 4300,
+    "defense": 2580,
+    "agility": 248,
+    "spellAttack": 4500,
+    "exp": 2520,
+    "drops": [],
+    "skills": [
+      27,
+      28,
+      29,
+      31
+    ],
+    "skill_levels": {
+      "27": {
+        "level": 4
+      },
+      "29": {
+        "level": 4
+      },
+      "31": {
+        "level": 3
+      }
+    },
+    "mp": 4800
+  },
+  {
+    "id": 29,
+    "name": "虚空裂隙怪",
+    "type": "spirit",
+    "level": 298,
+    "hp": 60000,
+    "attack": 4100,
+    "defense": 2480,
+    "agility": 255,
+    "spellAttack": 4600,
+    "exp": 2580,
+    "drops": [],
+    "skills": [
+      46,
+      47,
+      50
+    ],
+    "mp": 5000
+  },
+  {
+    "id": 30,
+    "name": "合体古妖",
+    "type": "beast",
+    "level": 338,
+    "hp": 105000,
+    "attack": 7000,
+    "defense": 4200,
+    "agility": 420,
+    "spellAttack": 7500,
+    "exp": 4500,
+    "drops": [],
+    "skills": [
+      27,
+      24,
+      26,
+      49
+    ],
+    "skill_levels": {
+      "24": {
+        "level": 3
+      },
+      "26": {
+        "level": 3
+      },
+      "27": {
+        "level": 4
+      }
+    },
+    "mp": 8200
+  },
+  {
+    "id": 31,
+    "name": "合体天魔",
+    "type": "spirit",
+    "level": 345,
+    "hp": 115000,
+    "attack": 7500,
+    "defense": 4500,
+    "agility": 445,
+    "spellAttack": 8000,
+    "exp": 4800,
+    "drops": [],
+    "skills": [
+      27,
+      28,
+      29,
+      50
+    ],
+    "skill_levels": {
+      "27": {
+        "level": 4
+      },
+      "29": {
+        "level": 4
+      }
+    },
+    "mp": 8800
+  },
+  {
+    "id": 32,
+    "name": "大乘仙兽",
+    "type": "beast",
+    "level": 385,
+    "hp": 155000,
+    "attack": 11000,
+    "defense": 6600,
+    "agility": 640,
+    "spellAttack": 11500,
+    "exp": 7200,
+    "drops": [],
+    "skills": [
+      27,
+      28,
+      29,
+      49
+    ],
+    "skill_levels": {
+      "27": {
+        "level": 4
+      },
+      "29": {
+        "level": 4
+      }
+    },
+    "mp": 12500
+  },
+  {
+    "id": 33,
+    "name": "大乘魔灵",
+    "type": "spirit",
+    "level": 395,
+    "hp": 170000,
+    "attack": 12000,
+    "defense": 7200,
+    "agility": 700,
+    "spellAttack": 12500,
+    "exp": 7800,
+    "drops": [],
+    "skills": [
+      27,
+      28,
+      29,
+      30,
+      50
+    ],
+    "skill_levels": {
+      "27": {
+        "level": 4
+      },
+      "29": {
+        "level": 4
+      }
+    },
+    "mp": 13500
+  }
+]

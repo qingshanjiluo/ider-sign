@@ -1,0 +1,17 @@
+{
+  "name": "aider-ai-trainer",
+  "version": "1.0.0",
+  "description": "艾德尔修仙传 AI 机器人训练系统 - 使用强化学习自动提升等级和战力",
+  "main": "train.js",
+  "scripts": {
+    "train": "node train.js",
+    "train:headless": "set HEADLESS=true && node train.js",
+    "test:env": "node test_env.js",
+    "start:server": "cd ../server && node index.js",
+    "analyze": "node analyze_results.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "node-fetch": "^2.7.0"
+  }
+}

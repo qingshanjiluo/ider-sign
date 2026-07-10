@@ -1,0 +1,16 @@
+{
+  "name": "aidler-crawler",
+  "version": "1.0.0",
+  "description": "艾德尔修仙传 - 数据爬虫",
+  "main": "run.js",
+  "scripts": {
+    "start": "node run.js",
+    "login": "node run.js login",
+    "collect": "node run.js collect",
+    "server": "node run.js server",
+    "watch": "node run.js watch"
+  },
+  "dependencies": {
+    "node-fetch": "^2.7.0"
+  }
+}

@@ -1,0 +1,360 @@
+[
+  {
+	"id": 1,
+	"name": "筑基丹",
+	"result": {"id": 1, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 6, "count": 1}],
+	  "sub": [{"itemId": 7, "count": 1}, {"itemId": 8, "count": 1}],
+	  "catalyst": [{"itemId": 9, "count": 3}]
+	},
+	"time": 60,
+	"unlocked": false
+  },
+  {
+	"id": 3,
+	"name": "蕴灵丹",
+	"result": {"id": 5, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 29, "count": 1}],
+	  "sub": [{"itemId": 27, "count": 1}, {"itemId": 22, "count": 1}],
+	  "catalyst": [{"itemId": 25, "count": 1}]
+	},
+	"time": 90,
+	"unlocked": false
+  },
+  {
+	"id": 7,
+	"name": "锐金丹",
+	"result": {"id": 73, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 24, "count": 1}],
+	  "sub": [{"itemId": 29, "count": 1}],
+	  "catalyst": [{"itemId": 20, "count": 1}]
+	},
+	"time": 60,
+	"unlocked": false
+  },
+  {
+	"id": 8,
+	"name": "灵木丹",
+	"result": {"id": 74, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 7, "count": 1}],
+	  "sub": [{"itemId": 17, "count": 1}],
+	  "catalyst": [{"itemId": 22, "count": 1}]
+	},
+	"time": 60,
+	"unlocked": false
+  },
+  {
+	"id": 9,
+	"name": "柔水丹",
+	"result": {"id": 75, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 6, "count": 1}],
+	  "sub": [{"itemId": 22, "count": 1}],
+	  "catalyst": [{"itemId": 24, "count": 1}]
+	},
+	"time": 60,
+	"unlocked": false
+  },
+  {
+	"id": 10,
+	"name": "烈火丹",
+	"result": {"id": 76, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 8, "count": 1}],
+	  "sub": [{"itemId": 10, "count": 1}],
+	  "catalyst": [{"itemId": 7, "count": 1}]
+	},
+	"time": 60,
+	"unlocked": false
+  },
+  {
+	"id": 11,
+	"name": "厚土丹",
+	"result": {"id": 77, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 20, "count": 1}],
+	  "sub": [{"itemId": 7, "count": 1}],
+	  "catalyst": [{"itemId": 8, "count": 1}]
+	},
+	"time": 60,
+	"unlocked": false
+  },
+  {
+	"id": 12,
+	"name": "升体丹",
+	"result": {"id": 72, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 30, "count": 1}],
+	  "sub": [{"itemId": 32, "count": 1}, {"itemId": 36, "count": 1}],
+	  "catalyst": [{"itemId": 68, "count": 1}]
+	},
+	"time": 90,
+	"unlocked": false
+  },
+  {
+	"id": 13,
+	"name": "升灵丹",
+	"result": {"id": 78, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 30, "count": 1}],
+	  "sub": [{"itemId": 34, "count": 1}, {"itemId": 38, "count": 1}],
+	  "catalyst": [{"itemId": 70, "count": 1}]
+	},
+	"time": 90,
+	"unlocked": false
+  },
+  {
+	"id": 14,
+	"name": "补天丹",
+	"result": {"id": 79, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 44, "count": 1}],
+	  "sub": [{"itemId": 40, "count": 1}, {"itemId": 41, "count": 1}, {"itemId": 42, "count": 1}],
+	  "catalyst": [{"itemId": 43, "count": 1}]
+	},
+	"time": 120,
+	"unlocked": false
+  },
+  {
+	"id": 15,
+	"name": "补血散",
+	"result": {"id": 112, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 10, "count": 1}],
+	  "sub": [{"itemId": 23, "count": 1}],
+	  "catalyst": []
+	},
+	"time": 5,
+	"unlocked": false
+  },
+  {
+	"id": 16,
+	"name": "理气散",
+	"result": {"id": 113, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 22, "count": 1}],
+	  "sub": [{"itemId": 21, "count": 1}],
+	  "catalyst": []
+	},
+	"time": 5,
+	"unlocked": false
+  },
+  {
+	"id": 17,
+	"name": "急救丹",
+	"result": {"id": 114, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 10, "count": 1}],
+	  "sub": [{"itemId": 25, "count": 1}],
+	  "catalyst": []
+	},
+	"time": 10,
+	"unlocked": false
+  },
+  {
+	"id": 18,
+	"name": "复元丹",
+	"result": {"id": 115, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 22, "count": 1}],
+	  "sub": [{"itemId": 27, "count": 1}],
+	  "catalyst": []
+	},
+	"time": 10,
+	"unlocked": false
+  },
+  {
+	"id": 19,
+	"name": "神体丹",
+	"result": {"id": 126, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 42, "count": 1}],
+	  "sub": [{"itemId": 40, "count": 1}, {"itemId": 41, "count": 1}, {"itemId": 43, "count": 1}],
+	  "catalyst": [{"itemId": 39, "count": 1}]
+	},
+	"time": 120,
+	"unlocked": false
+  },
+  {
+	"id": 20,
+	"name": "破锋丹",
+	"result": {"id": 134, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 24, "count": 12}],
+	  "sub": [{"itemId": 29, "count": 6}],
+	  "catalyst": [{"itemId": 38, "count": 2}]
+	},
+	"time": 45,
+	"unlocked": false
+  },
+  {
+	"id": 21,
+	"name": "猎魄丹",
+	"result": {"id": 135, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 7, "count": 18}],
+	  "sub": [{"itemId": 10, "count": 10}],
+	  "catalyst": [{"itemId": 25, "count": 4}]
+	},
+	"time": 45,
+	"unlocked": false
+  },
+  {
+	"id": 22,
+	"name": "回生丹",
+	"result": {"id": 136, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 42, "count": 1}],
+	  "sub": [{"itemId": 41, "count": 1}, {"itemId": 43, "count": 1}],
+	  "catalyst": [{"itemId": 44, "count": 1}]
+	},
+	"time": 70,
+	"unlocked": false
+  },
+  {
+	"id": 23,
+	"name": "炽灵丹",
+	"result": {"id": 137, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 8, "count": 16}],
+	  "sub": [{"itemId": 23, "count": 12}],
+	  "catalyst": [{"itemId": 37, "count": 2}]
+	},
+	"time": 45,
+	"unlocked": false
+  },
+  {
+	"id": 24,
+	"name": "迅影丹",
+	"result": {"id": 138, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 39, "count": 1}],
+	  "sub": [{"itemId": 34, "count": 2}],
+	  "catalyst": [{"itemId": 44, "count": 1}]
+	},
+	"time": 70,
+	"unlocked": false
+  },
+  {
+	"id": 25,
+	"name": "聚宝丹",
+	"result": {"id": 139, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 29, "count": 10}],
+	  "sub": [{"itemId": 38, "count": 6}],
+	  "catalyst": [{"itemId": 44, "count": 1}]
+	},
+	"time": 60,
+	"unlocked": false
+  },
+  {
+	"id": 26,
+	"name": "悟道丹",
+	"result": {"id": 140, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 121, "count": 1}],
+	  "sub": [{"itemId": 44, "count": 2}, {"itemId": 40, "count": 1}],
+	  "catalyst": [{"itemId": 152, "count": 1}]
+	},
+	"time": 120,
+	"unlocked": false
+  },
+  {
+	"id": 27,
+	"name": "玄甲丹",
+	"result": {"id": 141, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 20, "count": 20}],
+	  "sub": [{"itemId": 25, "count": 8}, {"itemId": 31, "count": 4}],
+	  "catalyst": [{"itemId": 70, "count": 3}]
+	},
+	"time": 70,
+	"unlocked": false
+  },
+  {
+	"id": 28,
+	"name": "玄悟丹",
+	"result": {"id": 150, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 34, "count": 12}],
+	  "sub": [{"itemId": 35, "count": 8}, {"itemId": 42, "count": 1}],
+	  "catalyst": [{"itemId": 64, "count": 4}]
+	},
+	"time": 75,
+	"unlocked": false
+  },
+  {
+	"id": 29,
+	"name": "圣战丹",
+	"result": {"id": 130, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 182, "count": 1}],
+	  "sub": [{"itemId": 169, "count": 1}, {"itemId": 178, "count": 1}],
+	  "catalyst": [{"itemId": 53, "count": 1}]
+	},
+	"time": 150,
+	"unlocked": false,
+	"requires_unlock": true,
+	"unlock_item_id": 193
+  },
+  {
+	"id": 30,
+	"name": "脱凡丹",
+	"result": {"id": 129, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 169, "count": 1}],
+	  "sub": [{"itemId": 182, "count": 1}, {"itemId": 178, "count": 1}],
+	  "catalyst": [{"itemId": 45, "count": 1}]
+	},
+	"time": 150,
+	"unlocked": false,
+	"requires_unlock": true,
+	"unlock_item_id": 194
+  },
+  {
+	"id": 31,
+	"name": "雅韵丹",
+	"result": {"id": 128, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 44, "count": 1}],
+	  "sub": [{"itemId": 169, "count": 1}, {"itemId": 182, "count": 1}],
+	  "catalyst": [{"itemId": 121, "count": 1}]
+	},
+	"time": 145,
+	"unlocked": false,
+	"requires_unlock": true,
+	"unlock_item_id": 195
+  },
+  {
+	"id": 32,
+	"name": "坤元丹",
+	"result": {"id": 131, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 40, "count": 1}],
+	  "sub": [{"itemId": 182, "count": 1}, {"itemId": 41, "count": 1}],
+	  "catalyst": [{"itemId": 46, "count": 1}]
+	},
+	"time": 145,
+	"unlocked": false,
+	"requires_unlock": true,
+	"unlock_item_id": 196
+  },
+  {
+	"id": 33,
+	"name": "神木丸",
+	"result": {"id": 132, "count": 1},
+	"ingredients": {
+	  "main": [{"itemId": 41, "count": 1}],
+	  "sub": [{"itemId": 169, "count": 1}, {"itemId": 40, "count": 1}],
+	  "catalyst": [{"itemId": 47, "count": 1}]
+	},
+	"time": 145,
+	"unlocked": false,
+	"requires_unlock": true,
+	"unlock_item_id": 197
+  }
+]
