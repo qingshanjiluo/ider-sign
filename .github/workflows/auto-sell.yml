@@ -1,0 +1,149 @@
+name: 自动卖出工具
+
+on:
+  # 手动触发（最常用）
+  workflow_dispatch:
+    inputs:
+      accounts:
+        description: '账号列表（每行: username,password），留空则读取仓库中的 accounts.txt'
+        required: false
+        default: ''
+      sell_types:
+        description: '物品类型（逗号分隔，如: material,consumable,medicine，留空=全部）'
+        required: false
+        default: 'material,consumable'
+      sell_min_quality:
+        description: '最低品质 [1-8, 0=不限]'
+        required: false
+        default: '0'
+      sell_max_quality:
+        description: '最高品质 [1-8, 0=不限]'
+        required: false
+        default: '0'
+      sell_min_count:
+        description: '最少数量（>=此值才卖，0=不限）'
+        required: false
+        default: '10'
+      sell_percent:
+        description: '卖出比例 [1-100]'
+        required: false
+        default: '100'
+      sell_unit_price:
+        description: '交易所单价（灵石），0=系统回收'
+        required: false
+        default: '0'
+      sell_prioritize_more:
+        description: '先卖数量多的 [true/false]'
+        required: false
+        default: 'true'
+      batch_index:
+        description: '批次序号'
+        required: false
+        default: '1'
+
+  # 定时触发（可选）
+  # schedule:
+  #   # 每天 UTC 2:30 运行（北京时间 10:30）
+  #   - cron: '30 2 * * *'
+
+jobs:
+  auto-sell:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: 批量注册工具
+
+    steps:
+      - name: 🔄 检出代码
+        uses: actions/checkout@v4
+
+      - name: ⚙️ 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 批量注册工具/package-lock.json
+
+      - name: 📦 安装依赖
+        run: npm install
+        env:
+          NODE_ENV: production
+
+      - name: 📝 准备账号文件
+        run: |
+          # 1) workflow 传入的 accounts 参数
+          if [ -n "${{ github.event.inputs.accounts }}" ]; then
+            echo "📄 使用 workflow 传入的账号数据"
+            echo "${{ github.event.inputs.accounts }}" > accounts.txt
+          fi
+
+          # 2) GitHub Secrets 的 ACCOUNTS_DATA
+          if [ -n "${{ secrets.ACCOUNTS_DATA }}" ]; then
+            echo "🔐 使用 GitHub Secrets 中的账号数据"
+            echo "${{ secrets.ACCOUNTS_DATA }}" > accounts.txt
+          fi
+
+          # 3) GitHub Secrets 的 ACCOUNTS_BASE64
+          if [ -n "${{ secrets.ACCOUNTS_BASE64 }}" ]; then
+            echo "🔐 使用 GitHub Secrets 中的 base64 编码账号数据"
+            echo "${{ secrets.ACCOUNTS_BASE64 }}" | base64 -d > accounts.txt
+          fi
+
+          if [ ! -f accounts.txt ]; then
+            echo "❌ 未找到 accounts.txt！请通过 Secrets 或 workflow_dispatch 传入账号"
+            exit 1
+          fi
+
+          echo "✅ 账号文件就绪，共 $(wc -l < accounts.txt) 行"
+
+      - name: 🚀 执行自动卖出
+        run: |
+          echo "⏱️ 开始时间: $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "═══════════════════════════════════════════════"
+
+          CI=true \
+          SELL_TYPES="${{ github.event.inputs.sell_types || 'material,consumable' }}" \
+          SELL_MIN_QUALITY="${{ github.event.inputs.sell_min_quality || '0' }}" \
+          SELL_MAX_QUALITY="${{ github.event.inputs.sell_max_quality || '0' }}" \
+          SELL_MIN_COUNT="${{ github.event.inputs.sell_min_count || '10' }}" \
+          SELL_PERCENT="${{ github.event.inputs.sell_percent || '100' }}" \
+          SELL_UNIT_PRICE="${{ github.event.inputs.sell_unit_price || '0' }}" \
+          SELL_PRIORITIZE_MORE="${{ github.event.inputs.sell_prioritize_more || 'true' }}" \
+          BATCH_INDEX="${{ github.event.inputs.batch_index || '1' }}" \
+          node auto_sell.js
+
+        env:
+          CI: true
+          NODE_ENV: production
+
+      - name: 📤 上传运行结果
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: auto-sell-result-${{ github.event.inputs.batch_index || '1' }}-${{ github.run_id }}
+          path: |
+            批量注册工具/sell_result_*.json
+            批量注册工具/*.log
+          compression-level: 6
+          retention-days: 7
+
+      - name: 📊 输出结果摘要
+        if: always()
+        run: |
+          echo "═══════════════════════════════════════════════"
+          echo "⏱️ 结束时间: $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "📋 结果摘要"
+          echo "═══════════════════════════════════════════════"
+
+          RESULT_FILE=$(ls -t sell_result_*.json 2>/dev/null | head -1)
+          if [ -z "$RESULT_FILE" ]; then
+            echo "未找到结果文件"
+            exit 0
+          fi
+
+          echo "结果文件: $RESULT_FILE"
+          echo ""
+
+          # 使用 node 解析 JSON 摘要（单行命令避免 YAML 多行问题）
+          node -e "const d=require('./$RESULT_FILE');(d.accounts||[]).forEach(a=>{const s=a.stats||{};console.log('  ['+a.username+'] '+'扫描:'+(s.scanned||0)+' '+'上架:'+(s.listedOnMarket||0)+' '+'回收:'+(s.soldToSystem||0)+' '+'失败:'+(s.failed||0)+' '+'回收收入:'+(s.systemIncome||0))})"
