@@ -1,0 +1,9 @@
+node_modules/
+*.log
+result_*.json
+accounts.txt
+.DS_Store
+Thumbs.db
+*.user.js
+源代码/browser-plugin/icons/*
+plans/

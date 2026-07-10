@@ -1,0 +1,4 @@
+node_modules/
+*.log
+result_*.json
+accounts.txt

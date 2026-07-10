@@ -1,0 +1,150 @@
+name: 批量注册工具
+
+on:
+  # 手动触发（最常用）
+  workflow_dispatch:
+    inputs:
+      accounts:
+        description: '账号列表（每行: username,password,invite_code），留空则读取仓库中的 accounts.txt'
+        required: false
+        default: ''
+      map_id:
+        description: '地图ID [1=荒石村]'
+        required: false
+        default: '1'
+      technique_id:
+        description: '功法ID [1=吐纳法]'
+        required: false
+        default: '1'
+      auto_battle:
+        description: '自动战斗 [true/false]'
+        required: false
+        default: 'true'
+      auto_restart:
+        description: '自动刷怪 [true/false]'
+        required: false
+        default: 'true'
+      delay_between_accounts:
+        description: '账号间隔(ms)'
+        required: false
+        default: '3000'
+      batch_index:
+        description: '批次序号（用于日志文件命名）'
+        required: false
+        default: '1'
+
+  # 定时触发（可选，取消注释即可启用）
+  # schedule:
+  #   # 每天 UTC 时间 2:00 运行（北京时间 10:00）
+  #   - cron: '0 2 * * *'
+
+jobs:
+  batch-register:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        # 所有步骤默认在 批量注册工具 目录下执行
+        working-directory: 批量注册工具
+
+    steps:
+      - name: 🔄 检出代码
+        uses: actions/checkout@v4
+
+      - name: ⚙️ 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 批量注册工具/package-lock.json
+
+      - name: 📦 安装依赖
+        run: npm install
+        env:
+          NODE_ENV: production
+
+      - name: 📝 准备账号文件
+        run: |
+          # 1) 如果 workflow 传入了 accounts 参数，写入 accounts.txt
+          if [ -n "${{ github.event.inputs.accounts }}" ]; then
+            echo "📄 使用 workflow 传入的账号数据"
+            echo "${{ github.event.inputs.accounts }}" > accounts.txt
+          fi
+
+          # 2) 如果从 GitHub Secrets 读取到 ACCOUNTS_DATA，用它覆盖
+          if [ -n "${{ secrets.ACCOUNTS_DATA }}" ]; then
+            echo "🔐 使用 GitHub Secrets 中的账号数据"
+            echo "${{ secrets.ACCOUNTS_DATA }}" > accounts.txt
+          fi
+
+          # 3) 如果从 GitHub Secrets 读取到 ACCOUNTS_BASE64（base64 编码），解码写入
+          if [ -n "${{ secrets.ACCOUNTS_BASE64 }}" ]; then
+            echo "🔐 使用 GitHub Secrets 中的 base64 编码账号数据"
+            echo "${{ secrets.ACCOUNTS_BASE64 }}" | base64 -d > accounts.txt
+          fi
+
+          # 检查最终是否有 accounts.txt
+          if [ ! -f accounts.txt ]; then
+            echo "❌ 未找到 accounts.txt！请通过以下方式之一提供账号："
+            echo "  1) 修改仓库中的 accounts.txt 文件并提交"
+            echo "  2) 在 GitHub Secrets 中设置 ACCOUNTS_DATA"
+            echo "  3) 在 GitHub Secrets 中设置 ACCOUNTS_BASE64（base64 编码）"
+            echo "  4) 通过 workflow_dispatch 传入 accounts 参数"
+            exit 1
+          fi
+
+          echo "✅ 账号文件就绪，内容预览（前 5 行，隐藏密码）:"
+          awk -F',' '{ if(NR<=5) { if($2!="") $2="******"; print $0 } }' accounts.txt
+          echo "... 共 $(wc -l < accounts.txt) 行（含注释）"
+
+      - name: 🚀 执行批量注册
+        run: |
+          echo "⏱️ 开始时间: $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "═══════════════════════════════════════════════"
+          echo "配置:"
+          echo "  地图ID:      ${{ github.event.inputs.map_id || '1' }}"
+          echo "  功法ID:      ${{ github.event.inputs.technique_id || '1' }}"
+          echo "  自动战斗:    ${{ github.event.inputs.auto_battle || 'true' }}"
+          echo "  自动刷怪:    ${{ github.event.inputs.auto_restart || 'true' }}"
+          echo "  账号间隔:    ${{ github.event.inputs.delay_between_accounts || '3000' }}ms"
+          echo "═══════════════════════════════════════════════"
+
+          CI=true \
+          MAP_ID="${{ github.event.inputs.map_id || '1' }}" \
+          TECHNIQUE_ID="${{ github.event.inputs.technique_id || '1' }}" \
+          AUTO_BATTLE="${{ github.event.inputs.auto_battle || 'true' }}" \
+          AUTO_RESTART="${{ github.event.inputs.auto_restart || 'true' }}" \
+          DELAY_MS="${{ github.event.inputs.delay_between_accounts || '3000' }}" \
+          BATCH_INDEX="${{ github.event.inputs.batch_index || '1' }}" \
+          node batch.js
+
+        env:
+          CI: true
+          NODE_ENV: production
+
+      - name: 📤 上传运行日志
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: batch-register-logs-${{ github.event.inputs.batch_index || '1' }}-${{ github.run_id }}
+          path: |
+            批量注册工具/*.log
+            批量注册工具/result_*.json
+          compression-level: 6
+          retention-days: 7
+
+      - name: 📊 输出运行摘要
+        if: always()
+        run: |
+          echo "═══════════════════════════════════════════════"
+          echo "⏱️ 结束时间: $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "📋 运行结果摘要"
+          echo "═══════════════════════════════════════════════"
+
+          LATEST_RESULT=$(ls -t result_*.json 2>/dev/null | head -1)
+          if [ -n "$LATEST_RESULT" ]; then
+            echo "结果文件: $LATEST_RESULT"
+            cat "$LATEST_RESULT" | python3 -m json.tool 2>/dev/null || cat "$LATEST_RESULT"
+          else
+            echo "未找到结果文件，请查看控制台输出或日志"
+          fi
