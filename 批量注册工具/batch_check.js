@@ -1,5 +1,5 @@
 /**
- * 艾德尔修仙传 - 注册账号完整性检查修复工具
+ * 艾德尔修仙传 - 注册账号完整性检查修复工具 v2.0
  *
  * ════════════════════════════════════════════════════════════
  *  📂 文件指向说明
@@ -9,6 +9,13 @@
  *    1. ✅ 技能是否装备（重击、火球术、治疗术）
  *    2. ✅ 铁剑是否装备
  *  如不完整，自动补装
+ *
+ *  🛡️ 反检测保护（v2.0 新增）：
+ *    - 每账号独立 machine_id（防机器码检测）
+ *    - 随机延迟 2000-5000ms 操作间隔
+ *    - 伪造 X-Forwarded-For / X-Real-IP（防同IP检测）
+ *    - 智能分段：每5个账号暂停15-30秒
+ *    - 多个 User-Agent 轮换
  *  ════════════════════════════════════════════════════════════
  *
  * 使用：
@@ -37,7 +44,110 @@ const STARTER_SKILL_NAMES = { 1: '重击', 2: '火球术', 3: '治疗术' };
 const IRON_SWORD_ITEM_ID = 11;
 
 // ============================================================
-// 签名 & API
+// 🛡️ 极致IP伪装 v2.0 反检测配置
+// ============================================================
+// 模拟真实中国运营商IP段（非内网IP！）
+// 分布在不同省份，每个账号完全独立IP（不共享IP）
+const IP_SEGMENTS = [
+  // 中国电信
+  { prefix: '61.',   province: '广东' },
+  { prefix: '59.',   province: '北京' },
+  { prefix: '219.',  province: '上海' },
+  { prefix: '218.',  province: '浙江' },
+  { prefix: '222.',  province: '江苏' },
+  { prefix: '113.',  province: '福建' },
+  { prefix: '116.',  province: '湖南' },
+  { prefix: '118.',  province: '湖北' },
+  { prefix: '119.',  province: '四川' },
+  { prefix: '120.',  province: '广西' },
+  // 中国联通
+  { prefix: '106.',  province: '山东' },
+  { prefix: '111.',  province: '河北' },
+  { prefix: '112.',  province: '河南' },
+  { prefix: '123.',  province: '辽宁' },
+  { prefix: '124.',  province: '黑龙江' },
+  { prefix: '125.',  province: '吉林' },
+  { prefix: '175.',  province: '山西' },
+  // 中国移动
+  { prefix: '36.',   province: '陕西' },
+  { prefix: '39.',   province: '云南' },
+  { prefix: '42.',   province: '贵州' },
+  { prefix: '49.',   province: '安徽' },
+  { prefix: '101.',  province: '江西' },
+  { prefix: '110.',  province: '甘肃' },
+  { prefix: '117.',  province: '新疆' },
+  { prefix: '221.',  province: '海南' },
+  // 其他
+  { prefix: '103.',  province: '天津' },
+  { prefix: '115.',  province: '重庆' },
+  { prefix: '171.',  province: '内蒙古' },
+  { prefix: '183.',  province: '宁夏' },
+  { prefix: '202.',  province: '西藏' },
+];
+
+// 每个账号完全独立IP（不再共享）
+function getFakeIpForIndex(index) {
+  const segment = IP_SEGMENTS[index % IP_SEGMENTS.length];
+  const c = Math.floor(Math.random() * 255);
+  const d = Math.floor(Math.random() * 254) + 1;
+  return segment.prefix + c + '.' + d;
+}
+
+function getProvinceByIndex(index) {
+  return IP_SEGMENTS[index % IP_SEGMENTS.length].province;
+}
+
+// 生成独立 machine_id（每个账号唯一，多样格式）
+function generateMachineId(accountIndex) {
+  const patterns = [
+    () => `web_${crypto.randomBytes(4).toString('hex')}_${Date.now().toString(36).slice(-6)}`,
+    () => `canvas_${crypto.randomBytes(6).toString('hex')}`,
+    () => {
+      const hex = crypto.randomBytes(16).toString('hex');
+      return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
+    },
+    () => `bid_${crypto.randomBytes(8).toString('hex')}`,
+    () => `dev_${(accountIndex * 777 + Date.now()).toString(16)}_${crypto.randomBytes(3).toString('hex')}`,
+  ];
+  return patterns[accountIndex % patterns.length]();
+}
+
+// User-Agent 轮换池（扩展）
+const USER_AGENTS = [
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/121.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/122.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/123.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/125.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/123.0.0.0 Safari/537.36 Edg/123.0.0.0',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Safari/605.1.15',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3 Safari/605.1.15',
+];
+
+const ACCEPT_HEADERS = [
+  'application/json, text/plain, */*',
+  'application/json, text/plain, text/html, */*',
+  'application/json, */*; q=0.8',
+  'application/json, text/plain, text/html, application/xhtml+xml, */*; q=0.9',
+];
+
+const CDN_NODES = [
+  'cloudflare', 'aliyun-cdn', 'tencent-cdn',
+  'baishan-cdn', 'wangsu-cdn', 'china-cache', 'cdn77',
+];
+
+// 随机延迟工具
+function randomDelay(min, max) {
+  const ms = Math.floor(Math.random() * (max - min + 1)) + min;
+  return new Promise(r => setTimeout(r, ms));
+}
+
+// ============================================================
+// 签名 & API（带 🛡️ 反检测头）
 // ============================================================
 function makeSign(method, path, timestamp, bodyStr) {
   const data = method + '\n' + path + '\n' + timestamp + '\n' + bodyStr;
@@ -46,9 +156,14 @@ function makeSign(method, path, timestamp, bodyStr) {
   return hmac.digest('hex');
 }
 
-async function apiRequest(method, path, token, body) {
+// 全局account索引跟踪，用于注入反检测头
+let _antiDetectIndex = 0;
+function setAntiDetectIndex(idx) { _antiDetectIndex = idx; }
+
+async function apiRequest(method, path, token, body, extraHeaders) {
   if (token === undefined) token = '';
   if (body === undefined) body = null;
+  if (extraHeaders === undefined) extraHeaders = {};
   const timestamp = Math.floor(Date.now() / 1000);
   const bodyStr = body ? JSON.stringify(body) : '';
   const sign = makeSign(method, path, timestamp, bodyStr);
@@ -59,8 +174,42 @@ async function apiRequest(method, path, token, body) {
     'X-Sign': sign
   };
   if (token) headers['Authorization'] = 'Bearer ' + token;
+
+  // ===== 🛡️ 极致IP伪装 v2.0（修复：去掉中文和非法HTTP头字符） =====
+  const idx = _antiDetectIndex;
+  const fakeIp = getFakeIpForIndex(idx);
+  const ua = USER_AGENTS[idx % USER_AGENTS.length];
+  const cdnNode = CDN_NODES[idx % CDN_NODES.length];
+  const langs = ['zh-CN,zh;q=0.9', 'zh-CN,zh;q=0.9,en;q=0.8', 'zh-CN,zh;q=0.9,zh-TW;q=0.8,en;q=0.7'];
+
+  // 🛡️ IP伪装（模拟真实中国运营商IP）
+  headers['X-Forwarded-For'] = fakeIp;
+  headers['X-Real-IP'] = fakeIp;
+  headers['X-Client-IP'] = fakeIp;
+  headers['X-Originating-IP'] = fakeIp;
+  // 🛡️ 浏览器指纹
+  headers['User-Agent'] = ua;
+  headers['Accept'] = ACCEPT_HEADERS[idx % ACCEPT_HEADERS.length];
+  headers['Accept-Language'] = langs[idx % langs.length];
+  headers['Accept-Encoding'] = 'gzip, deflate, br';
+  headers['Sec-CH-UA'] = `"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"`;
+  headers['Sec-CH-UA-Platform'] = idx % 4 === 0 ? '"macOS"' : '"Windows"';
+  headers['Sec-CH-UA-Mobile'] = '?0';
+  headers['Sec-Fetch-Site'] = ['none', 'same-origin', 'same-site', 'cross-site'][idx % 4];
+  headers['Sec-Fetch-Mode'] = ['cors', 'no-cors', 'navigate'][idx % 3];
+  headers['Sec-Fetch-Dest'] = 'empty';
+  // 🛡️ CDN代理链（仅ASCII字符）
+  headers['Via'] = `1.1 ${cdnNode}`;
+  headers['X-Cache'] = ['HIT', 'MISS'][idx % 2];
+  headers['DNT'] = idx % 3 === 0 ? '1' : '0';
+  headers['Connection'] = 'keep-alive';
+  headers['Cache-Control'] = ['no-cache', 'max-age=0', 'private', 'no-store'][idx % 4];
+
+  // 混入额外头
+  Object.assign(headers, extraHeaders);
+
   const url = API_BASE + path;
-  const opts = { method, headers, timeout: 30000 };
+  const opts = { method, headers, timeout: 45000 };
   if (bodyStr) opts.body = bodyStr;
   try {
     const r = await fetch(url, opts);
@@ -123,6 +272,8 @@ class Account {
     this.token = '';
     this.accountId = 0;
     this.playerName = '';
+    this.machineId = '';           // 🛡️ 独立机器码
+    this.fakeIp = '';              // 🛡️ 伪造IP
   }
   isValid() {
     return this.username.length >= 2 && this.password.length >= 6;
@@ -140,13 +291,21 @@ function loadAccounts(filepath) {
     .filter(l => l && !l.startsWith('//'));
   const accounts = [];
   for (const line of lines) {
-    // 去掉行首的 #（已标记完成的也可以检查）
+    // 跳过 #BANNED 前缀的已封账号
+    if (/^#BANNED/i.test(line)) continue;
+    // 去掉行首的 #（普通注释行）
     const cleanLine = line.replace(/^#+\s*/, '').trim();
     if (!cleanLine) continue;
     const parts = cleanLine.split(',').map(s => s.trim());
     if (parts.length >= 2) {
       const acc = new Account(parts[0], parts[1]);
-      if (acc.isValid()) accounts.push(acc);
+      if (acc.isValid()) {
+        // 🛡️ 分配独立 machine_id 和伪造 IP
+        const idx = accounts.length;
+        acc.machineId = generateMachineId(idx);
+        acc.fakeIp = getFakeIpForIndex(idx);
+        accounts.push(acc);
+      }
     }
   }
   return accounts;
@@ -194,7 +353,9 @@ class CheckRepairEngine {
   // ============================================================
   async login() {
     info(this.account.username, '正在登录...');
-    const body = { username: this.account.username, password: this.account.password, machine_id: 'batch-check-tool' };
+    // 🛡️ 使用账号独立的 machine_id（防机器码检测）
+    const machineId = this.account.machineId || generateMachineId(0);
+    const body = { username: this.account.username, password: this.account.password, machine_id: machineId };
     const data = await apiRequest('POST', '/auth/login', '', body);
     this.account.token = data.token;
     this.account.accountId = int(data.accountId, 0);
@@ -428,7 +589,8 @@ class CheckRepairEngine {
     // 1. 登录
     try {
       await this.login();
-      await this.delay(500);
+      // 🛡️ 随机延迟 1-3s 模拟人类操作
+      await randomDelay(1000, 3000);
     } catch (e) {
       err(acc.username, '登录失败: ' + e.message);
       this.stats.errors.push({ action: 'login', error: e.message });
@@ -451,7 +613,8 @@ class CheckRepairEngine {
 
       if (missing.length > 0) {
         needsFix = true;
-        await this.delay(500);
+        // 🛡️ 随机延迟再修复
+        await randomDelay(1500, 3000);
 
         // 修复缺失的技能
         await this.fixSkills(missing);
@@ -466,7 +629,8 @@ class CheckRepairEngine {
 
       if (!hasIronSword) {
         needsFix = true;
-        await this.delay(500);
+        // 🛡️ 随机延迟再修复
+        await randomDelay(1500, 3000);
 
         // 修复铁剑
         await this.fixIronSword();
@@ -475,7 +639,8 @@ class CheckRepairEngine {
 
     // 5. 最终验证（如果有修复操作）
     if (needsFix) {
-      await this.delay(800);
+      // 🛡️ 随机延迟再验证
+      await randomDelay(2000, 4000);
       await this.verifyFixes();
     }
 
@@ -503,13 +668,20 @@ function saveResult(result) {
 function showBanner() {
   console.log('');
   console.log('╔══════════════════════════════════════════════════════════╗');
-  console.log('║    艾德尔修仙传 - 注册账号完整性检查修复工具 v1.0      ║');
+  console.log('║  艾德尔修仙传 - 注册账号完整性检查修复工具 v2.0 🛡️   ║');
   console.log('╠══════════════════════════════════════════════════════════╣');
   console.log('║  📂 账号文件：./accounts.txt                          ║');
   console.log('║     检查项：                                          ║');
   console.log('║     ① 技能 - 重击 / 火球术 / 治疗术                  ║');
   console.log('║     ② 装备 - 铁剑                                    ║');
   console.log('║     自动补装不完整项                                  ║');
+  console.log('╠══════════════════════════════════════════════════════════╣');
+  console.log('║  🛡️ 反检测保护已启用：                                ║');
+  console.log('║     ✓ 每账号独立 machine_id                           ║');
+  console.log('║     ✓ 伪造 X-Forwarded-For / X-Real-IP               ║');
+  console.log('║     ✓ 随机延迟 1-5s 操作间隔                         ║');
+  console.log('║     ✓ 每 5 账号暂停 15-30 秒                         ║');
+  console.log('║     ✓ 多个 User-Agent 轮换                           ║');
   console.log('╚══════════════════════════════════════════════════════════╝');
   console.log('');
 }
@@ -599,6 +771,9 @@ async function main() {
       console.log('');
       console.log('═══ 处理账号 [' + (i + 1) + '/' + accounts.length + ']: ' + acc.username + ' ═══');
 
+      // 🛡️ 设置当前账号索引，用于 apiRequest 注入反检测头
+      setAntiDetectIndex(i);
+
       const engine = new CheckRepairEngine(acc, {
         skipSkills: false,
         skipIronSword: false
@@ -625,10 +800,20 @@ async function main() {
         hasError = true;
       }
 
+      // 🛡️ 账号间随机延迟 3-6 秒
       if (i < accounts.length - 1) {
         console.log('');
-        info('引擎', '等待 2 秒后处理下一个账号...');
-        await sleep(2000);
+        const waitMs = randomDelay(3000, 6000);
+        info('引擎', '等待后处理下一个账号...');
+        await waitMs;
+      }
+
+      // 🛡️ 智能分段：每 5 个账号暂停 15-30 秒
+      if ((i + 1) % 5 === 0 && i < accounts.length - 1) {
+        console.log('');
+        const pauseLabel = '🛡️ 智能暂停 [' + (i + 1) + '/' + accounts.length + ']';
+        info(pauseLabel, '已处理 5 个账号，暂停 15-30 秒防检测...');
+        await randomDelay(15000, 30000);
       }
     }
 
@@ -700,6 +885,9 @@ async function main() {
     console.log('');
     console.log('═══ 处理账号 [' + (i + 1) + '/' + accounts.length + ']: ' + acc.username + ' ═══');
 
+    // 🛡️ 设置当前账号索引，用于 apiRequest 注入反检测头
+    setAntiDetectIndex(i);
+
     const engine = new CheckRepairEngine(acc, {
       skipSkills: false,
       skipIronSword: false
@@ -724,10 +912,20 @@ async function main() {
       overallStats.accounts.push({ username: acc.username, error: e.message });
     }
 
+    // 🛡️ 账号间随机延迟 3-6 秒
     if (i < accounts.length - 1) {
       console.log('');
-      info('引擎', '等待 2 秒后处理下一个账号...');
-      await sleep(2000);
+      const waitMs = randomDelay(3000, 6000);
+      info('引擎', '等待后处理下一个账号...');
+      await waitMs;
+    }
+
+    // 🛡️ 智能分段：每 5 个账号暂停 15-30 秒
+    if ((i + 1) % 5 === 0 && i < accounts.length - 1) {
+      console.log('');
+      const pauseLabel = '🛡️ 智能暂停 [' + (i + 1) + '/' + accounts.length + ']';
+      info(pauseLabel, '已处理 5 个账号，暂停 15-30 秒防检测...');
+      await randomDelay(15000, 30000);
     }
   }
 
