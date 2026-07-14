@@ -1,0 +1,89 @@
+name: 🔄 一键炼丹总控 - Full Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      accounts_data:
+        description: '账号数据（格式: username,password，每行一个）'
+        required: true
+        type: string
+      max_accounts:
+        description: '处理的账号数量（默认全部）'
+        required: false
+        default: ''
+        type: string
+  schedule:
+    # 每天 UTC 18:00 运行一次完整流水线（北京时间 02:00）
+    - cron: '0 18 * * *'
+  push:
+    branches: [ main ]
+    paths:
+      - '批量注册工具/run_alchemy_pipeline.js'
+      - '批量注册工具/craft_pills.js'
+      - '批量注册工具/mail_claim_and_use.js'
+      - '批量注册工具/levelup_breakthrough.js'
+      - '批量注册工具/_anti_detect_shared.js'
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+
+    - name: 设置 Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: '批量注册工具/package-lock.json'
+
+    - name: 安装依赖
+      run: |
+        cd 批量注册工具
+        npm install
+
+    - name: 准备账号文件
+      run: |
+        cd 批量注册工具
+        echo "${{ github.event.inputs.accounts_data || secrets.ACCOUNTS_DATA || '' }}" > alchemy_accounts.txt
+        echo "📋 账号文件内容:"
+        cat alchemy_accounts.txt
+
+    - name: 运行一键炼丹总控
+      run: |
+        cd 批量注册工具
+        export CI=true
+        export MAX_ACCOUNTS="${{ github.event.inputs.max_accounts || '' }}"
+        echo "🔄 运行一键炼丹总控脚本..."
+        node run_alchemy_pipeline.js
+
+    - name: 上传结果
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: pipeline-result
+        path: |
+          批量注册工具/pipeline_result_*.json
+          批量注册工具/craft_result_*.json
+          批量注册工具/mail_pill_result_*.json
+          批量注册工具/levelup_result_*.json
+        retention-days: 7
+
+    - name: 输出结果摘要
+      if: always()
+      run: |
+        cd 批量注册工具
+        echo "📊 流水线执行结果:"
+        echo "---"
+        ls -la pipeline_result_*.json 2>/dev/null || echo "无总控结果文件"
+        echo "---"
+        echo "📋 各阶段结果预览:"
+        for f in craft_result_*.json mail_pill_result_*.json levelup_result_*.json; do
+          if [ -f "$f" ]; then
+            echo "=== $f ==="
+            cat "$f" | head -50
+            echo ""
+          fi
+        done
