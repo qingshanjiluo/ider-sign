@@ -1,16 +1,15 @@
 /**
- * 升级突破脚本 ⬆️
+ * 一键升级脚本 ⬆️
  * 功能:
- *   1. 登录账号 / GET /player/sync 获取当前等级
- *   2. POST /player/level_up 循环升级（每级一次请求）
- *   3. 在突破节点(120/160/200/240/280) 调用 POST /player/breakthrough
- *   4. 继续升级直到"灵石不足"或达到400级封顶
+ *   1. 读取 alchemy_accounts.txt 账号文件
+ *   2. 登录 → 获取等级 → 循环 POST /player/level_up
+ *   3. 遇到经验不足/灵石不足/突破节点 → 停止该账号
+ *   4. 所有账号处理完后打印汇总
  *
- * 突破等级节点: [120, 160, 200, 240, 280]
- * 封顶等级: 400
+ * 使用: node levelup.js
+ *       选择账号范围 → Y确认 → 自动执行
  *
- * 使用: node levelup_breakthrough.js
- * CI模式: set CI=true && set ACCOUNTS_DATA=... && node levelup_breakthrough.js
+ * 🛡️ 反检测: IP伪装 / 独立指纹 / 随机延迟 / 智能分段暂停
  */
 const crypto = require('crypto');
 const fetch = require('node-fetch');
@@ -25,24 +24,6 @@ const antiDetect = require('./_anti_detect_shared');
 const API_BASE = 'https://idlexiuxianzhuan.cn';
 const CLIENT_VERSION = '1.2.4';
 const SIGN_KEY = 'KDYJ1iHyB02LgyN1Jljb5pQkTHU1ELC6Vg6ox6FC0iX0dW9l';
-const MAX_RETRY = 3;
-
-// 突破节点（仅在这些等级可以突破）
-const BREAKPOINTS = [120, 160, 200, 240, 280];
-const MAX_LEVEL = 400;      // 大乘大圆满封顶
-const MAX_LEVEL_UP_ATTEMPTS = 2000; // 防止死循环
-
-// ============================================================
-// CI 检测
-// ============================================================
-const IS_CI = process.env.CI === 'true' || process.env.CI === '1';
-
-function getEnvInt(name, def) {
-  const v = process.env[name];
-  if (v === undefined || v === '') return def;
-  const n = parseInt(v, 10);
-  return Number.isFinite(n) ? n : def;
-}
 
 // ============================================================
 // 🛡️ 反检测全局索引
@@ -152,7 +133,7 @@ function loadAccounts(filepath) {
 }
 
 // ============================================================
-// 升级突破引擎
+// 升级引擎
 // ============================================================
 class LevelUpEngine {
   constructor(account) {
@@ -162,9 +143,7 @@ class LevelUpEngine {
       levelBefore: 0,
       levelAfter: 0,
       levelsGained: 0,
-      breakthroughs: 0,
-      breakthroughFailed: 0,
-      stuckReason: '',
+      stopReason: '',
       errors: []
     };
   }
@@ -210,55 +189,15 @@ class LevelUpEngine {
     return data;
   }
 
-  /** 4. 突破 */
-  async doBreakthrough() {
-    info(this.account.username, '尝试突破...');
-    const idx = this.account._antiIdx || 0;
-    const antiHeaders = antiDetect.buildAntiDetectHeaders(idx + 60);
-    try {
-      const data = await apiRequest('POST', '/player/breakthrough', this.account.token, {}, antiHeaders);
-      if (data && data.ok) {
-        this.stats.breakthroughs++;
-        ok(this.account.username, '突破成功！');
-        return true;
-      }
-      warn(this.account.username, '突破返回异常: ' + JSON.stringify(data));
-      return false;
-    } catch (e) {
-      // 经验不足/条件不足 → 暂时无法突破，调用方应停止该账号
-      if (e.message.includes('无法突破') || e.message.includes('条件不足') || e.message.includes('请先突破') || e.message.includes('经验不足')) {
-        warn(this.account.username, '突破条件不满足: ' + e.message);
-        this.stats.breakthroughFailed++;
-        this.stats.breakthroughFailReason = e.message;
-        return false;
-      }
-      warn(this.account.username, '突破请求失败: ' + e.message);
-      this.stats.breakthroughFailed++;
-      this.stats.breakthroughFailReason = e.message;
-      return false;
-    }
-  }
-
-  /** 5. 检查是否需要突破（在突破节点时检查） */
-  shouldBreakthrough(level) {
-    return BREAKPOINTS.includes(level);
-  }
-
-  /** 6. 判断是否为封顶等级（不可再升） */
-  isMaxLevel(level) {
-    return level >= MAX_LEVEL;
-  }
-
-  /** 完整升级流程 */
+  /** 完整升级流程（只升级，不突破） */
   async run() {
     const acc = this.account;
     const idx = acc._antiIdx || 0;
     const ipInfo = antiDetect.getIpInfo(idx);
 
-    info('⬆️', '================ 升级突破脚本 ================');
+    info('⬆️', '========== 一键升级 ==========');
     info('⬆️', '账号: ' + acc.username);
-    info('⬆️', '🛡️ 反检测: IP=' + ipInfo.ip + ' (' + ipInfo.isp + '·' + ipInfo.province + ')');
-    info('⬆️', '突破节点: ' + JSON.stringify(BREAKPOINTS));
+    info('⬆️', '🛡️ 伪装IP: ' + ipInfo.ip + ' (' + ipInfo.isp + '·' + ipInfo.province + ')');
 
     // 1. 登录
     await this.login();
@@ -277,102 +216,59 @@ class LevelUpEngine {
     // 3. 升级循环
     let attempts = 0;
     let stuckCount = 0;
-    let lastLevel = currentLevel;
+    const MAX_ATTEMPTS = 2000;
+    const MAX_STUCK = 10;
 
-    while (attempts < MAX_LEVEL_UP_ATTEMPTS && stuckCount < 10) {
+    while (attempts < MAX_ATTEMPTS && stuckCount < MAX_STUCK) {
       attempts++;
 
-      // 检查封顶
-      if (this.isMaxLevel(currentLevel)) {
-        ok(acc.username, '已达到 400 级封顶');
-        this.stats.stuckReason = '封顶';
-        break;
-      }
-
-      // 检查是否需要突破
-      if (this.shouldBreakthrough(currentLevel)) {
-        info(acc.username, '到达突破节点 ' + currentLevel + ' 级');
-        await antiDetect.randomDelay(1000, 2000);
-        const btSuccess = await this.doBreakthrough();
-        await this.delay(1500);
-
-        if (btSuccess) {
-          // 突破成功，重新获取等级（突破可能改变等级）
-          currentLevel = await this.getLevel();
-          info(acc.username, '突破后等级: ' + currentLevel);
-          continue;
-        } else {
-          // 突破失败
-          const failReason = this.stats.breakthroughFailReason || '未知';
-          warn(acc.username, '突破失败 @等级' + currentLevel + ': ' + failReason);
-          this.stats.errors.push('突破失败 @等级' + currentLevel + ': ' + failReason);
-          // 如果突破失败原因是经验不足等硬性条件，直接停止该账号
-          // 因为升到突破节点后必须突破才能继续升级（"请先突破"），但条件不够时会死循环
-          if (failReason.includes('经验不足') || failReason.includes('条件不足') || failReason.includes('资源不足')) {
-            warn(acc.username, '突破条件不足，停止升级: ' + failReason);
-            this.stats.stuckReason = '突破条件不足（' + failReason + '）';
-            break;
-          }
-        }
-      }
-
-      // 执行升级
       try {
-        // apiRequest 在 ok===false 时会抛异常，所以成功时才走到这里
-        const result = await this.levelUpOnce();
+        await this.levelUpOnce();
 
-        // 升级成功才累加等级
+        // 升级成功
         currentLevel++;
-        lastLevel = currentLevel;
         stuckCount = 0;
 
         if (currentLevel % 10 === 0) {
           info(acc.username, '当前等级: ' + currentLevel);
         }
 
-        // 随机延迟 — 反检测
+        // 🛡️ 随机延迟 — 反检测
         await antiDetect.randomDelay(300, 800);
       } catch (e) {
         const msg = e.message;
 
-        // ⚠️ 经验不足 → 灵石不够升级了，停止
+        // ⚠️ 经验/灵气/灵石不足 → 正常停止
         if (msg.includes('经验不足') || msg.includes('灵气不足') || msg.includes('灵石不足') || msg.includes('资源不足')) {
           warn(acc.username, '升级停止: ' + msg);
-          this.stats.stuckReason = msg;
+          this.stats.stopReason = msg;
           break;
-        }
-        if (msg.includes('已达上限') || msg.includes('大圆满') || msg.includes('瓶颈')) {
-          warn(acc.username, '已达瓶颈: ' + msg);
-          this.stats.stuckReason = msg;
-          break;
-        }
-        if (msg.includes('已达到大乘大圆满') || msg.includes('400') || msg.includes('封顶')) {
-          ok(acc.username, '已达到封顶等级');
-          this.stats.stuckReason = '封顶';
-          break;
-        }
-        if (msg.includes('请先突破')) {
-          warn(acc.username, '需要先突破: ' + msg);
-          await antiDetect.randomDelay(1000, 2000);
-          const btOk = await this.doBreakthrough();
-          await this.delay(1000);
-          if (btOk) {
-            currentLevel = await this.getLevel();
-            continue;
-          } else {
-            // 突破也失败（经验不足/条件不够）→ 停止该账号，避免死循环
-            const failReason = this.stats.breakthroughFailReason || '未知突破失败';
-            warn(acc.username, '突破条件不满足，停止升级: ' + failReason);
-            this.stats.stuckReason = '突破条件不满足（' + failReason + '）';
-            break;
-          }
         }
 
-        // 其他异常 → 卡住计数
+        // ⚠️ 已达封顶 / 大圆满 / 上限
+        if (msg.includes('已达上限') || msg.includes('大圆满') || msg.includes('封顶') || msg.includes('400')) {
+          ok(acc.username, '已达到封顶等级: ' + msg);
+          this.stats.stopReason = '封顶';
+          break;
+        }
+
+        // ⚠️ 到达突破节点（120/160/200/240/280），不处理突破，停止该账号
+        if (msg.includes('请先突破')) {
+          warn(acc.username, '到达突破节点(' + currentLevel + '级)，需要手动突破，停止升级');
+          this.stats.stopReason = '到达突破节点 @' + currentLevel + '级';
+          break;
+        }
+
+        // ⚠️ 其他异常 → 卡住计数
         stuckCount++;
-        warn(acc.username, '升级异常(' + attempts + '): ' + msg);
+        warn(acc.username, '升级异常(' + attempts + '/' + MAX_STUCK + '): ' + msg.slice(0, 80));
         await this.delay(2000);
       }
+    }
+
+    // 如果因卡住次数过多退出
+    if (stuckCount >= MAX_STUCK && !this.stats.stopReason) {
+      this.stats.stopReason = '卡住次数过多(' + stuckCount + ')';
     }
 
     // 4. 最终获取等级
@@ -382,14 +278,13 @@ class LevelUpEngine {
 
     // 输出
     console.log('');
-    console.log('══════ 升级突破结果 ══════');
+    console.log('══════ 升级结果 ══════');
     console.log('  账号:         ' + acc.username);
     console.log('  初始等级:     ' + this.stats.levelBefore);
     console.log('  最终等级:     ' + this.stats.levelAfter);
     console.log('  提升:         +' + this.stats.levelsGained + ' 级');
-    console.log('  突破次数:     ' + this.stats.breakthroughs);
-    console.log('  停止原因:     ' + (this.stats.stuckReason || '正常结束'));
-    console.log('══════════════════════════');
+    console.log('  停止原因:     ' + (this.stats.stopReason || '正常结束'));
+    console.log('═══════════════════');
     console.log('');
 
     return this.stats;
@@ -414,7 +309,6 @@ function saveResult(results) {
 // 交互输入
 // ============================================================
 function ask(question) {
-  if (IS_CI) return Promise.resolve('');
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
   return new Promise(resolve => rl.question(question, answer => { rl.close(); resolve(answer); }));
 }
@@ -422,14 +316,53 @@ function ask(question) {
 function showBanner() {
   console.log('');
   console.log('╔══════════════════════════════════════════════╗');
-  console.log('║      升级突破脚本 v1.0                       ║');
-  console.log('║      API: /player/level_up                   ║');
-  console.log('║            /player/breakthrough              ║');
-  console.log('║      突破节点: 120/160/200/240/280          ║');
-  console.log('║      封顶等级: 400                           ║');
+  console.log('║       一键升级脚本 v1.1                      ║');
+  console.log('║                                            ║');
+  console.log('║       只升级 · 不突破 · 防封号               ║');
+  console.log('║                                            ║');
+  console.log('║   API: POST /player/level_up                ║');
+  console.log('║   限: 到突破节点自动停止                    ║');
   console.log('╠══════════════════════════════════════════════╣');
-  console.log('║  🛡️ 反检测: IP伪装/独立指纹/随机延迟       ║');
+  console.log('║  🛡️ 反检测:                                 ║');
+  console.log('║     IP伪装 / 独立指纹 / 随机延迟            ║');
+  console.log('║     浏览器指纹轮换 / 智能分段暂停            ║');
   console.log('╚══════════════════════════════════════════════╝');
+  console.log('');
+}
+
+// ============================================================
+// 汇总输出
+// ============================================================
+function printSummary(results) {
+  console.log('');
+  console.log('╔══════════════════════════════════════════════╗');
+  console.log('║               📊 升级汇总                     ║');
+  console.log('╠══════════════════════════════════════════════╣');
+  let totalGained = 0;
+  let successCount = 0;
+  for (const r of results) {
+    if (r.stats) {
+      totalGained += r.stats.levelsGained || 0;
+      if (r.stats.levelAfter > r.stats.levelBefore) successCount++;
+    }
+  }
+  console.log('║  处理账号: ' + String(results.length).padEnd(20) + '║');
+  console.log('║  成功升级: ' + String(successCount).padEnd(20) + '║');
+  console.log('║  总提升级: +' + String(totalGained).padEnd(19) + '║');
+  console.log('╚══════════════════════════════════════════════╝');
+  console.log('');
+
+  for (const r of results) {
+    const s = r.stats;
+    if (!s) {
+      console.log('  ✗ ' + (r.username || '?') + ' — ' + (r.error || '未知错误'));
+      continue;
+    }
+    const gained = s.levelsGained || 0;
+    const icon = gained > 0 ? '✓' : (s.stopReason ? '⏸' : '✗');
+    const reason = s.stopReason ? ' [' + s.stopReason + ']' : '';
+    console.log('  ' + icon + ' ' + r.username + ': ' + s.levelBefore + '→' + s.levelAfter + ' (+' + gained + ')' + reason);
+  }
   console.log('');
 }
 
@@ -443,52 +376,26 @@ async function main() {
   let filepath = './alchemy_accounts.txt';
   if (!fs.existsSync(filepath)) filepath = './accounts.txt';
   if (!fs.existsSync(filepath)) {
-    console.log('未找到账号文件，请创建 alchemy_accounts.txt');
-    if (IS_CI) process.exit(1);
-    return;
+    console.log('❌ 未找到账号文件，请创建 alchemy_accounts.txt');
+    console.log('   格式: 每行 username,password');
+    console.log('   示例: test001,abc123456');
+    process.exit(1);
   }
 
   const accounts = loadAccounts(filepath);
   if (accounts.length === 0) {
-    console.log('没有有效账号');
+    console.log('❌ 没有有效账号');
     process.exit(0);
   }
 
-  if (IS_CI) {
-    const maxAccounts = Math.min(accounts.length, getEnvInt('MAX_ACCOUNTS', accounts.length));
-    const selected = accounts.slice(0, maxAccounts);
-    const results = [];
-    let hasError = false;
+  console.log('📁 账号文件: ' + filepath);
+  console.log('📋 共 ' + accounts.length + ' 个账号');
+  for (const acc of accounts) console.log('   [' + acc.username + ']');
 
-    for (let i = 0; i < selected.length; i++) {
-      const acc = selected[i];
-      acc._antiIdx = i;
-      setApiAccountIndex(i);
-      console.log('═══ 升级突破 [' + (i+1) + '/' + selected.length + ']: ' + acc.username + ' ═══');
-      const engine = new LevelUpEngine(acc);
-      try {
-        const stats = await engine.run();
-        results.push({ username: acc.username, stats });
-        if (stats.errors.length > 0) hasError = true;
-      } catch (e) {
-        err(acc.username, '失败: ' + e.message);
-        results.push({ username: acc.username, error: e.message });
-        hasError = true;
-      }
-      await antiDetect.smartPause(i, selected.length, { batchSize: 2, pauseMin: 15000, pauseMax: 30000 });
-      if (i < selected.length - 1) await antiDetect.randomDelay(3000, 5000);
-    }
-
-    saveResult({ timestamp: new Date().toISOString(), accounts: results });
-    process.exit(hasError ? 1 : 0);
-  }
-
-  // 交互模式
-  console.log('当前 ' + accounts.length + ' 个账号');
-  for (const acc of accounts) console.log('  [' + acc.username + ']');
-  const rangeInput = await ask('输入范围 [1-' + accounts.length + ', 全部]: ');
+  console.log('');
+  const rangeInput = await ask('选择范围 [1-' + accounts.length + ', 直接回车=全部]: ');
   let selected = accounts;
-  if (rangeInput && rangeInput !== '全部') {
+  if (rangeInput && rangeInput.trim()) {
     const parts = rangeInput.split('-').map(s => parseInt(s.trim()));
     if (parts.length === 2 && parts[0] > 0 && parts[1] <= accounts.length)
       selected = accounts.slice(parts[0] - 1, parts[1]);
@@ -496,32 +403,49 @@ async function main() {
       selected = [accounts[parts[0] - 1]];
   }
 
-  console.log('选择 ' + selected.length + ' 个账号');
+  console.log('✅ 已选择 ' + selected.length + ' 个账号');
   const confirm = await ask('开始执行? (Y/n): ');
-  if (confirm.toLowerCase() === 'n' || confirm.toLowerCase() === 'no') { console.log('已取消'); process.exit(0); }
+  if (confirm.toLowerCase() === 'n' || confirm.toLowerCase() === 'no') {
+    console.log('已取消');
+    process.exit(0);
+  }
 
+  // 执行
   const results = [];
-  let hasError = false;
   for (let i = 0; i < selected.length; i++) {
     const acc = selected[i];
     acc._antiIdx = i;
     setApiAccountIndex(i);
-    console.log('═══ 升级突破 [' + (i+1) + '/' + selected.length + ']: ' + acc.username + ' ═══');
+
+    console.log('');
+    console.log('═══ [' + (i + 1) + '/' + selected.length + '] ' + acc.username + ' ═══');
     const engine = new LevelUpEngine(acc);
     try {
       const stats = await engine.run();
       results.push({ username: acc.username, stats });
-      if (stats.errors.length > 0) hasError = true;
     } catch (e) {
-      err(acc.username, '失败: ' + e.message);
+      err(acc.username, '运行失败: ' + e.message);
       results.push({ username: acc.username, error: e.message });
-      hasError = true;
     }
-    await antiDetect.smartPause(i, selected.length, { batchSize: 2, pauseMin: 15000, pauseMax: 30000 });
-    if (i < selected.length - 1) await antiDetect.randomDelay(3000, 5000);
+
+    // 🛡️ 智能分段暂停 — 防封号
+    if (i < selected.length - 1) {
+      await antiDetect.smartPause(i, selected.length, {
+        batchSize: 2,
+        pauseMin: 15000,
+        pauseMax: 30000
+      });
+      await antiDetect.randomDelay(3000, 5000);
+    }
   }
 
+  // 保存结果
   saveResult({ timestamp: new Date().toISOString(), accounts: results });
+
+  // 汇总
+  printSummary(results);
+
+  // 退出
   const rl2 = readline.createInterface({ input: process.stdin, output: process.stdout });
   rl2.question('按回车退出...', () => { rl2.close(); });
 }

@@ -100,7 +100,7 @@ function showBanner() {
   console.log('║                                                    ║');
   console.log('║  阶段1: 🧪 百艺炼丹    → craft_pills.js            ║');
   console.log('║  阶段2: 📬 邮件筑基丹  → mail_claim_and_use.js     ║');
-  console.log('║  阶段3: ⬆️ 升级突破    → levelup_breakthrough.js   ║');
+  console.log('║  阶段3: ⬆️ 一键升级    → levelup.js                ║');
   console.log('╠══════════════════════════════════════════════════════╣');
   console.log('║  🛡️ 每个脚本独立加载反检测模块                    ║');
   console.log('╚══════════════════════════════════════════════════════╝');
@@ -127,7 +127,7 @@ async function main() {
   const scripts = [
     { name: 'craft_pills.js', label: '🧪 百艺炼丹' },
     { name: 'mail_claim_and_use.js', label: '📬 邮件筑基丹' },
-    { name: 'levelup_breakthrough.js', label: '⬆️ 升级突破' }
+    { name: 'levelup.js', label: '⬆️ 一键升级' }
   ];
 
   for (const s of scripts) {
