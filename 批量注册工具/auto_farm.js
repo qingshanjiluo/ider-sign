@@ -62,57 +62,40 @@ function makeSign(method, path, timestamp, bodyStr) {
 
 async function apiRequest(method, path, token, body, extraHeaders) {
   if (token === undefined) token = '';
-  const timestamp = Date.now().toString();
+  if (body === undefined) body = null;
+  if (extraHeaders === undefined) extraHeaders = {};
+  const timestamp = Math.floor(Date.now() / 1000);
   const bodyStr = body ? JSON.stringify(body) : '';
   const sign = makeSign(method, path, timestamp, bodyStr);
-
   const headers = {
     'Content-Type': 'application/json',
     'X-Client-Version': CLIENT_VERSION,
     'X-Sign-T': String(timestamp),
-    'Sign': sign,
-    'X-Requested-With': 'XMLHttpRequest',
-    'Accept': 'application/json, text/plain, */*',
-    'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-    'Priority': 'u=1, i',
-    'Sec-Fetch-Dest': 'empty',
-    'Sec-Fetch-Mode': 'cors',
-    'Sec-Fetch-Site': 'same-origin',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
+    'X-Sign': sign
   };
-
   if (token) headers['Authorization'] = 'Bearer ' + token;
 
-  // 每 3 次调用更换一次反检测头
+  // 🛡️ 注入反检测头
+  const antiHeaders = antiDetect.buildAntiDetectHeaders(_apiAccountIndex + (_apiCallCounter % 100));
+  Object.assign(headers, antiHeaders);
   _apiCallCounter++;
-  if (_apiCallCounter % 3 === 1) {
-    const anti = antiDetect.buildAntiDetectHeaders(_apiAccountIndex);
-    Object.assign(headers, anti);
-  }
 
-  if (extraHeaders) Object.assign(headers, extraHeaders);
+  Object.assign(headers, extraHeaders);
 
   const url = API_BASE + path;
-  const opts = { method, headers };
-  if (body) opts.body = JSON.stringify(body);
-
-  let lastErr = null;
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    try {
-      const res = await fetch(url, opts);
-      const text = await res.text();
-      let json;
-      try { json = JSON.parse(text); } catch (e) { json = { raw: text }; }
-      return json;
-    } catch (err) {
-      lastErr = err;
-      if (attempt < 3) {
-        const wait = Math.min(1000 * attempt, 3000);
-        await new Promise(r => setTimeout(r, wait));
-      }
-    }
+  const opts = { method, headers, timeout: 30000 };
+  if (bodyStr) opts.body = bodyStr;
+  try {
+    const r = await fetch(url, opts);
+    const text = await r.text();
+    let data;
+    try { data = JSON.parse(text); } catch (e) { throw new Error('非JSON响应(' + r.status + '): ' + text.slice(0, 200)); }
+    if (!data || data.ok === false) { throw new Error(data && data.error ? data.error : '请求失败'); }
+    return data;
+  } catch (e) {
+    if (e.message.includes('非JSON') || e.message.includes('请求失败')) throw e;
+    throw new Error(path + ' 请求失败: ' + e.message);
   }
-  return { ok: false, error: String(lastErr?.message || lastErr || '网络请求失败') };
 }
 
 // ============================================================
