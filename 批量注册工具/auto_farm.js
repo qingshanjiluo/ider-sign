@@ -68,8 +68,8 @@ async function apiRequest(method, path, token, body, extraHeaders) {
 
   const headers = {
     'Content-Type': 'application/json',
-    'Client-Version': CLIENT_VERSION,
-    'Timestamp': timestamp,
+    'X-Client-Version': CLIENT_VERSION,
+    'X-Sign-T': String(timestamp),
     'Sign': sign,
     'X-Requested-With': 'XMLHttpRequest',
     'Accept': 'application/json, text/plain, */*',
