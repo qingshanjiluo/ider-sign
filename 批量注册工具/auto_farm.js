@@ -173,78 +173,98 @@ class AutoFarmEngine {
 
   // 登录
   async login() {
-    const body = antiDetect.buildLoginBody(this.account.username, this.account.password, _apiAccountIndex);
-    const result = await apiRequest('POST', '/auth/login', '', body);
-    if (result && result.token) {
-      this.account.token = result.token;
-      this.stats.loginOk = true;
-      return true;
+    try {
+      const body = antiDetect.buildLoginBody(this.account.username, this.account.password, _apiAccountIndex);
+      const result = await apiRequest('POST', '/auth/login', '', body);
+      if (result && result.token) {
+        this.account.token = result.token;
+        this.stats.loginOk = true;
+        return true;
+      }
+      this.stats.error = result?.error || '登录失败';
+    } catch (e) {
+      this.stats.error = e.message || '登录失败';
     }
-    this.stats.error = result?.error || '登录失败';
     return false;
   }
 
   // 获取角色状态 (GET /player/state)
   async getPlayerState() {
-    const result = await apiRequest('GET', '/player/state', this.account.token);
-    if (result && result.ok && result.hasCharacter) {
-      this.account.player = result.player;
-      this.account.activeBattle = result.active_battle;
-      return result;
+    try {
+      const result = await apiRequest('GET', '/player/state', this.account.token);
+      if (result && result.ok && result.hasCharacter) {
+        this.account.player = result.player;
+        this.account.activeBattle = result.active_battle;
+        return result;
+      }
+      this.stats.error = result?.error || '获取角色状态失败';
+    } catch (e) {
+      this.stats.error = e.message || '获取角色状态失败';
     }
-    this.stats.error = result?.error || '获取角色状态失败';
     return null;
   }
 
   // 切换地图 (POST /player/set_map)
   async setMap(mapId) {
-    const result = await apiRequest('POST', '/player/set_map', this.account.token, { map_id: mapId });
-    if (result && result.ok) {
-      this.stats.switchedMap = true;
-      if (this.account.player) {
-        this.account.player.current_map_id = mapId;
+    try {
+      const result = await apiRequest('POST', '/player/set_map', this.account.token, { map_id: mapId });
+      if (result && result.ok) {
+        this.stats.switchedMap = true;
+        if (this.account.player) {
+          this.account.player.current_map_id = mapId;
+        }
+        return true;
       }
-      return true;
+      this.stats.error = result?.error || '切换地图失败';
+    } catch (e) {
+      this.stats.error = e.message || '切换地图失败';
     }
-    this.stats.error = result?.error || '切换地图失败';
     return false;
   }
 
   // 开始战斗 (POST /battle/start)
   async startBattle() {
-    const body = {
-      mapId: this.farmMapId,
-      poll_mode: false,
-      auto_restart: true,
-    };
-    const result = await apiRequest('POST', '/battle/start', this.account.token, body);
-    if (result && result.ok) {
-      this.stats.startedBattle = true;
-      this.stats.inBattle = true;
-      return true;
+    try {
+      const body = {
+        mapId: this.farmMapId,
+        poll_mode: false,
+        auto_restart: true,
+      };
+      const result = await apiRequest('POST', '/battle/start', this.account.token, body);
+      if (result && result.ok) {
+        this.stats.startedBattle = true;
+        this.stats.inBattle = true;
+        return true;
+      }
+      // 可能是已经在战斗中
+      if (result && result.error && (
+        result.error.includes('已在战斗') ||
+        result.error.includes('战斗中') ||
+        result.error.includes('active_battle')
+      )) {
+        this.stats.inBattle = true;
+        this.stats.startedBattle = false;
+        return true; // 已经在战斗，也算成功
+      }
+      this.stats.error = result?.error || '开始战斗失败';
+    } catch (e) {
+      this.stats.error = e.message || '开始战斗失败';
     }
-    // 可能是已经在战斗中
-    if (result && result.error && (
-      result.error.includes('已在战斗') ||
-      result.error.includes('战斗中') ||
-      result.error.includes('active_battle')
-    )) {
-      this.stats.inBattle = true;
-      this.stats.startedBattle = false;
-      return true; // 已经在战斗，也算成功
-    }
-    this.stats.error = result?.error || '开始战斗失败';
     return false;
   }
 
   // 自动设置自动重启战斗 (POST /battle/auto_restart)
   async setAutoRestart() {
-    const body = {
-      enabled: true,
-      map_id: this.farmMapId,
-    };
-    const result = await apiRequest('POST', '/battle/auto_restart', this.account.token, body);
-    return result && result.ok;
+    try {
+      const body = {
+        enabled: true,
+        map_id: this.farmMapId,
+      };
+      const result = await apiRequest('POST', '/battle/auto_restart', this.account.token, body);
+      return result && result.ok;
+    } catch (e) {
+      return false;
+    }
   }
 
   // 主流程
@@ -417,8 +437,22 @@ async function processAccounts(selected) {
     info('系统', `===== 处理 [${i + 1}/${selected.length}] ${acc.username} =====`);
 
     const engine = new AutoFarmEngine(acc);
-    const stats = await engine.run();
-    results.push({ account: acc, stats });
+    try {
+      const stats = await engine.run();
+      results.push({ account: acc, stats });
+    } catch (e) {
+      err(acc.username, `未捕获异常: ${e.message}`);
+      results.push({
+        account: acc,
+        stats: {
+          loginOk: false,
+          inBattle: false,
+          switchedMap: false,
+          startedBattle: false,
+          error: e.message || 'unknown',
+        },
+      });
+    }
 
     // 智能暂停: 每隔 5 个账号休息 30-60 秒
     if ((i + 1) % 5 === 0 && i + 1 < selected.length) {
