@@ -1,0 +1,161 @@
+name: ⚔️ 一键自动刷怪
+
+on:
+  workflow_dispatch:
+    inputs:
+      max_accounts:
+        description: '账号数量（留空=全部）'
+        required: false
+        default: ''
+        type: string
+      range:
+        description: '范围如 1-10（留空=全部）'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  auto-farm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: '批量注册工具/package-lock.json'
+
+      - name: 安装依赖
+        run: |
+          cd 批量注册工具
+          npm install
+
+      - name: 写入账号文件
+        run: |
+          cat > 批量注册工具/alchemy_accounts.txt << 'ACCOUNTS_EOF'
+          AmberDolphin12,qwertyuiop
+          BloodstoneShark26,qwertyuiop
+          HeliotropeWhale27,qwertyuiop
+          JasperDolphin28,qwertyuiop
+          MorganiteOwl31,qwertyuiop
+          NephriteRaven32,qwertyuiop
+          RhodonitePigeon34,qwertyuiop
+          SerpentineSparrow35,qwertyuiop
+          CelestialFox8,qwertyuiop
+          BlazingEagle9,qwertyuiop
+          User001,qwertyuiop
+          User002,qwertyuiop
+          User004,qwertyuiop
+          User005,qwertyuiop
+          User007,qwertyuiop
+          User008,qwertyuiop
+          User010,qwertyuiop
+          User011,qwertyuiop
+          User013,qwertyuiop
+          User014,qwertyuiop
+          User016,qwertyuiop
+          User017,qwertyuiop
+          User019,qwertyuiop
+          User020,qwertyuiop
+          User022,qwertyuiop
+          User023,qwertyuiop
+          User025,qwertyuiop
+          User026,qwertyuiop
+          User034,qwertyuiop
+          User037,qwertyuiop
+          User040,qwertyuiop
+          User043,qwertyuiop
+          User046,qwertyuiop
+          User049,qwertyuiop
+          AzureDragon7_v2,qwertyuiop
+          CrimsonFalcon22_v2,qwertyuiop
+          EmeraldTiger33_v2,qwertyuiop
+          GoldenEagle44_v2,qwertyuiop
+          SilverWolf55_v2,qwertyuiop
+          BronzeBear66_v2,qwertyuiop
+          PlatinumFox77_v2,qwertyuiop
+          DiamondHawk88_v2,qwertyuiop
+          RubyLion99_v2,qwertyuiop
+          SapphireShark10_v2,qwertyuiop
+          TopazWhale11_v2,qwertyuiop
+          CoralSnake13_v2,qwertyuiop
+          PearlOwl14_v2,qwertyuiop
+          OnyxRaven15_v2,qwertyuiop
+          JadeCrow16_v2,qwertyuiop
+          OpalPigeon17_v2,qwertyuiop
+          MalachiteHawk19_v2,qwertyuiop
+          AzuriteEagle20_v2,qwertyuiop
+          CitrineWolf21_v2,qwertyuiop
+          GarnetTiger22_v2,qwertyuiop
+          ObsidianBear23_v2,qwertyuiop
+          MoonstoneFox24_v2,qwertyuiop
+          SunstoneLion25_v2,qwertyuiop
+          KyaniteSnake29_v2,qwertyuiop
+          LarimarFalcon30_v2,qwertyuiop
+          PietersiteCrow33_v2,qwertyuiop
+          TigersEyeHawk36_v2,qwertyuiop
+          QuantumViper4_v2,qwertyuiop
+          User003_v2,qwertyuiop
+          User006_v2,qwertyuiop
+          User009_v2,qwertyuiop
+          User012_v2,qwertyuiop
+          User015_v2,qwertyuiop
+          User018_v2,qwertyuiop
+          User021_v2,qwertyuiop
+          User024_v2,qwertyuiop
+          User027_v2,qwertyuiop
+          User028_v2,qwertyuiop
+          User029_v2,qwertyuiop
+          User030_v2,qwertyuiop
+          User031_v2,qwertyuiop
+          User032_v2,qwertyuiop
+          User033_v2,qwertyuiop
+          User035_v2,qwertyuiop
+          User036_v2,qwertyuiop
+          User038_v2,qwertyuiop
+          User039_v2,qwertyuiop
+          User041_v2,qwertyuiop
+          User042_v2,qwertyuiop
+          User044_v2,qwertyuiop
+          User045_v2,qwertyuiop
+          User047_v2,qwertyuiop
+          User048_v2,qwertyuiop
+          User050_v2,qwertyuiop
+          Turquoise18_v2,qwertyuiop
+          MistLynx,qwertyuiop
+          StormViper,qwertyuiop
+          IronLotus,qwertyuiop
+          WindPhoenix,qwertyuiop
+          DarkCrane,qwertyuiop
+          GoldenEagle,qwertyuiop
+          ACCOUNTS_EOF
+          echo "✅ 账号文件写入完成"
+          echo "📊 账号数量: $(wc -l < 批量注册工具/alchemy_accounts.txt)"
+
+      - name: 运行一键刷怪
+        env:
+          CI: "true"
+          MAX_ACCOUNTS: ${{ github.event.inputs.max_accounts || '' }}
+          RANGE: ${{ github.event.inputs.range || '' }}
+        run: |
+          cd 批量注册工具
+          echo "⚔️ 开始一键自动刷怪..."
+          node auto_farm.js
+
+      - name: 上传结果
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: auto-farm-result
+          path: 批量注册工具/auto_farm_result_*.json
+          retention-days: 7
+
+      - name: 结果摘要
+        if: always()
+        run: |
+          cd 批量注册工具
+          echo "📊 执行结果:"
+          ls -la auto_farm_result_*.json 2>/dev/null && cat auto_farm_result_*.json | head -200 || echo "无结果文件"
