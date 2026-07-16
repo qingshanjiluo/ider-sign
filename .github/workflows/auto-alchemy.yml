@@ -13,7 +13,7 @@ on:
         default: ''
         type: string
   schedule:
-    - cron: '0 */8 * * *'  # 每8小时运行一次
+    - cron: ' * * *'  # 每8小时运行一次
   push:
     branches: [ main ]
     paths:
