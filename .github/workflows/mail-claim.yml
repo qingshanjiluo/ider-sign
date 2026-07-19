@@ -12,8 +12,6 @@ on:
         required: false
         default: ''
         type: string
-  schedule:
-    - cron: '30 */8 * * *'  # 每8小时+30分钟运行一次（与炼丹错开）
   push:
     branches: [ main ]
     paths:
