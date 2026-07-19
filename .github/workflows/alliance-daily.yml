@@ -57,7 +57,7 @@ on:
         default: '天地一家大爱盟'
 
   schedule:
-    - cron: '0 2 * * *'
+    - cron: '0 17 * * *'
 
 jobs:
   alliance-daily:
