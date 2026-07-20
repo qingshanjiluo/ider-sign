@@ -45,7 +45,7 @@ async function authenticate(request, env) {
     return null;
   }
   const user = await env.DB.prepare(
-    'SELECT id, username, level, total_orders, total_spent, invite_code, invited_by, invite_points, commission_rate, email, is_admin, locked FROM users WHERE id = ?'
+    'SELECT id, username, display_name, level, xp, total_orders, total_spent, invite_code, invited_by, invite_points, total_invited, commission_rate, email, avatar_url, bio, is_admin, locked FROM users WHERE id = ?'
   ).bind(result.user_id).first();
   return user;
 }
@@ -91,6 +91,27 @@ function checkRateLimit(ip, key, max = 30, windowSec = 60) {
   return true;
 }
 // Rate limit map entries are cleaned lazily in checkRateLimit
+
+// ─── XP/Level System ──────────────────────
+const XP_LEVELS = [0, 0, 100, 300, 600, 1000, 1600, 2400, 3400, 4600, 6000];
+
+async function recalcUserLevelAndXP(env, userId) {
+  const user = await env.DB.prepare('SELECT id, xp FROM users WHERE id = ?').bind(userId).first();
+  if (!user) return;
+  let level = 1;
+  for (let i = XP_LEVELS.length - 1; i >= 1; i--) {
+    if (user.xp >= XP_LEVELS[i]) { level = i; break; }
+  }
+  await env.DB.prepare('UPDATE users SET level = ? WHERE id = ?').bind(level, userId).run();
+}
+
+async function addXP(env, userId, amount, reason) {
+  await env.DB.prepare('UPDATE users SET xp = xp + ? WHERE id = ?').bind(amount, userId).run();
+  await recalcUserLevelAndXP(env, userId);
+  await env.DB.prepare(
+    "INSERT INTO notifications (user_id, title, content, type) VALUES (?, '经验值 +" + amount + "', '" + reason + "，获得 " + amount + " 经验值', 'xp')"
+  ).bind(userId).run();
+}
 
 export default {
   async fetch(request, env) {
@@ -174,6 +195,12 @@ async function handleRoute(method, path, request, env, url) {
       'INSERT INTO users (username, password_hash, email, invite_code, invited_by, ip_address, created_at) VALUES (?, ?, ?, ?, ?, ?, datetime(\'now\'))'
     ).bind(username, hash, email || '', myInviteCode, inviterId, ip).run();
 
+    // Give inviter XP
+    if (inviterId > 0) {
+      await env.DB.prepare('UPDATE users SET total_invited = total_invited + 1 WHERE id = ?').bind(inviterId).run();
+      await addXP(env, inviterId, 50, '成功邀请用户 ' + username);
+    }
+
     return json({ ok: true, message: '注册成功' });
   }
 
@@ -207,7 +234,8 @@ async function handleRoute(method, path, request, env, url) {
     const totalInvited = await env.DB.prepare(
       'SELECT COUNT(*) as cnt FROM users WHERE invited_by = ?'
     ).bind(user.id).first();
-    return json({ ok: true, user: { ...user, total_invited: totalInvited.cnt, password_hash: undefined } });
+    const nextXP = XP_LEVELS[Math.min(user.level + 1, XP_LEVELS.length - 1)] || 0;
+    return json({ ok: true, user: { ...user, total_invited: totalInvited.cnt, xp_next: nextXP, password_hash: undefined } });
   }
 
   // ── Orders ────────────────────────────────────────
@@ -453,7 +481,8 @@ async function handleRoute(method, path, request, env, url) {
       await env.DB.prepare(
         'UPDATE users SET total_orders = total_orders + 1, total_spent = total_spent + ? WHERE id = ?'
       ).bind(order.price, order.user_id).run();
-      await recalcUserLevel(env, order.user_id);
+      const xpGain = Math.max(50, Math.floor(order.price));
+      await addXP(env, order.user_id, xpGain, '工单 #' + orderId + ' 审核通过');
       await logActivity(env, orderId, order.user_id, 'approved', '工单已审核通过');
 
       if (order.user_id) {
@@ -489,7 +518,7 @@ async function handleRoute(method, path, request, env, url) {
     const user = await authenticate(request, env);
     if (!user || !user.is_admin) return json({ error: '无权限' }, 403);
     const users = await env.DB.prepare(
-      "SELECT id, username, level, total_orders, total_spent, invite_code, invite_points, email, is_admin, locked, created_at, last_login FROM users ORDER BY id DESC"
+      "SELECT id, username, display_name, level, xp, total_orders, total_spent, total_invited, invite_code, invite_points, email, avatar_url, bio, is_admin, locked, created_at, last_login FROM users ORDER BY id DESC"
     ).all();
     return json({ ok: true, users: users.results });
   }
@@ -577,11 +606,11 @@ async function handleRoute(method, path, request, env, url) {
     if (new_password.length < 6) return json({ error: '新密码至少6位' }, 400);
     if (new_password.length > 64) return json({ error: '新密码过长' }, 400);
     const valid = await env.DB.prepare(
-      'SELECT id FROM users WHERE id = ? AND password = ?'
+      'SELECT id FROM users WHERE id = ? AND password_hash = ?'
     ).bind(user.id, hashPassword(old_password)).first();
     if (!valid) return json({ error: '旧密码错误' }, 400);
     await env.DB.prepare(
-      'UPDATE users SET password = ? WHERE id = ?'
+      'UPDATE users SET password_hash = ? WHERE id = ?'
     ).bind(hashPassword(new_password), user.id).run();
     return json({ ok: true, message: '密码修改成功' });
   }
@@ -589,12 +618,35 @@ async function handleRoute(method, path, request, env, url) {
   if (path === '/api/user/profile' && method === 'PUT') {
     const user = await authenticate(request, env);
     if (!user) return json({ error: '未登录' }, 401);
-    const { email, avatar } = body;
+    const { email, avatar_url, display_name, bio } = body;
     if (email !== undefined) {
       if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ error: '邮箱格式不正确' }, 400);
       await env.DB.prepare('UPDATE users SET email = ? WHERE id = ?').bind(email || '', user.id).run();
     }
+    if (avatar_url !== undefined) {
+      if (avatar_url.length > 500) return json({ error: '头像URL过长' }, 400);
+      await env.DB.prepare('UPDATE users SET avatar_url = ? WHERE id = ?').bind(avatar_url, user.id).run();
+    }
+    if (display_name !== undefined) {
+      if (display_name.length > 30) return json({ error: '显示名过长' }, 400);
+      await env.DB.prepare('UPDATE users SET display_name = ? WHERE id = ?').bind(display_name, user.id).run();
+    }
+    if (bio !== undefined) {
+      if (bio.length > 200) return json({ error: '简介过长' }, 400);
+      await env.DB.prepare('UPDATE users SET bio = ? WHERE id = ?').bind(bio, user.id).run();
+    }
     return json({ ok: true, message: '资料已更新' });
+  }
+
+  // ── Public Profile ──────────────────────────────
+  if (path.match(/^\/api\/user\/(\d+)\/public$/) && method === 'GET') {
+    const uid = parseInt(path.match(/^\/api\/user\/(\d+)\/public$/)[1]);
+    const u = await env.DB.prepare(
+      'SELECT id, username, display_name, level, total_orders, total_spent, invite_code, avatar_url, bio, created_at FROM users WHERE id = ?'
+    ).bind(uid).first();
+    if (!u) return json({ error: '用户不存在' }, 404);
+    const totalInvited = await env.DB.prepare('SELECT COUNT(*) as cnt FROM users WHERE invited_by = ?').bind(uid).first();
+    return json({ ok: true, user: { ...u, total_invited: totalInvited.cnt } });
   }
 
   // ── Admin: Coupons ──────────────────────────────────
@@ -760,6 +812,231 @@ async function handleRoute(method, path, request, env, url) {
     });
   }
 
+  // ── Leaderboard ─────────────────────────────────
+  if (path === '/api/leaderboard/purchase' && method === 'GET') {
+    const users = await env.DB.prepare(
+      "SELECT id, username, display_name, avatar_url, level, total_orders, total_spent, total_invited, xp, bio FROM users WHERE total_spent > 0 ORDER BY total_spent DESC LIMIT 50"
+    ).all();
+    return json({ ok: true, leaderboard: users.results });
+  }
+
+  if (path === '/api/leaderboard/invite' && method === 'GET') {
+    const users = await env.DB.prepare(
+      "SELECT id, username, display_name, avatar_url, level, total_invited, xp, total_spent, bio FROM users WHERE total_invited > 0 ORDER BY total_invited DESC LIMIT 50"
+    ).all();
+    return json({ ok: true, leaderboard: users.results });
+  }
+
+  if (path === '/api/leaderboard/level' && method === 'GET') {
+    const users = await env.DB.prepare(
+      "SELECT id, username, display_name, avatar_url, level, xp, total_orders, bio FROM users ORDER BY xp DESC LIMIT 50"
+    ).all();
+    return json({ ok: true, leaderboard: users.results });
+  }
+
+  // ── After-Sales (enhanced appeals) ─────────────
+  if (path === '/api/after-sales' && method === 'GET') {
+    const user = await authenticate(request, env);
+    if (!user) return json({ error: '未登录' }, 401);
+    const items = await env.DB.prepare(
+      "SELECT a.*, o.invite_code as order_invite_code FROM appeals a LEFT JOIN orders o ON a.order_id = o.id WHERE a.user_id = ? AND a.type IN ('after_sales','appeal') ORDER BY a.created_at DESC"
+    ).bind(user.id).all();
+    return json({ ok: true, items: items.results });
+  }
+
+  if (path === '/api/after-sales' && method === 'POST') {
+    const user = await authenticate(request, env);
+    if (!user) return json({ error: '未登录' }, 401);
+    const { order_id, title, content } = body;
+    if (!title || !content) return json({ error: '请填写标题和内容' }, 400);
+    if (!order_id) return json({ error: '请选择相关工单' }, 400);
+    await env.DB.prepare(
+      "INSERT INTO appeals (user_id, order_id, title, content, type, status, created_at) VALUES (?, ?, ?, ?, 'after_sales', 'pending', datetime('now'))"
+    ).bind(user.id, order_id, title, content).run();
+    return json({ ok: true, message: '售后请求已提交，等待管理员回复' });
+  }
+
+  if (path.match(/^\/api\/after-sales\/(\d+)\/reply$/) && method === 'POST') {
+    const user = await authenticate(request, env);
+    if (!user) return json({ error: '未登录' }, 401);
+    const itemId = parseInt(path.match(/^\/api\/after-sales\/(\d+)\/reply$/)[1]);
+    const { content } = body;
+    if (!content) return json({ error: '请填写回复内容' }, 400);
+    const item = await env.DB.prepare('SELECT * FROM appeals WHERE id = ? AND user_id = ?').bind(itemId, user.id).first();
+    if (!item) return json({ error: '售后请求不存在' }, 404);
+    const existing = item.admin_reply || '';
+    await env.DB.prepare(
+      "UPDATE appeals SET admin_reply = ?, updated_at = datetime('now') WHERE id = ?"
+    ).bind(existing + '\n[用户回复] ' + content, itemId).run();
+    return json({ ok: true, message: '已回复' });
+  }
+
+  // ── Redeem Codes ───────────────────────────────
+  if (path === '/api/redeem' && method === 'POST') {
+    const user = await authenticate(request, env);
+    if (!user) return json({ error: '未登录' }, 401);
+    const { code } = body;
+    if (!code) return json({ error: '请输入兑换码' }, 400);
+    const clean = code.trim().toUpperCase();
+    const rc = await env.DB.prepare(
+      "SELECT * FROM redeem_codes WHERE code = ? AND (expires_at IS NULL OR expires_at > datetime('now')) AND (max_uses = 0 OR used_count < max_uses)"
+    ).bind(clean).first();
+    if (!rc) return json({ error: '兑换码无效或已用完' }, 404);
+    const used = await env.DB.prepare('SELECT id FROM redeem_log WHERE user_id = ? AND code = ?').bind(user.id, clean).first();
+    if (used) return json({ error: '您已使用过此兑换码' }, 400);
+    await env.DB.prepare('UPDATE redeem_codes SET used_count = used_count + 1 WHERE id = ?').bind(rc.id).run();
+    await env.DB.prepare('INSERT INTO redeem_log (user_id, code, xp) VALUES (?, ?, ?)').bind(user.id, clean, rc.xp).run();
+    await addXP(env, user.id, rc.xp, '使用兑换码 ' + clean);
+    return json({ ok: true, message: '兑换成功，获得 ' + rc.xp + ' 经验值', xp: rc.xp });
+  }
+
+  // ── Account Logs (GH run output) ────────────────
+  if (path.match(/^\/api\/accounts\/(\d+)\/logs$/) && method === 'GET') {
+    const user = await authenticate(request, env);
+    if (!user) return json({ error: '未登录' }, 401);
+    const aid = parseInt(path.match(/^\/api\/accounts\/(\d+)\/logs$/)[1]);
+    const acc = await env.DB.prepare(
+      'SELECT ga.*, o.user_id as order_user_id FROM game_accounts ga JOIN orders o ON ga.order_id = o.id WHERE ga.id = ?'
+    ).bind(aid).first();
+    if (!acc) return json({ error: '账号不存在' }, 404);
+    if (acc.order_user_id !== user.id && !user.is_admin) return json({ error: '无权限' }, 403);
+    const logs = await env.DB.prepare(
+      'SELECT * FROM account_logs WHERE account_id = ? ORDER BY created_at DESC LIMIT 100'
+    ).bind(aid).all();
+    return json({ ok: true, logs: logs.results });
+  }
+
+  // ── Admin: Full User Management ────────────────
+  if (path.match(/^\/api\/admin\/users\/(\d+)\/reset-password$/) && method === 'POST') {
+    const admin = await authenticate(request, env);
+    if (!admin || !admin.is_admin) return json({ error: '无权限' }, 403);
+    const targetId = parseInt(path.match(/^\/api\/admin\/users\/(\d+)\/reset-password$/)[1]);
+    const { new_password } = body;
+    if (!new_password || new_password.length < 6) return json({ error: '密码至少6位' }, 400);
+    await env.DB.prepare('UPDATE users SET password_hash = ? WHERE id = ?').bind(hashPassword(new_password), targetId).run();
+    return json({ ok: true, message: '密码已重置' });
+  }
+
+  if (path.match(/^\/api\/admin\/users\/(\d+)\/level$/) && method === 'POST') {
+    const admin = await authenticate(request, env);
+    if (!admin || !admin.is_admin) return json({ error: '无权限' }, 403);
+    const targetId = parseInt(path.match(/^\/api\/admin\/users\/(\d+)\/level$/)[1]);
+    const { level } = body;
+    if (!level || level < 1 || level > 10) return json({ error: '等级需在1-10之间' }, 400);
+    await env.DB.prepare('UPDATE users SET level = ? WHERE id = ?').bind(level, targetId).run();
+    return json({ ok: true, message: '等级已更新' });
+  }
+
+  if (path.match(/^\/api\/admin\/users\/(\d+)\/admin$/) && method === 'POST') {
+    const admin = await authenticate(request, env);
+    if (!admin || !admin.is_admin) return json({ error: '无权限' }, 403);
+    const targetId = parseInt(path.match(/^\/api\/admin\/users\/(\d+)\/admin$/)[1]);
+    const { is_admin } = body;
+    await env.DB.prepare('UPDATE users SET is_admin = ? WHERE id = ?').bind(is_admin ? 1 : 0, targetId).run();
+    return json({ ok: true, message: is_admin ? '已提升为管理员' : '已取消管理员' });
+  }
+
+  if (path.match(/^\/api\/admin\/users\/(\d+)\/delete$/) && method === 'DELETE') {
+    const admin = await authenticate(request, env);
+    if (!admin || !admin.is_admin) return json({ error: '无权限' }, 403);
+    const targetId = parseInt(path.match(/^\/api\/admin\/users\/(\d+)\/delete$/)[1]);
+    if (targetId === admin.id) return json({ error: '不能删除自己' }, 400);
+    await env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(targetId).run();
+    await env.DB.prepare('DELETE FROM users WHERE id = ?').bind(targetId).run();
+    return json({ ok: true, message: '用户已删除' });
+  }
+
+  // ── Admin: Announcements & Ads ────────────────
+  if (path === '/api/admin/announcements' && method === 'GET') {
+    const admin = await authenticate(request, env);
+    if (!admin || !admin.is_admin) return json({ error: '无权限' }, 403);
+    const anns = await env.DB.prepare('SELECT * FROM announcements ORDER BY created_at DESC').all();
+    return json({ ok: true, announcements: anns.results });
+  }
+
+  if (path === '/api/admin/announcements' && method === 'POST') {
+    const admin = await authenticate(request, env);
+    if (!admin || !admin.is_admin) return json({ error: '无权限' }, 403);
+    const { content, enabled } = body;
+    if (!content) return json({ error: '请输入公告内容' }, 400);
+    await env.DB.prepare(
+      "INSERT INTO announcements (content, enabled, created_at) VALUES (?, ?, datetime('now'))"
+    ).bind(content, enabled !== false ? 1 : 0).run();
+    return json({ ok: true, message: '公告已发布' });
+  }
+
+  if (path.match(/^\/api\/admin\/announcements\/(\d+)$/) && method === 'DELETE') {
+    const admin = await authenticate(request, env);
+    if (!admin || !admin.is_admin) return json({ error: '无权限' }, 403);
+    await env.DB.prepare('DELETE FROM announcements WHERE id = ?').bind(parseInt(path.match(/^\/api\/admin\/announcements\/(\d+)$/)[1])).run();
+    return json({ ok: true });
+  }
+
+  if (path === '/api/announcements/active' && method === 'GET') {
+    const ann = await env.DB.prepare(
+      "SELECT * FROM announcements WHERE enabled = 1 ORDER BY created_at DESC LIMIT 1"
+    ).first();
+    return json({ ok: true, announcement: ann || null });
+  }
+
+  // ── Admin: Ads ─────────────────────────────────
+  if (path === '/api/admin/ads' && method === 'GET') {
+    const admin = await authenticate(request, env);
+    if (!admin || !admin.is_admin) return json({ error: '无权限' }, 403);
+    const ads = await env.DB.prepare('SELECT * FROM ads ORDER BY created_at DESC').all();
+    return json({ ok: true, ads: ads.results });
+  }
+
+  if (path === '/api/admin/ads' && method === 'POST') {
+    const admin = await authenticate(request, env);
+    if (!admin || !admin.is_admin) return json({ error: '无权限' }, 403);
+    const { type, image_url, link_url, title, enabled } = body;
+    if (!image_url) return json({ error: '请上传图片' }, 400);
+    await env.DB.prepare(
+      "INSERT INTO ads (type, image_url, link_url, title, enabled, created_at) VALUES (?, ?, ?, ?, ?, datetime('now'))"
+    ).bind(type || 'popup', image_url, link_url || '', title || '', enabled ? 1 : 0).run();
+    return json({ ok: true, message: '广告已添加' });
+  }
+
+  if (path.match(/^\/api\/admin\/ads\/(\d+)$/) && method === 'DELETE') {
+    const admin = await authenticate(request, env);
+    if (!admin || !admin.is_admin) return json({ error: '无权限' }, 403);
+    await env.DB.prepare('DELETE FROM ads WHERE id = ?').bind(parseInt(path.match(/^\/api\/admin\/ads\/(\d+)$/)[1])).run();
+    return json({ ok: true });
+  }
+
+  if (path === '/api/ads/active' && method === 'GET') {
+    const popup = await env.DB.prepare("SELECT * FROM ads WHERE type = 'popup' AND enabled = 1 ORDER BY created_at DESC LIMIT 1").first();
+    const sidebar = await env.DB.prepare("SELECT * FROM ads WHERE type = 'sidebar' AND enabled = 1 ORDER BY created_at DESC LIMIT 1").first();
+    return json({ ok: true, popup: popup || null, sidebar: sidebar || null });
+  }
+
+  // ── GH: Report Account Log ─────────────────────
+  if (path === '/api/gh/report-log' && method === 'POST') {
+    if (!authenticateApi(request, env)) return json({ error: '无效API密钥' }, 403);
+    const { account_id, order_id, log_type, message, raw_output } = body;
+    await env.DB.prepare(
+      "INSERT INTO account_logs (account_id, order_id, log_type, message, raw_output) VALUES (?, ?, ?, ?, ?)"
+    ).bind(account_id || 0, order_id || 0, log_type || 'info', message || '', raw_output || '').run();
+    return json({ ok: true });
+  }
+
+  // ── Public config with announcements/ads ──────
+  if (path === '/api/public/config' && method === 'GET') {
+    const configs = await env.DB.prepare('SELECT key, value FROM config').all();
+    const cfg = {};
+    for (const c of configs.results) cfg[c.key] = c.value;
+    const ann = await env.DB.prepare("SELECT * FROM announcements WHERE enabled = 1 ORDER BY created_at DESC LIMIT 1").first();
+    const adsData = {
+      popup: null, sidebar: null
+    };
+    const popupAd = await env.DB.prepare("SELECT * FROM ads WHERE type = 'popup' AND enabled = 1 ORDER BY created_at DESC LIMIT 1").first();
+    const sidebarAd = await env.DB.prepare("SELECT * FROM ads WHERE type = 'sidebar' AND enabled = 1 ORDER BY created_at DESC LIMIT 1").first();
+    if (popupAd) adsData.popup = popupAd;
+    if (sidebarAd) adsData.sidebar = sidebarAd;
+    return json({ ok: true, config: cfg, announcement: ann || null, ads: adsData });
+  }
+
   return json({ error: 'Not found' }, 404);
 }
 
@@ -892,14 +1169,4 @@ async function getBotAnswer(question, env, user) {
     '试试问：\n- "我的订单状态"\n- "价格说明"\n- "优惠折扣"\n- "邀请分成"\n- "预计多久到账"';
 }
 
-async function recalcUserLevel(env, userId) {
-  const user = await env.DB.prepare('SELECT total_orders FROM users WHERE id = ?').bind(userId).first();
-  if (!user) return;
-  const orders = user.total_orders || 0;
-  const levelMap = [0, 0, 1, 3, 5, 10, 20, 35, 50, 75, 100];
-  let newLevel = 1;
-  for (let i = levelMap.length - 1; i >= 1; i--) {
-    if (orders >= levelMap[i]) { newLevel = i; break; }
-  }
-  await env.DB.prepare('UPDATE users SET level = ? WHERE id = ?').bind(newLevel, userId).run();
-}
+

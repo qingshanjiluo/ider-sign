@@ -1,6 +1,11 @@
 name = "ider-order-system"
 main = "worker/index.js"
 compatibility_date = "2025-01-01"
+workers_dev = true
+
+routes = [
+  { pattern = "ider-order-system.sifangzhiji.workers.dev/*", zone_id = "", custom_domain = false }
+]
 
 [[d1_databases]]
 binding = "DB"
