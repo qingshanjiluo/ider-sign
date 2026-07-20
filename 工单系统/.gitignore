@@ -1,3 +1,27 @@
-.wrangler/  
-set_secrets.mjs  
-setup_domain.mjs  
+# Temporary diagnosis/verification scripts
+_check_*.js
+_diag*.js
+_fix_*.js
+_deploy_*.js
+_promote*.js
+_config_*.js
+_redeploy*.js
+_route_*.js
+_verify*.js
+
+# Dependencies
+node_modules/
+
+# Cloudflare Wrangler artifacts
+.wrangler/
+
+# Database migrations
+migrations/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Environment files
+.env
+.env.local

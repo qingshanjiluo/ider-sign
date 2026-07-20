@@ -1,0 +1,36 @@
+name: 每日试炼
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  daily-trial:
+    name: 每日自动试炼
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 运行每日试炼
+        env:
+          WORKER_URL: ${{ secrets.WORKER_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+        run: node gh-actions/daily_trial.js
+
+      - name: 上传日志
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-trial-log
+          path: |
+            gh-actions/trial_config.json
+            trial_test_report.json
+          retention-days: 7

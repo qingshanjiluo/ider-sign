@@ -1,5 +1,5 @@
 -- 艾德尔工单系统 - D1 数据库 Schema
--- 赛博朋克修仙工单平台 v3.0
+-- 赛博朋克修仙工单平台 v3.1
 
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -22,7 +22,9 @@ CREATE TABLE IF NOT EXISTS users (
   last_login TEXT,
   ip_address TEXT DEFAULT '',
   locked INTEGER DEFAULT 0,
-  is_admin INTEGER DEFAULT 0
+  is_admin INTEGER DEFAULT 0,
+  role TEXT DEFAULT 'user' CHECK(role IN ('user', 'admin', 'super_admin')),
+  bonus_points REAL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS sessions (
@@ -45,6 +47,8 @@ CREATE TABLE IF NOT EXISTS orders (
   coupon_code TEXT DEFAULT '',
   discount REAL DEFAULT 0,
   bonus_points INTEGER DEFAULT 0,
+  order_type TEXT DEFAULT '代练',
+  quantity INTEGER DEFAULT 1,
   status TEXT DEFAULT 'pending',
   bind_account_name TEXT DEFAULT '',
   bind_invite_code TEXT DEFAULT '',
@@ -227,6 +231,32 @@ CREATE TABLE IF NOT EXISTS ads (
 CREATE INDEX IF NOT EXISTS idx_account_logs_account ON account_logs(account_id);
 CREATE INDEX IF NOT EXISTS idx_redeem_log_user ON redeem_log(user_id);
 
--- Seed admin user (zzhx / Pipi20100817)
-INSERT OR IGNORE INTO users (username, password_hash, invite_code, is_admin, level, xp, created_at)
-VALUES ('zzhx', '8d1920593b78d648a4dda2d3ec58a2177e6356ac845e4edde4fb0a01663cb452', 'ADMIN01', 1, 10, 9999, datetime('now'));
+-- v3.1: 密码重置 Token 表（替代全局 Map，解决多实例冷启动问题）
+CREATE TABLE IF NOT EXISTS reset_tokens (
+  token TEXT PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  username TEXT NOT NULL,
+  expires_at INTEGER NOT NULL,
+  created_at TEXT DEFAULT (datetime('now')),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+CREATE INDEX IF NOT EXISTS idx_reset_tokens_expires ON reset_tokens(expires_at);
+
+-- v4.0: 角色系统 + 联系留言
+CREATE TABLE IF NOT EXISTS contact_messages (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER DEFAULT 0,
+  name TEXT NOT NULL,
+  email TEXT DEFAULT '',
+  content TEXT NOT NULL,
+  is_read INTEGER DEFAULT 0,
+  created_at TEXT DEFAULT (datetime('now')),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- 迁移 v4.0: 旧管理员 is_admin=1 自动升级为 admin 角色
+UPDATE users SET role = 'admin' WHERE is_admin = 1 AND role = 'user';
+
+-- Seed admin user (最中幻想 / Pipi20100817)
+INSERT OR IGNORE INTO users (username, password_hash, display_name, invite_code, is_admin, role, level, xp, created_at)
+VALUES ('zzhx', 'ce768490e42a23ffdbd585e0a437293f9cf91d6dc7d2f8c55887ad0c4063d982', '最中幻想', 'ADMIN01', 1, 'super_admin', 10, 9999, datetime('now'));

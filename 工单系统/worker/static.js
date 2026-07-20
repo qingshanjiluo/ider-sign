@@ -353,6 +353,8 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); curs
 .modal h2 { color:var(--cyan); margin-bottom:16px; font-size:1em; text-transform:uppercase; letter-spacing:3px; font-family:'Orbitron', monospace; }
 .modal .btn-group { display:flex; gap:12px; justify-content:flex-end; margin-top:24px; }
 
+/* ─── Pagination Disabled ───────────── */
+.btn[disabled], .btn:disabled { opacity:0.3; cursor:not-allowed; pointer-events:none; }
 /* ─── Tabs ─────────────────────────── */
 .tabs {
   display:flex; gap:2px; margin-bottom:20px;
@@ -545,6 +547,82 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); curs
   .redeem-input { display:flex; gap:10px; }
   .redeem-input input { flex:1; padding:10px 14px; border:1px solid var(--border); background:var(--bg-input); color:var(--text); border-radius:6px; font-size:1.2em; text-align:center; letter-spacing:4px; text-transform:uppercase; }
 }`;
+// ─── SVG Icons (Lucide-based) ─────────────
+const ICONS = {
+user:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12"cy="8"r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg>',
+users:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5"cy="7"r="4"/><path d="M20 8v6"/><path d="M23 11h-6"/></svg>',
+settings:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12"cy="12"r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+star:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+trophy:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',
+crown:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><path d="M3 20h18"/></svg>',
+zap:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+mail:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2"y="4"width="20"height="16"rx="2"/><path d="M22 4 12 13 2 4"/></svg>',
+shield:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+check:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>',
+x:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18"y1="6"x2="6"y2="18"/><line x1="6"y1="6"x2="18"y2="18"/></svg>',
+menu:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4"y1="6"x2="20"y2="6"/><line x1="4"y1="12"x2="20"y2="12"/><line x1="4"y1="18"x2="20"y2="18"/></svg>',
+hourglass:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>',
+sparkles:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h3l-1.5 3 1.5 3H9"/><path d="M15 3h3l-1.5 3 1.5 3h-3"/><path d="M5 15h3l1.5-3L9 9H6"/><path d="M8 21h3l1.5-3-1.5-3H8"/></svg>',
+pencil:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>',
+swords:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13"y1="19"x2="19"y2="13"/><line x1="16"y1="16"x2="20"y2="20"/><line x1="19"y1="21"x2="21"y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5"y1="11"x2="11"y2="5"/></svg>',
+alert:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+rocket:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>',
+book:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M18 2v6l-2-2-2 2V2"/></svg>',
+monitor:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2"y="3"width="20"height="14"rx="2"/><line x1="8"y1="21"x2="16"y2="21"/><line x1="12"y1="17"x2="12"y2="21"/></svg>',
+handshake:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 17a1 1 0 0 1 1 1c0 .5-.34 1-.76 1.22L8.5 21.5l-3.74-3.74A2 2 0 0 1 4 16.38V5.5a2.5 2.5 0 0 1 5 0v5"/><path d="M13 17a1 1 0 0 0 1 1c.5 0 .34 1 .76 1.22L15.5 21.5l3.74-3.74A2 2 0 0 0 20 16.38V5.5a2.5 2.5 0 0 0-5 0v5"/><path d="M6 12h4"/><path d="M14 12h4"/><path d="M8 8h3"/><path d="M13 8h3"/></svg>',
+chart:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 16v-3"/><path d="M12 16v-6"/><path d="M17 16V8"/></svg>',
+crosshair:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12"cy="12"r="10"/><line x1="22"y1="12"x2="18"y2="12"/><line x1="6"y1="12"x2="2"y2="12"/><line x1="12"y1="6"x2="12"y2="2"/><line x1="12"y1="22"x2="12"y2="18"/></svg>',
+gem:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M12 22 2 9h20"/><path d="M2 9h20"/><path d="M10 3 8 9"/><path d="M14 3l2 6"/></svg>',
+clipboard:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8"y="2"width="8"height="4"rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>',
+bot:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3"y="11"width="18"height="10"rx="2"/><circle cx="12"cy="5"r="2"/><path d="M12 7v4"/><line x1="8"y1="15"x2="8"y2="15"/><line x1="16"y1="15"x2="16"y2="15"/></svg>',
+coins:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8"cy="8"r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="M16.42 17.08a6 6 0 0 1-3.25 1.42"/></svg>',
+timer:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10"y1="2"x2="14"y2="2"/><line x1="12"y1="14"x2="12"y2="8"/><circle cx="12"cy="14"r="8"/></svg>',
+lifebuoy:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12"cy="12"r="10"/><circle cx="12"cy="12"r="4"/><path d="M4.93 4.93l4.24 4.24"/><path d="M14.83 14.83l4.24 4.24"/><path d="M4.93 19.07l4.24-4.24"/><path d="M14.83 9.17l4.24-4.24"/></svg>',
+creditcard:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1"y="4"width="22"height="16"rx="2"/><line x1="1"y1="10"x2="23"y2="10"/></svg>',
+search:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11"cy="11"r="8"/><line x1="21"y1="21"x2="16.65"y2="16.65"/></svg>',
+gamepad:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6"y1="11"x2="10"y2="11"/><line x1="8"y1="9"x2="8"y2="13"/><line x1="15"y1="12"x2="15.01"y2="12"/><line x1="18"y1="10"x2="18.01"y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg>',
+ticket:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>',
+megaphone:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 13"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>',
+image:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3"y="3"width="18"height="18"rx="2"/><circle cx="8.5"cy="8.5"r="1.5"/><path d="m21 15-5-5L5 21"/></svg>',
+key:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8"cy="21"r="2"/><path d="m16 16-4 4-1-1-2 2"/><circle cx="16"cy="7"r="5"/><line x1="19"y1="4"x2="12"y2="11"/></svg>',
+bell:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>',
+calendar:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3"y="4"width="18"height="18"rx="2"/><line x1="16"y1="2"x2="16"y2="6"/><line x1="8"y1="2"x2="8"y2="6"/><line x1="3"y1="10"x2="21"y2="10"/></svg>',
+scroll:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h12a2 2 0 0 0 2-2v-2H4v2a2 2 0 0 0 2 2z"/><path d="M20 15V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10"/><path d="M9 9h6"/><path d="M9 13h6"/><path d="M4 5h16"/></svg>',
+lock:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3"y="11"width="18"height="11"rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+trending:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
+copy:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9"y="9"width="13"height="13"rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+logOut:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21"y1="12"x2="9"y2="12"/></svg>',
+arrowUp:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12"y1="19"x2="12"y2="5"/><polyline points="5 12 12 5 19 12"/></svg>',
+arrowDown:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12"y1="5"x2="12"y2="19"/><polyline points="19 12 12 19 5 12"/></svg>',
+refresh:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>',
+plus:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12"y1="5"x2="12"y2="19"/><line x1="5"y1="12"x2="19"y2="12"/></svg>',
+link:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+trash:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+external:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>',
+globe:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12"cy="12"r="10"/><line x1="2"y1="12"x2="22"y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+message:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+heart:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.5-1.5 2.5-3.5 2.5-5.5A4.5 4.5 0 0 0 12 7.5 4.5 4.5 0 0 0 2.5 8.5c0 2 1 4 2.5 5.5L12 22z"/></svg>',
+info:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12"cy="12"r="10"/><line x1="12"y1="16"x2="12"y2="12"/><line x1="12"y1="8"x2="12.01"y2="8"/></svg>',
+upload:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12"y1="3"x2="12"y2="15"/></svg>',
+download:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12"y1="15"x2="12"y2="3"/></svg>',
+home:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+filter:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>',
+flame:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
+dollar:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00ff88"stroke-width="2"><line x1="12"y1="1"x2="12"y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
+wallet:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>',
+package:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+activity:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
+};
+function icon(n) { return ICONS[n]||''; }
+function iconBig(n) {
+  const b = {
+    crown:'<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><path d="M3 20h18"/></svg>',
+    trophy:'<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',
+    handshake:'<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 17a1 1 0 0 1 1 1c0 .5-.34 1-.76 1.22L8.5 21.5l-3.74-3.74A2 2 0 0 1 4 16.38V5.5a2.5 2.5 0 0 1 5 0v5"/><path d="M13 17a1 1 0 0 0 1 1c.5 0 .34 1 .76 1.22L15.5 21.5l3.74-3.74A2 2 0 0 0 20 16.38V5.5a2.5 2.5 0 0 0-5 0v5"/><path d="M6 12h4"/><path d="M14 12h4"/><path d="M8 8h3"/><path d="M13 8h3"/></svg>',
+    rocket:'<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>',
+  };
+  return b[n]||'';
+}
 
 const HTML = `<!DOCTYPE html>
 <html lang="zh-CN">
@@ -603,6 +681,10 @@ const HTML = `<!DOCTYPE html>
 // ─── State ──────────────────────────────────
 let TOKEN = localStorage.getItem('token') || '';
 let USER = null;
+// ─── Client-side Icons (for escaped template literals) ───
+const _ICONS={user:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg>',check:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>',x:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',shield:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',hourglass:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>',sparkles:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h3l-1.5 3 1.5 3H9"/><path d="M15 3h3l-1.5 3 1.5 3h-3"/><path d="M5 15h3l1.5-3L9 9H6"/><path d="M8 21h3l1.5-3-1.5-3H8"/></svg>',pencil:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>',swords:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" y1="19" x2="19" y2="13"/></svg>',alert:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',mail:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4 12 13 2 4"/></svg>',bell:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>',lock:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',clipboard:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>',trophy:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',bot:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg>'};
+function icon(n){return _ICONS[n]||'';}
+function iconBig(n){const b={crown:'<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><path d="M3 20h18"/></svg>',trophy:'<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',handshake:'<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 17a1 1 0 0 1 1 1c0 .5-.34 1-.76 1.22L8.5 21.5l-3.74-3.74A2 2 0 0 1 4 16.38V5.5a2.5 2.5 0 0 1 5 0v5"/><path d="M13 17a1 1 0 0 0 1 1c.5 0 .34 1 .76 1.22L15.5 21.5l3.74-3.74A2 2 0 0 0 20 16.38V5.5a2.5 2.5 0 0 0-5 0v5"/><path d="M6 12h4"/><path d="M14 12h4"/></svg>',rocket:'<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2"/></svg>'};return b[n]||'';}
 const API = window.location.origin;
 let notifInterval = null;
 const LD = { 1:0, 2:0, 3:10, 4:20, 5:30, 6:40, 7:45, 8:50, 9:60, 10:70 };
@@ -616,82 +698,6 @@ const INVITE_PACKAGES = [
   { id: 'legend',  name: '至尊无敌', points: 120000, price: 1000,color: '#ff00aa', desc: '满级倍率(3.0x)+专属标识', badge: 'LEGEND' },
 ];
 
-// ─── SVG Icons (Lucide-based) ─────────────
-const ICONS = {
-user:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><circle cx="12"cy="8"r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg>',
-users:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5"cy="7"r="4"/><path d="M20 8v6"/><path d="M23 11h-6"/></svg>',
-settings:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><circle cx="12"cy="12"r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
-star:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
-trophy:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',
-crown:'<svg w="20"h="20"viewBox="0 0 24 24"fill="none"stroke="#ffd700"sw="2"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><path d="M3 20h18"/></svg>',
-zap:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
-mail:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><rect x="2"y="4"width="20"height="16"rx="2"/><path d="M22 4 12 13 2 4"/></svg>',
-shield:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
-check:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><polyline points="20 6 9 17 4 12"/></svg>',
-x:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><line x1="18"y1="6"x2="6"y2="18"/><line x1="6"y1="6"x2="18"y2="18"/></svg>',
-menu:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><line x1="4"y1="6"x2="20"y2="6"/><line x1="4"y1="12"x2="20"y2="12"/><line x1="4"y1="18"x2="20"y2="18"/></svg>',
-hourglass:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="#ffd700"sw="2"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>',
-sparkles:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M9 3h3l-1.5 3 1.5 3H9"/><path d="M15 3h3l-1.5 3 1.5 3h-3"/><path d="M5 15h3l1.5-3L9 9H6"/><path d="M8 21h3l1.5-3-1.5-3H8"/></svg>',
-pencil:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>',
-swords:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13"y1="19"x2="19"y2="13"/><line x1="16"y1="16"x2="20"y2="20"/><line x1="19"y1="21"x2="21"y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5"y1="11"x2="11"y2="5"/></svg>',
-alert:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
-rocket:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>',
-book:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M18 2v6l-2-2-2 2V2"/></svg>',
-monitor:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><rect x="2"y="3"width="20"height="14"rx="2"/><line x1="8"y1="21"x2="16"y2="21"/><line x1="12"y1="17"x2="12"y2="21"/></svg>',
-handshake:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M11 17a1 1 0 0 1 1 1c0 .5-.34 1-.76 1.22L8.5 21.5l-3.74-3.74A2 2 0 0 1 4 16.38V5.5a2.5 2.5 0 0 1 5 0v5"/><path d="M13 17a1 1 0 0 0 1 1c.5 0 .34 1 .76 1.22L15.5 21.5l3.74-3.74A2 2 0 0 0 20 16.38V5.5a2.5 2.5 0 0 0-5 0v5"/><path d="M6 12h4"/><path d="M14 12h4"/><path d="M8 8h3"/><path d="M13 8h3"/></svg>',
-chart:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M3 3v18h18"/><path d="M7 16v-3"/><path d="M12 16v-6"/><path d="M17 16V8"/></svg>',
-crosshair:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><circle cx="12"cy="12"r="10"/><line x1="22"y1="12"x2="18"y2="12"/><line x1="6"y1="12"x2="2"y2="12"/><line x1="12"y1="6"x2="12"y2="2"/><line x1="12"y1="22"x2="12"y2="18"/></svg>',
-gem:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M12 22 2 9h20"/><path d="M2 9h20"/><path d="M10 3 8 9"/><path d="M14 3l2 6"/></svg>',
-clipboard:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><rect x="8"y="2"width="8"height="4"rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>',
-bot:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><rect x="3"y="11"width="18"height="10"rx="2"/><circle cx="12"cy="5"r="2"/><path d="M12 7v4"/><line x1="8"y1="15"x2="8"y2="15"/><line x1="16"y1="15"x2="16"y2="15"/></svg>',
-coins:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><circle cx="8"cy="8"r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="M16.42 17.08a6 6 0 0 1-3.25 1.42"/></svg>',
-timer:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><line x1="10"y1="2"x2="14"y2="2"/><line x1="12"y1="14"x2="12"y2="8"/><circle cx="12"cy="14"r="8"/></svg>',
-lifebuoy:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><circle cx="12"cy="12"r="10"/><circle cx="12"cy="12"r="4"/><path d="M4.93 4.93l4.24 4.24"/><path d="M14.83 14.83l4.24 4.24"/><path d="M4.93 19.07l4.24-4.24"/><path d="M14.83 9.17l4.24-4.24"/></svg>',
-creditcard:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><rect x="1"y="4"width="22"height="16"rx="2"/><line x1="1"y1="10"x2="23"y2="10"/></svg>',
-search:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><circle cx="11"cy="11"r="8"/><line x1="21"y1="21"x2="16.65"y2="16.65"/></svg>',
-gamepad:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><line x1="6"y1="11"x2="10"y2="11"/><line x1="8"y1="9"x2="8"y2="13"/><line x1="15"y1="12"x2="15.01"y2="12"/><line x1="18"y1="10"x2="18.01"y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg>',
-ticket:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>',
-megaphone:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="m3 11 18-5v12L3 13"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>',
-image:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><rect x="3"y="3"width="18"height="18"rx="2"/><circle cx="8.5"cy="8.5"r="1.5"/><path d="m21 15-5-5L5 21"/></svg>',
-key:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><circle cx="8"cy="21"r="2"/><path d="m16 16-4 4-1-1-2 2"/><circle cx="16"cy="7"r="5"/><line x1="19"y1="4"x2="12"y2="11"/></svg>',
-bell:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>',
-calendar:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><rect x="3"y="4"width="18"height="18"rx="2"/><line x1="16"y1="2"x2="16"y2="6"/><line x1="8"y1="2"x2="8"y2="6"/><line x1="3"y1="10"x2="21"y2="10"/></svg>',
-scroll:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M8 21h12a2 2 0 0 0 2-2v-2H4v2a2 2 0 0 0 2 2z"/><path d="M20 15V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10"/><path d="M9 9h6"/><path d="M9 13h6"/><path d="M4 5h16"/></svg>',
-lock:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><rect x="3"y="11"width="18"height="11"rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
-trending:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
-copy:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><rect x="9"y="9"width="13"height="13"rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
-logOut:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21"y1="12"x2="9"y2="12"/></svg>',
-arrowUp:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><line x1="12"y1="19"x2="12"y2="5"/><polyline points="5 12 12 5 19 12"/></svg>',
-arrowDown:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><line x1="12"y1="5"x2="12"y2="19"/><polyline points="19 12 12 19 5 12"/></svg>',
-refresh:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>',
-plus:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><line x1="12"y1="5"x2="12"y2="19"/><line x1="5"y1="12"x2="19"y2="12"/></svg>',
-link:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
-trash:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
-external:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>',
-globe:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><circle cx="12"cy="12"r="10"/><line x1="2"y1="12"x2="22"y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
-message:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
-heart:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M19 14c1.5-1.5 2.5-3.5 2.5-5.5A4.5 4.5 0 0 0 12 7.5 4.5 4.5 0 0 0 2.5 8.5c0 2 1 4 2.5 5.5L12 22z"/></svg>',
-info:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><circle cx="12"cy="12"r="10"/><line x1="12"y1="16"x2="12"y2="12"/><line x1="12"y1="8"x2="12.01"y2="8"/></svg>',
-upload:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12"y1="3"x2="12"y2="15"/></svg>',
-download:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12"y1="15"x2="12"y2="3"/></svg>',
-home:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
-filter:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>',
-flame:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
-dollar:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="#00ff88"sw="2"><line x1="12"y1="1"x2="12"y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
-wallet:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>',
-package:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
-activity:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
-};
-function icon(n) { return ICONS[n]||''; }
-function iconBig(n) {
-  const b = {
-    crown:'<svg w="40"h="40"viewBox="0 0 24 24"fill="none"stroke="#ffd700"sw="1.5"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><path d="M3 20h18"/></svg>',
-    trophy:'<svg w="36"h="36"viewBox="0 0 24 24"fill="none"stroke="#ffd700"sw="1.5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',
-    handshake:'<svg w="36"h="36"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="1.5"><path d="M11 17a1 1 0 0 1 1 1c0 .5-.34 1-.76 1.22L8.5 21.5l-3.74-3.74A2 2 0 0 1 4 16.38V5.5a2.5 2.5 0 0 1 5 0v5"/><path d="M13 17a1 1 0 0 0 1 1c.5 0 .34 1 .76 1.22L15.5 21.5l3.74-3.74A2 2 0 0 0 20 16.38V5.5a2.5 2.5 0 0 0-5 0v5"/><path d="M6 12h4"/><path d="M14 12h4"/><path d="M8 8h3"/><path d="M13 8h3"/></svg>',
-    rocket:'<svg w="36"h="36"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="1.5"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>',
-  };
-  return b[n]||'';
-}
 
 function toast(m, t = 'info') {
   const c = document.getElementById('toast-container');
@@ -713,7 +719,7 @@ function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt
 
 function sb(s) {
   const m = { pending:'${icon("hourglass")}审核中', approved:'${icon("check")}已通过', rejected:'${icon("x")}已拒绝', completed:'${icon("sparkles")}已完成',
-    registering:'${icon("pencil")}注册中', creating:'${icon("pencil")}创建中', farming:'${icon("swords")}️挂机中', active:'${icon("swords")}️活跃', failed:'${icon("x")}失败', error:'${icon("alert")}️异常' };
+    registering:'${icon("pencil")}注册中', creating:'${icon("pencil")}创建中', farming:'${icon("swords")}挂机中', active:'${icon("swords")}活跃', failed:'${icon("x")}失败', error:'${icon("alert")}异常' };
   return '<span class="badge badge-' + s + '">' + (m[s] || s) + '</span>';
 }
 
@@ -780,7 +786,7 @@ P.landing = () => \`
     <div class="feature-card"><h3>${icon("handshake")} 邀请分成</h3><p>生成专属邀请码分享给好友，好友成交后获得30%积分返还，多邀多得，上不封顶。</p></div>
     <div class="feature-card"><h3>${icon("chart")} 实时监控</h3><p>实时查看每个账号的等级、地图位置、技能功法、装备信息，进度一目了然。</p></div>
     <div class="feature-card"><h3>${icon("crosshair")} 等级优惠</h3><p>成交越多等级越高，最高Lv.10享70%折扣。优惠码可与等级折扣叠加，超值实惠。</p></div>
-    <div class="feature-card"><h3>${icon("shield")}️ 防封保障</h3><p>每账号独立运营商IP · 随机机器码 · 浏览器指纹轮换 · 智能延迟 · 自动暂停，全方位防检测。</p></div>
+    <div class="feature-card"><h3>${icon("shield")} 防封保障</h3><p>每账号独立运营商IP · 随机机器码 · 浏览器指纹轮换 · 智能延迟 · 自动暂停，全方位防检测。</p></div>
   </div>
 
   <h2 class="page-title mt-20">价格方案</h2>
@@ -844,7 +850,7 @@ P.control = () => \`
     <div class="card"><h3>${icon("clipboard")} 工单系统</h3><p style="color:var(--text-dim);font-size:0.88em;line-height:1.8">提交购买工单，填写邀请码、支付方式和金额。管理员审核到账后自动开始处理流程。</p></div>
     <div class="card"><h3>${icon("bot")} 自动化流程</h3><p style="color:var(--text-dim);font-size:0.88em;line-height:1.8">审核通过 → GitHub Actions 扫描 → 自动注册 → 全满金灵根 → 装配铁剑/技能/功法 → 切换荒石村 → 开始刷怪 → 每日健康检测 → 自动升级到120级 → 2天后停止监控</p></div>
     <div class="card"><h3>${icon("gem")} 账号规格</h3><p style="color:var(--text-dim);font-size:0.88em;line-height:1.8">${icon("check")} 全满金属性灵根<br>${icon("check")} 自动装配铁剑<br>${icon("check")} 学习重击+火球术技能<br>${icon("check")} 修炼吐纳法功法<br>${icon("check")} 自动切换荒石村刷怪<br>${icon("check")} 每日自动检测升级</p></div>
-    <div class="card"><h3>${icon("shield")}️ 防封策略</h3><p style="color:var(--text-dim);font-size:0.88em;line-height:1.8">${icon("check")} 每账号独立伪造运营商IP(31段池)<br>${icon("check")} 独立机器码(6种格式轮换)<br>${icon("check")} 浏览器指纹轮换(12种UA)<br>${icon("check")} 多CDN代理头模拟<br>${icon("check")} 操作间随机延迟<br>${icon("check")} 每3-5账号智能暂停</p></div>
+    <div class="card"><h3>${icon("shield")} 防封策略</h3><p style="color:var(--text-dim);font-size:0.88em;line-height:1.8">${icon("check")} 每账号独立伪造运营商IP(31段池)<br>${icon("check")} 独立机器码(6种格式轮换)<br>${icon("check")} 浏览器指纹轮换(12种UA)<br>${icon("check")} 多CDN代理头模拟<br>${icon("check")} 操作间随机延迟<br>${icon("check")} 每3-5账号智能暂停</p></div>
     <div class="card"><h3>${icon("chart")} 数据监控</h3><p style="color:var(--text-dim);font-size:0.88em;line-height:1.8">实时查看账号等级、地图位置、技能装备、在线状态。到达120级后2天自动停止检测，发送完成通知。</p></div>
     <div class="card"><h3>${icon("crosshair")} 交付标准</h3><p style="color:var(--text-dim);font-size:0.88em;line-height:1.8">等级到达120级即视为完成。完成后保留2天监控期，期间如有异常可申诉。支持售后和退款申请。</p></div>
   </div>
@@ -859,7 +865,7 @@ P.docs = () => \`
     <div class="card"><h3>${icon("coins")} 价格说明</h3><p style="color:var(--text-dim);font-size:0.85em;line-height:1.9">微信支付：1 元 = 120 邀请积分<br>灵石支付：100 万灵石 = 10 邀请积分<br>每单可以要求多个账号（按积分计算）<br>最高可享70%等级折扣（Lv.10）<br>优惠码可叠加使用，折上折！</p></div>
     <div class="card"><h3>${icon("crosshair")} 用户等级</h3><p style="color:var(--text-dim);font-size:0.85em;line-height:1.9">每完成一单提升一级，等级越高折扣越多：<br>Lv.1 基础价 · Lv.2 解锁邀请<br>Lv.3 10% · Lv.4 20% · Lv.5 30%<br>Lv.6 40% · Lv.7 45% · Lv.8 50%<br>Lv.9 60% · Lv.10 70% ${icon("trophy")}</p></div>
     <div class="card"><h3>${icon("handshake")} 邀请分成</h3><p style="color:var(--text-dim);font-size:0.85em;line-height:1.9">在邀请页面生成专属邀请码，分享给好友<br>好友注册时填写你的邀请码<br>好友订单审核通过后，你获得30%返利<br>邀请积分可以提现或消费<br>邀请越多，赚得越多！</p></div>
-    <div class="card"><h3>${icon("timer")}️ 预计时间</h3><p style="color:var(--text-dim);font-size:0.85em;line-height:1.9">工单审核：管理员确认到账后通过（通常24h内）<br>注册时间：审核通过后开始自动注册<br>升级周期：约5天到达120级<br>完成后：到达120级后2天停止检测<br>全程进度可在「账号列表」查看</p></div>
+    <div class="card"><h3>${icon("timer")} 预计时间</h3><p style="color:var(--text-dim);font-size:0.85em;line-height:1.9">工单审核：管理员确认到账后通过（通常24h内）<br>注册时间：审核通过后开始自动注册<br>升级周期：约5天到达120级<br>完成后：到达120级后2天停止检测<br>全程进度可在「账号列表」查看</p></div>
     <div class="card"><h3>${icon("lifebuoy")} 售后申诉</h3><p style="color:var(--text-dim);font-size:0.85em;line-height:1.9">如遇问题可在「申诉售后」页面提交申诉<br>包括：账号异常、超时未完成、等级不符等<br>管理员24小时内回复处理<br>必要时可联系客服机器人咨询进度</p></div>
   </div>
 </div>
@@ -879,6 +885,7 @@ P.login = () => \`
     </div>
     <button class="btn btn-magenta btn-block" onclick="doLogin()">登录</button>
     <p class="mt-20 text-center" style="color:var(--text-dim);font-size:0.82em">还没有账号？<a href="#" onclick="showPage('register');return false">立即注册</a></p>
+    <p class="mt-8 text-center" style="font-size:0.78em"><a href="#" onclick="showPage('forgot-password');return false" style="color:var(--yellow)">忘记密码？</a></p>
   </div>
 </div>
 \`;
@@ -904,10 +911,48 @@ P.register = () => \`
       <input id="reg-invite" placeholder="填写邀请人的邀请码">
     </div>
     <div class="form-group">
-      <label style="color:var(--text-dim);font-size:0.7em">${icon("alert")}️ 每IP仅可注册一个账号</label>
+      <label style="color:var(--text-dim);font-size:0.7em">${icon("alert")} 每IP仅可注册一个账号</label>
     </div>
     <button class="btn btn-magenta btn-block" onclick="doRegister()">注册</button>
     <p class="mt-20 text-center" style="color:var(--text-dim);font-size:0.82em">已有账号？<a href="#" onclick="showPage('login');return false">登录</a></p>
+  </div>
+</div>
+\`;
+
+P['forgot-password'] = () => \`
+<div class="container animate-in" style="max-width:420px">
+  <h2 class="page-title">找回密码</h2>
+  <div class="card">
+    <p style="color:var(--text-dim);font-size:0.85em;margin-bottom:16px">输入你的用户名和注册邮箱，系统将生成一个一次性重置码。</p>
+    <div class="form-group">
+      <label>用户名</label>
+      <input id="fp-user" placeholder="输入用户名" onkeydown="if(event.key==='Enter')doForgotPassword()">
+    </div>
+    <div class="form-group">
+      <label>邮箱 (选填)</label>
+      <input id="fp-email" type="email" placeholder="注册时的邮箱" onkeydown="if(event.key==='Enter')doForgotPassword()">
+    </div>
+    <button class="btn btn-yellow btn-block" onclick="doForgotPassword()">发送重置码</button>
+    <p class="mt-20 text-center" style="color:var(--text-dim);font-size:0.82em"><a href="#" onclick="showPage('login');return false">← 返回登录</a></p>
+  </div>
+</div>
+\`;
+
+P['reset-password'] = () => \`
+<div class="container animate-in" style="max-width:420px">
+  <h2 class="page-title">重置密码</h2>
+  <div class="card">
+    <p style="color:var(--text-dim);font-size:0.85em;margin-bottom:16px">输入重置码和新密码来重置你的账号。</p>
+    <div class="form-group">
+      <label>重置码</label>
+      <input id="rp-token" placeholder="粘贴重置码">
+    </div>
+    <div class="form-group">
+      <label>新密码</label>
+      <input id="rp-new-pass" type="password" placeholder="至少6位" onkeydown="if(event.key==='Enter')doResetPassword()">
+    </div>
+    <button class="btn btn-green btn-block" onclick="doResetPassword()">重置密码</button>
+    <p class="mt-20 text-center" style="color:var(--text-dim);font-size:0.82em"><a href="#" onclick="showPage('login');return false">← 返回登录</a></p>
   </div>
 </div>
 \`;
@@ -975,8 +1020,9 @@ P.admin = () => \`
     <div class="tab" onclick="switchTab(this,'ap-appeals')">${icon("mail")} 申诉</div>
     <div class="tab" onclick="switchTab(this,'ap-coupons')">${icon("ticket")} 优惠券</div>
     <div class="tab" onclick="switchTab(this,'ap-announce')">${icon("megaphone")} 公告</div>
-    <div class="tab" onclick="switchTab(this,'ap-ads')">${icon("image")}️ 广告</div>
-    <div class="tab" onclick="switchTab(this,'ap-config')">${icon("settings")}️ 配置</div>
+    <div class="tab" onclick="switchTab(this,'ap-ads')">${icon("image")} 广告</div>
+    <div class="tab" onclick="switchTab(this,'ap-config')">${icon("settings")} 配置</div>
+    <div class="tab" onclick="switchTab(this,'ap-stats')">${icon("chart")} 统计</div>
   </div>
 
   <div class="tab-content active" id="ap-orders">
@@ -1026,7 +1072,7 @@ P.admin = () => \`
   </div>
   <div class="tab-content" id="ap-ads">
     <div class="card">
-      <h3>${icon("image")}️ 广告管理</h3>
+      <h3>${icon("image")} 广告管理</h3>
       <div class="flex gap-10 mb-10 flex-wrap" style="border:1px solid var(--border);padding:16px;border-radius:8px">
         <select id="ad-type" style="padding:6px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px"><option value="popup">弹窗广告</option><option value="sidebar">侧栏广告</option></select>
         <input id="ad-img" placeholder="图片URL" style="flex:1;min-width:140px;padding:6px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px">
@@ -1039,6 +1085,13 @@ P.admin = () => \`
   </div>
   <div class="tab-content" id="ap-config">
     <div class="card"><h3>系统配置</h3><div id="admin-config"></div></div>
+  </div>
+  <div class="tab-content" id="ap-stats">
+    <div class="card">
+      <h3>${icon("chart")} 数据统计面板</h3>
+      <div id="admin-stats-loading" style="text-align:center;padding:30px;color:var(--text-dim)">加载中...</div>
+      <div id="admin-stats-content" style="display:none"></div>
+    </div>
   </div>
 </div>
 \`;
@@ -1184,6 +1237,8 @@ function showPage(name) {
     if (name === 'after-sales' && TOKEN) loadAfterSales();
     if (name === 'profile' && TOKEN) loadProfile();
     if (name === 'settings' && TOKEN) { /* settings loaded from P.settings template */ }
+    if (name === 'forgot-password') { /* no auth needed */ }
+    if (name === 'reset-password') { /* no auth needed */ }
   }
 }
 
@@ -1212,7 +1267,7 @@ function updateAvatarUI() {
 }
 
 async function checkAuth() {
-  if (!TOKEN) { updateNav(false); return; }
+  if (!TOKEN) { updateNav(false); showPage('landing'); return; }
   const r = await api('GET', '/api/user/info');
   if (r.ok && r.user) {
     USER = r.user;
@@ -1226,6 +1281,7 @@ async function checkAuth() {
     TOKEN = ''; USER = null;
     localStorage.removeItem('token');
     updateNav(false);
+    showPage('landing');
     if (notifInterval) clearInterval(notifInterval);
   }
 }
@@ -1302,26 +1358,30 @@ async function markNotifRead(id) { await api('POST', '/api/notifications/read', 
 
 // ─── Dashboard ──────────────────────────────
 let DASH_ORDERS = [];
+let DASH_ORDERS_PAGE = 1;
+const DASH_ORDERS_PER_PAGE = 8;
 
 async function refreshDashboard() {
   if (!TOKEN) return;
   const info = await api('GET', '/api/user/info');
   if (info.ok && info.user) {
     const u = info.user;
-    document.getElementById('d-level').textContent = 'Lv.' + (u.level || 1);
-    document.getElementById('d-level2').textContent = 'Lv.' + (u.level || 1);
-    document.getElementById('d-orders').textContent = u.total_orders || 0;
-    document.getElementById('d-spent').textContent = '¥' + (u.total_spent || 0).toFixed(1);
-    document.getElementById('d-invite').textContent = u.invite_code || '-';
-    document.getElementById('d-points').textContent = (u.invite_points || 0).toFixed(1);
-    document.getElementById('d-discount').textContent = (LD[u.level] || 0) + '%';
-    document.getElementById('d-username').textContent = esc(u.username) || '用户';
-    document.getElementById('d-email').textContent = u.email || '未设置';
+    const el = (id) => document.getElementById(id);
+    if (el('d-level')) el('d-level').textContent = 'Lv.' + (u.level || 1);
+    if (el('d-level2')) el('d-level2').textContent = 'Lv.' + (u.level || 1);
+    if (el('d-orders')) el('d-orders').textContent = u.total_orders || 0;
+    if (el('d-spent')) el('d-spent').textContent = '¥' + (u.total_spent || 0).toFixed(1);
+    if (el('d-invite')) el('d-invite').textContent = u.invite_code || '-';
+    if (el('d-points')) el('d-points').textContent = (u.invite_points || 0).toFixed(1);
+    if (el('d-discount')) el('d-discount').textContent = (LD[u.level] || 0) + '%';
+    if (el('d-username')) el('d-username').textContent = esc(u.username) || '用户';
+    if (el('d-email')) el('d-email').textContent = u.email || '未设置';
   }
   const inviteInfo = await api('GET', '/api/invite/info');
   if (inviteInfo.ok) {
-    document.getElementById('d-invited').textContent = inviteInfo.total_invited || 0;
-    const dBoost = document.getElementById('d-boost');
+    const el = (id) => document.getElementById(id);
+    if (el('d-invited')) el('d-invited').textContent = inviteInfo.total_invited || 0;
+    const dBoost = el('d-boost');
     if (dBoost) dBoost.textContent = (inviteInfo.boost_mult || 1) + 'x (' + (inviteInfo.boost_label || '基础') + ')';
   }
 
@@ -1333,6 +1393,10 @@ async function refreshDashboard() {
 }
 
 function filterDashOrders() {
+  DASH_ORDERS_PAGE = 1;
+  renderDashOrders();
+}
+function renderDashOrders() {
   const tb = document.getElementById('dash-orders');
   if (!tb) return;
   const q = (document.getElementById('dash-order-search')?.value || '').toLowerCase();
@@ -1340,9 +1404,14 @@ function filterDashOrders() {
   let filtered = DASH_ORDERS;
   if (q) filtered = filtered.filter(o => String(o.id).includes(q) || (o.invite_code||'').toLowerCase().includes(q));
   if (st) filtered = filtered.filter(o => o.status === st);
-  if (!filtered.length) { tb.innerHTML = '<tr><td colspan="6" class="text-center" style="color:var(--text-dim);padding:30px">没有匹配工单</td></tr>'; return; }
+  const total = filtered.length;
+  const totalPages = Math.ceil(total / DASH_ORDERS_PER_PAGE);
+  if (DASH_ORDERS_PAGE > totalPages) DASH_ORDERS_PAGE = totalPages || 1;
+  const start = (DASH_ORDERS_PAGE - 1) * DASH_ORDERS_PER_PAGE;
+  const pageData = filtered.slice(start, start + DASH_ORDERS_PER_PAGE);
+  if (!total) { tb.innerHTML = '<tr><td colspan="6" class="text-center" style="color:var(--text-dim);padding:30px">没有匹配工单</td></tr>'; return; }
   const s = { pending:'${icon("hourglass")}审核中', approved:'${icon("check")}已通过', rejected:'${icon("x")}已拒绝', completed:'${icon("sparkles")}已完成' };
-  tb.innerHTML = filtered.map(o => \`
+  let html = pageData.map(o => \`
     <tr style="cursor:pointer" onclick="showOrderDetail(\${o.id})">
       <td>#\${o.id}</td>
       <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis">\${esc(o.invite_code)}</td>
@@ -1352,7 +1421,18 @@ function filterDashOrders() {
       <td style="font-size:0.78em;color:var(--text-dim)">\${o.created_at?.split(' ')[0]||''}</td>
     </tr>
   \`).join('');
+  html += \`<tr><td colspan="6" style="padding:10px;text-align:center">
+    <div class="flex" style="justify-content:center;align-items:center;gap:6px;font-size:0.78em">
+      <button class="btn btn-sm" style="padding:2px 8px;font-size:0.75em" onclick="dashOrdersPage(1)" \${DASH_ORDERS_PAGE===1?'disabled':''}>«</button>
+      <button class="btn btn-sm" style="padding:2px 8px;font-size:0.75em" onclick="dashOrdersPage(\${DASH_ORDERS_PAGE-1})" \${DASH_ORDERS_PAGE===1?'disabled':''}>‹</button>
+      <span style="color:var(--cyan)">\${DASH_ORDERS_PAGE}/\${totalPages}</span>
+      <button class="btn btn-sm" style="padding:2px 8px;font-size:0.75em" onclick="dashOrdersPage(\${DASH_ORDERS_PAGE+1})" \${DASH_ORDERS_PAGE>=totalPages?'disabled':''}>›</button>
+      <button class="btn btn-sm" style="padding:2px 8px;font-size:0.75em" onclick="dashOrdersPage(\${totalPages})" \${DASH_ORDERS_PAGE>=totalPages?'disabled':''}>»</button>
+    </div>
+  </td></tr>\`;
+  tb.innerHTML = html;
 }
+function dashOrdersPage(p) { DASH_ORDERS_PAGE = p; renderDashOrders(); }
 
 // ─── Order Detail ───────────────────────────
 async function showOrderDetail(id) {
@@ -1524,18 +1604,161 @@ async function submitOrder() {
   else toast(r.error || '提交失败', 'error');
 }
 
+// ─── Password Reset ────────────────────────
+async function doForgotPassword() {
+  const username = document.getElementById('fp-user')?.value?.trim();
+  const email = document.getElementById('fp-email')?.value?.trim();
+  if (!username) return toast('请输入用户名', 'error');
+  const r = await api('POST', '/api/auth/forgot-password', { username, email: email || undefined });
+  if (r.ok) {
+    showModal(\`
+      <h3 style="color:var(--green);margin-bottom:12px">${icon("check")} 重置码已生成</h3>
+      <p style="color:var(--text-dim);font-size:0.85em;margin-bottom:12px">请复制以下重置码，有效期 <strong style="color:var(--yellow)">15 分钟</strong>：</p>
+      <div style="background:var(--bg-input);border:1px solid var(--border);border-radius:8px;padding:14px;font-family:monospace;font-size:1.1em;color:var(--cyan);word-break:break-all;letter-spacing:2px;text-align:center;margin:12px 0">\${r.reset_token}</div>
+      <div class="flex gap-10" style="justify-content:center;margin-top:16px">
+        <button class="btn btn-green" onclick="copyText('\${r.reset_token}');closeModal()">${icon("clipboard")} 复制重置码</button>
+        <button class="btn btn-magenta" onclick="closeModal();showPage('reset-password')">去重置密码 →</button>
+      </div>
+    \`);
+  } else toast(r.error, 'error');
+}
+
+async function doResetPassword() {
+  const token = document.getElementById('rp-token')?.value?.trim();
+  const newPass = document.getElementById('rp-new-pass')?.value;
+  if (!token || !newPass) return toast('请填写重置码和新密码', 'error');
+  if (newPass.length < 6) return toast('新密码至少6位', 'error');
+  const r = await api('POST', '/api/auth/reset-password', { reset_token: token, new_password: newPass });
+  if (r.ok) {
+    showModal(\`
+      <h3 style="color:var(--green);margin-bottom:12px">${icon("check")} 密码重置成功</h3>
+      <p style="color:var(--text-dim);font-size:0.85em;margin-bottom:16px">\${r.message}</p>
+      <button class="btn btn-magenta btn-block" onclick="closeModal();showPage('login')">前往登录 →</button>
+    \`);
+  } else toast(r.error, 'error');
+}
+
 // ─── Admin ──────────────────────────────────
-async function refreshAdmin() { await Promise.all([adminLoadOrders('pending'), adminLoadAccounts(), adminLoadUsers(), adminLoadAppeals(), adminLoadConfig(), adminLoadCoupons(), adminLoadAnnouncements(), adminLoadAds()]); }
+async function refreshAdmin() { await Promise.all([adminLoadOrders('pending'), adminLoadAccounts(), adminLoadUsers(), adminLoadAppeals(), adminLoadConfig(), adminLoadCoupons(), adminLoadAnnouncements(), adminLoadAds(), refreshAdminStats()]); }
+
+// ─── Admin Stats Dashboard ──────────────────
+async function refreshAdminStats() {
+  const r = await api('GET', '/api/admin/stats');
+  const loadingEl = document.getElementById('admin-stats-loading');
+  const contentEl = document.getElementById('admin-stats-content');
+  if (!loadingEl || !contentEl) return;
+  loadingEl.style.display = 'none';
+  contentEl.style.display = 'block';
+  if (!r.ok || !r.stats) { contentEl.innerHTML = '<p style="color:var(--red);padding:20px">加载统计数据失败</p>'; return; }
+  const s = r.stats;
+  const revenue = s.totalRevenue || 0;
+  const todayRev = s.todayRevenue || 0;
+  const avgOrder = s.approvedOrders > 0 ? (revenue / s.approvedOrders).toFixed(1) : '0.0';
+  const levelDist = s.levelDist || {};
+  const dailyTrend = s.dailyTrend || [];
+  const topSpenders = s.topSpenders || [];
+  const maxBarVal = Math.max(...Object.values(levelDist).map(v=>v), 1);
+
+  contentEl.innerHTML = \`
+    <div class="grid grid-4" style="gap:12px;margin-bottom:20px">
+      <div style="background:linear-gradient(135deg,rgba(0,240,255,0.08),rgba(0,240,255,0.02));border:1px solid rgba(0,240,255,0.15);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:1.8em;font-weight:700;color:var(--cyan);font-family:'Orbitron',monospace">\${s.totalUsers||0}</div>
+        <div style="font-size:0.78em;color:var(--text-dim);margin-top:4px">总用户</div>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(0,255,136,0.08),rgba(0,255,136,0.02));border:1px solid rgba(0,255,136,0.15);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:1.8em;font-weight:700;color:var(--green);font-family:'Orbitron',monospace">\${s.totalOrders||0}</div>
+        <div style="font-size:0.78em;color:var(--text-dim);margin-top:4px">总工单</div>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(255,230,0,0.08),rgba(255,230,0,0.02));border:1px solid rgba(255,230,0,0.15);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:1.8em;font-weight:700;color:var(--yellow);font-family:'Orbitron',monospace">¥\${revenue.toFixed(0)}</div>
+        <div style="font-size:0.78em;color:var(--text-dim);margin-top:4px">总收入</div>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(124,58,237,0.08),rgba(124,58,237,0.02));border:1px solid rgba(124,58,237,0.15);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:1.8em;font-weight:700;color:var(--purple);font-family:'Orbitron',monospace">¥\${todayRev.toFixed(0)}</div>
+        <div style="font-size:0.78em;color:var(--text-dim);margin-top:4px">今日收入</div>
+      </div>
+    </div>
+    <div class="grid grid-3" style="gap:12px;margin-bottom:20px">
+      <div style="background:var(--bg-input);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center">
+        <div style="font-size:1.3em;font-weight:700;color:var(--cyan)">\${s.approvedOrders||0}</div>
+        <div style="font-size:0.75em;color:var(--text-dim)">已审核</div>
+      </div>
+      <div style="background:var(--bg-input);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center">
+        <div style="font-size:1.3em;font-weight:700;color:var(--green)">\${s.completedOrders||0}</div>
+        <div style="font-size:0.75em;color:var(--text-dim)">已完成</div>
+      </div>
+      <div style="background:var(--bg-input);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center">
+        <div style="font-size:1.3em;font-weight:700;color:var(--yellow)">\${avgOrder}</div>
+        <div style="font-size:0.75em;color:var(--text-dim)">平均客单价</div>
+      </div>
+    </div>
+    <div class="grid grid-2" style="gap:16px">
+      <div style="background:var(--bg-input);border:1px solid var(--border);border-radius:10px;padding:16px">
+        <h4 style="color:var(--cyan);font-size:0.82em;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px">等级分布</h4>
+        \${Object.entries(levelDist).map(([lv, cnt]) => \`
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:0.82em">
+            <span style="width:40px;color:var(--text-dim);text-align:right">Lv.\${lv}</span>
+            <div style="flex:1;height:16px;background:rgba(0,240,255,0.05);border-radius:4px;overflow:hidden">
+              <div style="width:\${Math.round(cnt/maxBarVal*100)}%;height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:4px;transition:width 0.6s"></div>
+            </div>
+            <span style="width:30px;color:var(--cyan);font-weight:600">\${cnt}</span>
+          </div>
+        \`).join('')}
+      </div>
+      <div style="background:var(--bg-input);border:1px solid var(--border);border-radius:10px;padding:16px">
+        <h4 style="color:var(--magenta);font-size:0.82em;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px">7日趋势</h4>
+        \${dailyTrend.length ? dailyTrend.map(d => \`
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:0.82em">
+            <span style="width:60px;color:var(--text-dim);text-align:right">\${(d.date||'').slice(5)}</span>
+            <div style="flex:1;height:16px;background:rgba(255,0,170,0.05);border-radius:4px;overflow:hidden">
+              <div style="width:\${Math.round(d.count/Math.max(...dailyTrend.map(x=>x.count),1)*100)}%;height:100%;background:linear-gradient(90deg,var(--magenta),var(--yellow));border-radius:4px;transition:width 0.6s"></div>
+            </div>
+            <span style="width:50px;color:var(--magenta);font-weight:600">\${d.count}单 ¥\${(d.revenue||0).toFixed(0)}</span>
+          </div>
+        \`).join('') : '<p style="color:var(--text-dim);font-size:0.82em">暂无趋势数据</p>'}
+      </div>
+    </div>
+    \${topSpenders.length ? \`
+    <div style="background:var(--bg-input);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:16px">
+      <h4 style="color:var(--yellow);font-size:0.82em;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px">${icon("trophy")} 消费排行 TOP5</h4>
+      \${topSpenders.map((u, i) => \`
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:0.85em">
+          <span style="width:24px;text-align:center;font-weight:700;font-size:0.9em;color:\${i===0?'var(--yellow)':i===1?'var(--cyan)':i===2?'var(--magenta)':'var(--text-dim)'}">\${['#1','#2','#3','#4','#5'][i]}</span>
+          <span style="flex:1;color:var(--text-bright)">\${esc(u.username)}</span>
+          <span style="color:var(--text-dim);font-size:0.82em">Lv.\${u.level||1}</span>
+          <span style="color:var(--green);font-weight:600">¥\${(u.total_spent||0).toFixed(1)}</span>
+        </div>
+      \`).join('')}
+    </div>
+    \` : ''}
+  \`;
+}
+
+let ADMIN_ORDERS_DATA = [];
+let ADMIN_ORDERS_PAGE = 1;
+const ADMIN_ORDERS_PER_PAGE = 10;
+let ADMIN_ORDERS_FILTER = '';
 
 async function adminLoadOrders(status) {
+  ADMIN_ORDERS_FILTER = status || '';
+  ADMIN_ORDERS_PAGE = 1;
   const p = status ? '/api/admin/orders?status=' + status : '/api/admin/orders';
   const r = await api('GET', p);
   if (!r.ok) return;
+  ADMIN_ORDERS_DATA = r.orders || [];
+  renderAdminOrders();
+}
+function renderAdminOrders() {
   const tb = document.getElementById('admin-orders-table');
   if (!tb) return;
-  if (!r.orders || !r.orders.length) { tb.innerHTML = '<tr><td colspan="9" class="text-center" style="color:var(--text-dim);padding:30px">暂无工单</td></tr>'; return; }
+  const total = ADMIN_ORDERS_DATA.length;
+  const totalPages = Math.ceil(total / ADMIN_ORDERS_PER_PAGE);
+  if (ADMIN_ORDERS_PAGE > totalPages) ADMIN_ORDERS_PAGE = totalPages || 1;
+  const start = (ADMIN_ORDERS_PAGE - 1) * ADMIN_ORDERS_PER_PAGE;
+  const pageData = ADMIN_ORDERS_DATA.slice(start, start + ADMIN_ORDERS_PER_PAGE);
   const s = { pending:'${icon("hourglass")}审核中', approved:'${icon("check")}已通过', rejected:'${icon("x")}已拒绝', completed:'${icon("sparkles")}已完成' };
-  tb.innerHTML = r.orders.map(o => \`<tr>
+  if (!total) { tb.innerHTML = '<tr><td colspan="9" class="text-center" style="color:var(--text-dim);padding:30px">暂无工单</td></tr>'; return; }
+  let html = pageData.map(o => \`<tr>
     <td>#\${o.id}</td><td>\${esc(o.user_name)}</td>
     <td style="max-width:90px;overflow:hidden;text-overflow:ellipsis">\${esc(o.invite_code)}</td>
     <td>\${o.payment_method === 'wechat' ? '微信' : '灵石'}</td>
@@ -1547,9 +1770,37 @@ async function adminLoadOrders(status) {
       <button class="btn btn-sm" style="padding:3px 10px;font-size:0.72em" onclick="showOrderDetail(\${o.id})">详情</button>
     </div></td>
   </tr>\`).join('');
+  html += \`<tr><td colspan="9" style="padding:12px;text-align:center">
+    <div class="flex" style="justify-content:center;align-items:center;gap:8px;font-size:0.82em">
+      <span style="color:var(--text-dim)">共 \${total} 条</span>
+      <button class="btn btn-sm" style="padding:2px 10px;font-size:0.78em" onclick="adminOrdersPage(1)" \${ADMIN_ORDERS_PAGE===1?'disabled':''}>«</button>
+      <button class="btn btn-sm" style="padding:2px 10px;font-size:0.78em" onclick="adminOrdersPage(\${ADMIN_ORDERS_PAGE-1})" \${ADMIN_ORDERS_PAGE===1?'disabled':''}>‹</button>
+      <span style="color:var(--cyan);font-weight:600">\${ADMIN_ORDERS_PAGE}/\${totalPages}</span>
+      <button class="btn btn-sm" style="padding:2px 10px;font-size:0.78em" onclick="adminOrdersPage(\${ADMIN_ORDERS_PAGE+1})" \${ADMIN_ORDERS_PAGE>=totalPages?'disabled':''}>›</button>
+      <button class="btn btn-sm" style="padding:2px 10px;font-size:0.78em" onclick="adminOrdersPage(\${totalPages})" \${ADMIN_ORDERS_PAGE>=totalPages?'disabled':''}>»</button>
+    </div>
+  </td></tr>\`;
+  tb.innerHTML = html;
 }
+function adminOrdersPage(p) { ADMIN_ORDERS_PAGE = p; renderAdminOrders(); }
 async function adminApprove(id) { if (!confirm('确认通过工单 #' + id + '？')) return; const r = await api('POST', '/api/admin/orders/' + id + '/status', { status: 'approved' }); if (r.ok) { toast('已通过', 'success'); adminLoadOrders('pending'); } else toast(r.error, 'error'); }
-async function adminReject(id) { const notes = prompt('拒绝原因：'); if (!notes) return; const r = await api('POST', '/api/admin/orders/' + id + '/status', { status: 'rejected', admin_notes: notes }); if (r.ok) { toast('已拒绝', 'info'); adminLoadOrders('pending'); } else toast(r.error, 'error'); }
+async function adminReject(id) {
+  showModal(\`
+    <h3 style="color:var(--red);margin-bottom:12px">${icon("alert")} 拒绝工单 #\${id}</h3>
+    <div class="form-group"><label>拒绝原因</label><textarea id="reject-reason" rows="3" placeholder="输入拒绝原因..." style="width:100%;padding:8px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px;font-size:0.85em"></textarea></div>
+    <div class="flex gap-10" style="justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-sm" onclick="closeModal()">取消</button>
+      <button class="btn btn-red btn-sm" onclick="submitAdminReject(\${id})">确认拒绝</button>
+    </div>
+  \`);
+}
+async function submitAdminReject(id) {
+  const notes = document.getElementById('reject-reason')?.value;
+  if (!notes || !notes.trim()) { toast('请填写拒绝原因', 'error'); return; }
+  closeModal();
+  const r = await api('POST', '/api/admin/orders/' + id + '/status', { status: 'rejected', admin_notes: notes });
+  if (r.ok) { toast('已拒绝', 'info'); adminLoadOrders('pending'); } else toast(r.error, 'error');
+}
 
 async function adminLoadAccounts() {
   const r = await api('GET', '/api/admin/accounts');
@@ -1608,7 +1859,23 @@ async function adminLoadAppeals() {
     <td><button class="btn btn-sm" style="padding:3px 10px;font-size:0.72em" onclick="adminReplyAppeal(\${a.id})">回复</button></td>
   </tr>\`).join('') : '<tr><td colspan="7" class="text-center" style="color:var(--text-dim);padding:30px">暂无申诉</td></tr>';
 }
-async function adminReplyAppeal(id) { const reply = prompt('回复内容：'); if (!reply) return; await api('POST', '/api/admin/appeals/' + id + '/reply', { reply, status: 'resolved' }); toast('已回复', 'success'); adminLoadAppeals(); }
+async function adminReplyAppeal(id) {
+  showModal(\`
+    <h3 style="color:var(--cyan);margin-bottom:12px">${icon("mail")} 回复申诉 #\${id}</h3>
+    <div class="form-group"><label>回复内容</label><textarea id="appeal-reply" rows="4" placeholder="输入回复内容..." style="width:100%;padding:8px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px;font-size:0.85em"></textarea></div>
+    <div class="flex gap-10" style="justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-sm" onclick="closeModal()">取消</button>
+      <button class="btn btn-green btn-sm" onclick="submitAdminReplyAppeal(\${id})">发送回复</button>
+    </div>
+  \`);
+}
+async function submitAdminReplyAppeal(id) {
+  const reply = document.getElementById('appeal-reply')?.value;
+  if (!reply || !reply.trim()) { toast('请填写回复内容', 'error'); return; }
+  closeModal();
+  await api('POST', '/api/admin/appeals/' + id + '/reply', { reply, status: 'resolved' });
+  toast('已回复', 'success'); adminLoadAppeals();
+}
 
 async function adminLoadConfig() {
   const el = document.getElementById('admin-config'); if (!el) return;
@@ -1687,7 +1954,7 @@ async function adminToggleLock(id, locked) {
   else toast(r.error, 'error');
 }
 async function adminDeleteUser(id) {
-  if (!confirm('${icon("alert")}️ 确认永久删除此用户？此操作不可恢复！')) return;
+  if (!confirm('${icon("alert")} 确认永久删除此用户？此操作不可恢复！')) return;
   if (!confirm('再次确认：删除用户 #' + id + '？')) return;
   const r = await api('DELETE', '/api/admin/users/' + id + '/delete');
   if (r.ok) { toast('用户已删除', 'success'); adminLoadUsers(); }

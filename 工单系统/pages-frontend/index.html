@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>艾德尔工单系统</title>
+  <meta name="description" content="艾德尔代练工单系统 — 自动挂机，稳定高效">
+  <meta name="theme-color" content="#2C2C2C">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◈</text></svg>">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/src/css/theme.css">
+  <link rel="stylesheet" href="/src/css/base.css">
+  <link rel="stylesheet" href="/src/css/auth.css">
+</head>
+<body>
+  <!-- SPA 挂载点 -->
+  <div id="app">
+    <!-- 初始加载状态 -->
+    <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg-base);">
+      <div style="text-align:center;">
+        <div class="spinner" style="margin:0 auto 16px;"></div>
+        <p style="color:var(--text-tertiary);font-size:14px;">加载中...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- App 入口 -->
+  <script type="module" src="/src/js/app.js"></script>
+</body>
+</html>

@@ -1,9 +1,24 @@
+/**
+ * ⚠️ 本 Worker 已废弃，请使用 Pages Functions (functions/) 替代
+ *
+ * 此文件保留仅用于兼容旧部署，所有新路由应在 functions/api/ 下创建
+ * 请参考 wrangler.pages.toml 使用 Pages 方式部署
+ *
+ * 待迁移路线图:
+ * - functions/api/auth/forgot-password.js   ✅ 已创建 (使用 D1 存储)
+ * - functions/api/auth/reset-password.js    ✅ 已创建 (使用 D1 存储)
+ * - worker/static.js → pages-frontend/      进行中
+ */
+
 import { renderStaticAsset } from './static';
 
+const ALLOWED_ORIGIN = (typeof CORS_ORIGIN !== 'undefined' && CORS_ORIGIN) || '*';
+
 const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
   'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-API-Key',
+  'Vary': 'Origin',
 };
 
 function json(data, status = 200) {
@@ -19,11 +34,92 @@ function html(content, status = 200) {
   });
 }
 
+// ── 密码哈希（PBKDF2，兼容旧 SHA-256） ──────────────
+
+function isLegacyHash(hash) {
+  return /^[a-f0-9]{64}$/.test(hash);
+}
+
+function uint8ArrayToBase64(bytes) {
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
+function base64ToUint8Array(b64) {
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+}
+
+// PBKDF2 哈希密码（输出格式: pbkdf2:iterations:salt_b64:hash_b64）
 async function hashPassword(pw) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode('ider:' + pw + ':order-system');
-  const hash = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const saltB64 = uint8ArrayToBase64(salt);
+
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(pw),
+    'PBKDF2',
+    false,
+    ['deriveBits']
+  );
+
+  const iterations = 100000;
+  const hash = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt, iterations, hash: 'SHA-256' },
+    keyMaterial,
+    256
+  );
+
+  const hashB64 = uint8ArrayToBase64(new Uint8Array(hash));
+  return `pbkdf2:${iterations}:${saltB64}:${hashB64}`;
+}
+
+// 验证密码（兼容旧 SHA-256 和新 PBKDF2 格式）
+async function verifyPassword(pw, storedHash) {
+  if (!storedHash) return false;
+
+  // 旧格式 SHA-256
+  if (isLegacyHash(storedHash)) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode('ider:' + pw + ':order-system');
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    const hexHash = Array.from(new Uint8Array(hash))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+    return constantTimeEqual(hexHash, storedHash);
+  }
+
+  // 新格式 PBKDF2
+  const parts = storedHash.split(':');
+  if (parts[0] !== 'pbkdf2' || parts.length !== 4) return false;
+
+  const iterations = parseInt(parts[1], 10);
+  const salt = base64ToUint8Array(parts[2]);
+  const expectedHashB64 = parts[3];
+
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(pw),
+    'PBKDF2',
+    false,
+    ['deriveBits']
+  );
+
+  const hash = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt, iterations, hash: 'SHA-256' },
+    keyMaterial,
+    256
+  );
+
+  const hashB64 = uint8ArrayToBase64(new Uint8Array(hash));
+  return constantTimeEqual(hashB64, expectedHashB64);
 }
 
 function generateToken() {
@@ -50,9 +146,18 @@ async function authenticate(request, env) {
   return user;
 }
 
+function constantTimeEqual(a, b) {
+  if (a.length !== b.length) return false;
+  let result = 0;
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return result === 0;
+}
+
 function authenticateApi(request, env) {
   const key = request.headers.get('X-API-Key') || '';
-  return key === env.API_KEY;
+  return constantTimeEqual(key, env.API_KEY || '');
 }
 
 function getClientIP(request) {
@@ -71,18 +176,32 @@ async function logActivity(env, orderId, userId, action, detail) {
 // ─── Simple Rate Limiter (in-memory) ──────────
 const rateLimitMap = new Map();
 let lastCleanup = Date.now();
-function checkRateLimit(ip, key, max = 30, windowSec = 60) {
-  // Lazy cleanup every 100 checks
+const RATE_LIMIT_MAX_ENTRIES = 10000; // Max entries to prevent memory bloat
+const RATE_LIMIT_CLEANUP_INTERVAL = 30000; // Cleanup every 30s
+const RATE_LIMIT_ENTRY_TTL = 60000; // Entry TTL: 60s (matching typical window)
+
+function cleanupRateLimit() {
   const now = Date.now();
-  if (now - lastCleanup > 60000) {
-    lastCleanup = now;
-    for (const [k, v] of rateLimitMap) {
-      if (now - v.reset > 120000) rateLimitMap.delete(k);
-    }
+  if (now - lastCleanup < RATE_LIMIT_CLEANUP_INTERVAL) return;
+  lastCleanup = now;
+  // If map is too large, clear all expired entries immediately
+  if (rateLimitMap.size > RATE_LIMIT_MAX_ENTRIES) {
+    rateLimitMap.clear();
+    return;
   }
+  for (const [k, v] of rateLimitMap) {
+    if (now - v.reset > RATE_LIMIT_ENTRY_TTL) rateLimitMap.delete(k);
+  }
+}
+
+function checkRateLimit(ip, key, max = 30, windowSec = 60) {
+  cleanupRateLimit();
   const k = ip + ':' + key;
   const entry = rateLimitMap.get(k);
+  const now = Date.now();
   if (!entry || now - entry.reset > windowSec * 1000) {
+    // Prevent unbounded growth even between cleanups
+    if (rateLimitMap.size > RATE_LIMIT_MAX_ENTRIES) rateLimitMap.clear();
     rateLimitMap.set(k, { count: 1, reset: now });
     return true;
   }
@@ -90,7 +209,6 @@ function checkRateLimit(ip, key, max = 30, windowSec = 60) {
   entry.count++;
   return true;
 }
-// Rate limit map entries are cleaned lazily in checkRateLimit
 
 // ─── XP/Level System (exponential) ────────
 // Formula: XP_LEVELS[i] = 100 * (2^(i-1) - 1), i ≥ 1
@@ -133,38 +251,38 @@ async function recalcUserLevelAndXP(env, userId) {
 async function addXP(env, userId, amount, reason) {
   await env.DB.prepare('UPDATE users SET xp = xp + ? WHERE id = ?').bind(amount, userId).run();
   await recalcUserLevelAndXP(env, userId);
+  const title = '经验值 +' + amount;
+  const content = reason + '，获得 ' + amount + ' 经验值';
   await env.DB.prepare(
-    "INSERT INTO notifications (user_id, title, content, type) VALUES (?, '经验值 +" + amount + "', '" + reason + "，获得 " + amount + " 经验值', 'xp')"
-  ).bind(userId).run();
+    'INSERT INTO notifications (user_id, title, content, type) VALUES (?, ?, ?, ?)'
+  ).bind(userId, title, content, 'xp').run();
 }
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
-    const method = request.method;
 
+    // 🚀 重定向到 Pages 新前端（瑞典极简风格）
+    // 保留 API 路径在 Worker 中作为备选
+    const PAGES_URL = 'https://ider-order-system.pages.dev';
+
+    // 非 API 请求 → 直接重定向到 Pages
+    if (!path.startsWith('/api/')) {
+      const dest = PAGES_URL + path + (url.search || '');
+      return Response.redirect(dest, 301);
+    }
+
+    // API 请求走旧 Worker 逻辑（备用）
+    const method = request.method;
     if (method === 'OPTIONS') {
       return new Response(null, { headers: CORS_HEADERS });
     }
 
-    if (path === '/' || path === '/index.html') {
-      const asset = await renderStaticAsset('index.html', env);
-      return html(asset);
-    }
-    if (path.startsWith('/public/')) {
-      const asset = await renderStaticAsset(path.slice(1), env);
-      if (asset) return new Response(asset, { headers: { ...CORS_HEADERS, 'Content-Type': getContentType(path) } });
-      return json({ error: 'Not found' }, 404);
-    }
-
-    // Rate limiting for API routes
-    if (path.startsWith('/api/')) {
-      const ip = getClientIP(request);
-      const isAuthRoute = path.includes('/auth/');
-      if (!checkRateLimit(ip, path.split('/')[3] || 'api', isAuthRoute ? 10 : 60)) {
-        return json({ error: '请求过于频繁，请稍后再试' }, 429);
-      }
+    const ip = getClientIP(request);
+    const isAuthRoute = path.includes('/auth/');
+    if (!checkRateLimit(ip, path.split('/')[3] || 'api', isAuthRoute ? 10 : 60)) {
+      return json({ error: '请求过于频繁，请稍后再试' }, 429);
     }
 
     try {
@@ -186,6 +304,40 @@ function getContentType(path) {
 }
 
 async function handleRoute(method, path, request, env, url) {
+  // ╔════════════════════════════════════════════════════╗
+  // ║  ⚠️ 废弃通知 — 此 Worker 路由已全部被迁移          ║
+  // ║  请使用 Pages Functions: functions/api/**/*.js    ║
+  // ║  旧路径                    →  新路径                ║
+  // ║  api/auth/register         →  api/auth/register    ║
+  // ║  api/auth/login            →  api/auth/login       ║
+  // ║  api/user/info             →  api/user/info        ║
+  // ║  api/user/change-password  →  api/user/change-pwd  ║
+  // ║  api/user/profile          →  api/user/profile     ║
+  // ║  api/user/:id/public       →  api/user/:id/public  ║
+  // ║  api/orders                →  api/orders           ║
+  // ║  api/orders/:id            →  api/orders/:id       ║
+  // ║  api/orders/:id/activities →  api/orders/:id/actvt ║
+  // ║  api/accounts              →  api/accounts         ║
+  // ║  api/accounts/:id          →  api/accounts/:id     ║
+  // ║  api/accounts/:id/logs     →  api/accounts/:id/logs║
+  // ║  api/notifications         →  api/notifications    ║
+  // ║  api/notifications/read    →  api/notifications/rd ║
+  // ║  api/appeals               →  api/appeals          ║
+  // ║  api/after-sales           →  api/after-sales      ║
+  // ║  api/invite/*              →  api/invite/*         ║
+  // ║  api/bot/ask               →  api/bot/ask          ║
+  // ║  api/coupon/validate       →  api/coupon/validate  ║
+  // ║  api/redeem                →  api/redeem           ║
+  // ║  api/config                →  api/config           ║
+  // ║  api/stats                 →  api/stats            ║
+  // ║  api/leaderboard/*         →  api/leaderboard/*    ║
+  // ║  api/announcements/active  →  api/anouncements/act ║
+  // ║  api/ads/active            →  api/ads/active       ║
+  // ║  api/public/config         →  api/public/config    ║
+  // ║  api/admin/*               →  api/admin/*          ║
+  // ║  api/gh/*                  →  api/gh/*             ║
+  // ╚════════════════════════════════════════════════════╝
+
   let body = {};
   if (!['GET', 'HEAD'].includes(method)) {
     try { body = await request.json(); } catch (e) { body = {}; }
@@ -237,8 +389,17 @@ async function handleRoute(method, path, request, env, url) {
     ).bind(username).first();
     if (!user) return json({ error: '用户不存在' }, 404);
     if (user.locked) return json({ error: '账号已锁定' }, 403);
-    const hash = await hashPassword(password);
-    if (user.password_hash !== hash) return json({ error: '密码错误' }, 401);
+
+    // 验证密码（兼容旧 SHA-256 和新 PBKDF2）
+    const valid = await verifyPassword(password, user.password_hash);
+    if (!valid) return json({ error: '密码错误' }, 401);
+
+    // 自动升级旧 SHA-256 哈希到新 PBKDF2
+    if (isLegacyHash(user.password_hash)) {
+      const newHash = await hashPassword(password);
+      await env.DB.prepare('UPDATE users SET password_hash = ? WHERE id = ?')
+        .bind(newHash, user.id).run();
+    }
 
     const token = generateToken();
     const expires = new Date(Date.now() + 7 * 86400000).toISOString();
@@ -280,58 +441,156 @@ async function handleRoute(method, path, request, env, url) {
     const user = await authenticate(request, env);
     if (!user) return json({ error: '未登录' }, 401);
 
-    const { invite_code, payment_method, payment_account, amount, coupon_code, bind_account_name, bind_invite_code, game_account_count } = body;
-    if (!invite_code || !payment_method || !payment_account || !amount) {
-      return json({ error: '请填写完整信息' }, 400);
-    }
-    if (!['wechat', 'spirit_stone'].includes(payment_method)) {
-      return json({ error: '无效支付方式' }, 400);
+    const {
+      order_type,
+      coupon_code,
+      note,
+      invite_code,
+      payment_method,   // 'coin' | 'wechat' | 'spirit_stone'
+      points            // 邀请积分数量（10的倍数）
+    } = body;
+
+    // ── 1. 验证积分数量 ──
+    if (!points || points < 10 || points % 10 !== 0) {
+      return json({ error: '邀请积分数量必须是10的倍数（最少10）' }, 400);
     }
 
+    // ── 2. 验证付款方式 ──
+    const validMethods = ['coin', 'wechat', 'spirit_stone'];
+    if (!payment_method || !validMethods.includes(payment_method)) {
+      return json({ error: '请选择有效的付款方式' }, 400);
+    }
+
+    // ── 3. 根据付款方式计算价格 ──
     let price = 0;
-    let bonusPoints = 0;
+    let priceUnit = '';
+    let bonusPoints = points;
+
     if (payment_method === 'wechat') {
-      price = amount;
-      bonusPoints = amount * 120;
-    } else {
-      price = amount * 1000000;
-      bonusPoints = amount * 10;
+      // 现金：1元 = 120积分
+      price = points / 120;
+      priceUnit = '元';
+    } else if (payment_method === 'spirit_stone') {
+      // 灵石：100万灵石 = 10积分
+      price = points * 100000;
+      priceUnit = '万灵石';
+    } else if (payment_method === 'coin') {
+      // 修仙币：1修仙币 = 1积分
+      price = points;
+      priceUnit = '修仙币';
     }
 
+    // ── 4. 修仙币支付：验证余额并冻结 ──
+    let frozenPoints = 0;
+    if (payment_method === 'coin') {
+      const userInfo = await env.DB.prepare('SELECT bonus_points FROM users WHERE id = ?').bind(user.id).first();
+      const currentBalance = userInfo?.bonus_points || 0;
+      if (currentBalance < points) {
+        return json({
+          error: `修仙币余额不足，当前余额: ${currentBalance}，需要: ${points}`
+        }, 400);
+      }
+      // 冻结积分：从余额中扣除
+      await env.DB.prepare(
+        'UPDATE users SET bonus_points = bonus_points - ? WHERE id = ?'
+      ).bind(points, user.id).run();
+      frozenPoints = points;
+    }
+
+    // ── 5. 优惠码折扣 ──
     let discount = 0;
+    let couponType = 'percent';
+    let couponFixedAmount = 0;
     if (coupon_code) {
       const coupon = await env.DB.prepare(
         "SELECT * FROM coupons WHERE code = ? AND (expires_at IS NULL OR expires_at > datetime('now')) AND used_count < max_uses"
       ).bind(coupon_code).first();
       if (coupon) {
-        discount = coupon.discount_percent;
+        couponType = coupon.coupon_type || 'percent';
+        if (couponType === 'fixed') {
+          couponFixedAmount = coupon.fixed_amount || 0;
+        } else {
+          discount = coupon.discount_percent || 0;
+        }
         await env.DB.prepare(
           'UPDATE coupons SET used_count = used_count + 1 WHERE id = ?'
         ).bind(coupon.id).run();
       }
     }
 
+    // ── 6. 等级折扣 ──
     const userLevel = user.level || 1;
     const levelDiscounts = { 1: 0, 2: 0, 3: 10, 4: 20, 5: 30, 6: 40, 7: 45, 8: 50, 9: 60, 10: 70 };
-    const maxDiscount = Math.max(discount, levelDiscounts[userLevel] || 0);
-    const finalPrice = price * (100 - maxDiscount) / 100;
+    const levelDiscount = levelDiscounts[userLevel] || 0;
 
-    const accCount = game_account_count || Math.max(1, Math.ceil(bonusPoints / 120));
+    // ── 7. 计算最终价格（取最大折扣） ──
+    let finalPrice = price;
+    if (couponType === 'fixed') {
+      // 固定金额减免
+      finalPrice = Math.max(0, price - couponFixedAmount);
+      const levelPrice = price * (100 - levelDiscount) / 100;
+      finalPrice = Math.min(finalPrice, levelPrice);
+      discount = levelDiscount;
+    } else {
+      // 百分比折扣，取最大值
+      const maxDiscount = Math.max(discount, levelDiscount);
+      finalPrice = price * (100 - maxDiscount) / 100;
+      discount = maxDiscount;
+    }
+
+    // ── 8. 计算账号数 ──
+    const accCount = Math.max(1, Math.ceil(bonusPoints / 10));
+
+    // ── 9. 预估完成日期 ──
     const estDays = parseInt((await env.DB.prepare("SELECT value FROM config WHERE key='est_delivery_days'").first())?.value || '5');
     const estDate = new Date(Date.now() + estDays * 86400000).toISOString().split('T')[0];
 
+    // ── 10. 插入订单 ──
+    const finalInviteCode = invite_code || user.invite_code || '';
     const result = await env.DB.prepare(
-      "INSERT INTO orders (user_id, invite_code, payment_method, payment_account, amount, price, coupon_code, discount, bonus_points, bind_account_name, bind_invite_code, status, created_at, est_complete_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now'), ?)"
-    ).bind(user.id, invite_code, payment_method, payment_account, amount, finalPrice, coupon_code || '', maxDiscount, bonusPoints, bind_account_name || '', bind_invite_code || '', estDate).run();
+      `INSERT INTO orders (user_id, invite_code, payment_method, amount, price, coupon_code, discount, bonus_points, order_type, quantity, frozen_points, invite_code_used, status, created_at, est_complete_date)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now'), ?)`
+    ).bind(
+      user.id,
+      finalInviteCode,
+      payment_method,
+      points,
+      finalPrice,
+      coupon_code || '',
+      discount,
+      bonusPoints,
+      order_type || '代练',
+      accCount,
+      frozenPoints,
+      finalInviteCode,
+      estDate
+    ).run();
 
-    // Send notification
+    const orderId = result.meta.last_row_id;
+
+    // ── 11. 发送通知 ──
     await env.DB.prepare(
       "INSERT INTO notifications (user_id, title, content, type) VALUES (?, '工单已提交', '工单 #' || ? || ' 已提交，等待管理员审核中', 'order')"
-    ).bind(user.id, result.meta.last_row_id).run();
+    ).bind(user.id, orderId).run();
 
-    await logActivity(env, result.meta.last_row_id, user.id, 'created', '提交工单: ' + (game_account_count || bonusPoints/120) + ' 个账号');
+    // ── 12. 记录活动日志 ──
+    const paymentLabel = payment_method === 'coin' ? '修仙币' : payment_method === 'wechat' ? '现金' : '灵石';
+    await logActivity(env, orderId, user.id, 'created',
+      `提交工单: ${accCount}个账号, ${paymentLabel}支付, ${points}积分`);
 
-    return json({ ok: true, message: '工单已提交，等待审核', order_id: result.meta.last_row_id });
+    return json({
+      ok: true,
+      message: '工单已提交，等待审核',
+      order_id: orderId,
+      price_info: {
+        points,
+        payment_method: payment_method,
+        price: finalPrice,
+        unit: priceUnit,
+        accounts: accCount,
+        frozen_points: frozenPoints
+      }
+    });
   }
 
   // ── Single Order Detail ────────────────────────────
@@ -434,8 +693,9 @@ async function handleRoute(method, path, request, env, url) {
     const inviteOrders = await env.DB.prepare(
       "SELECT COUNT(*) as cnt FROM orders o JOIN users u ON o.user_id = u.id WHERE u.invited_by = ? AND o.status = 'approved'"
     ).bind(user.id).first();
+    // 邀请收益基于bonus_points计算（不再硬编码30%，使用实际boost倍率）
     const inviteEarnings = await env.DB.prepare(
-      "SELECT COALESCE(SUM(o.price * 0.3), 0) as total FROM orders o JOIN users u ON o.user_id = u.id WHERE u.invited_by = ? AND o.status = 'approved'"
+      "SELECT COALESCE(SUM(o.bonus_points), 0) as total FROM orders o JOIN users u ON o.user_id = u.id WHERE u.invited_by = ? AND o.status = 'approved'"
     ).bind(user.id).first();
     const totalPurchased = user.total_purchased_points || 0;
     const boost = getInviteBoost(totalPurchased);
@@ -542,8 +802,9 @@ async function handleRoute(method, path, request, env, url) {
 
     if (status === 'approved') {
       await env.DB.prepare(
+        // total_spent使用bonus_points统一单位
         'UPDATE users SET total_orders = total_orders + 1, total_spent = total_spent + ? WHERE id = ?'
-      ).bind(order.price, order.user_id).run();
+      ).bind(order.bonus_points, order.user_id).run();
 
       // Handle invite package purchase orders
       const isPackage = order.invite_code && order.invite_code.startsWith('PKG:');
@@ -558,7 +819,8 @@ async function handleRoute(method, path, request, env, url) {
         ).bind(order.user_id, pkgName, pkgPoints).run();
         await logActivity(env, orderId, order.user_id, 'commission', '购买套餐到账 ' + pkgPoints + ' 积分');
       } else {
-        const xpGain = Math.max(50, Math.floor(order.price));
+        // XP基于bonus_points统一计算（微信1元=120分，灵石100万=10分）
+        const xpGain = Math.max(10, Math.floor(order.bonus_points * 0.1));
         await addXP(env, order.user_id, xpGain, '工单 #' + orderId + ' 审核通过');
         await logActivity(env, orderId, order.user_id, 'approved', '工单已审核通过');
 
@@ -566,7 +828,8 @@ async function handleRoute(method, path, request, env, url) {
           const buyer = await env.DB.prepare('SELECT invited_by FROM users WHERE id = ?').bind(order.user_id).first();
           if (buyer && buyer.invited_by > 0) {
             const boostInfo = getInviteBoost((await env.DB.prepare('SELECT total_purchased_points FROM users WHERE id = ?').bind(buyer.invited_by).first())?.total_purchased_points || 0);
-            const commission = order.price * (boostInfo.rate / 100);
+            // 佣金基于bonus_points统一计算，避免灵石/微信单位不一致
+            const commission = order.bonus_points * (boostInfo.rate / 100);
             await env.DB.prepare(
               'UPDATE users SET invite_points = invite_points + ? WHERE id = ?'
             ).bind(commission, buyer.invited_by).run();
@@ -582,6 +845,14 @@ async function handleRoute(method, path, request, env, url) {
         "INSERT INTO notifications (user_id, title, content, type) VALUES (?, '工单已通过', '工单 #' || ? || ' 已审核通过，正在处理中', 'order')"
       ).bind(order.user_id, orderId).run();
     } else if (status === 'rejected') {
+      // 修仙币支付：退还冻结的积分
+      if (order.payment_method === 'coin' && order.frozen_points > 0) {
+        await env.DB.prepare(
+          'UPDATE users SET bonus_points = bonus_points + ? WHERE id = ?'
+        ).bind(order.frozen_points, order.user_id).run();
+        await logActivity(env, orderId, order.user_id, 'refund',
+          '工单拒绝，退还冻结修仙币 ' + order.frozen_points + ' 个');
+      }
       await env.DB.prepare(
         "INSERT INTO notifications (user_id, title, content, type) VALUES (?, '工单被拒绝', '工单 #' || ? || ' 被拒绝: ' || ?, 'order')"
       ).bind(order.user_id, orderId, admin_notes || '无原因').run();
@@ -677,6 +948,8 @@ async function handleRoute(method, path, request, env, url) {
   }
 
   // ── User Settings ────────────────────────────────────
+  // ⚠️ [已废弃] 请使用 functions/api/user/change-password.js
+  // 旧版 worker 路径已同步 verifyPassword，但仍建议切换到 Pages Functions
   if (path === '/api/user/change-password' && method === 'POST') {
     const user = await authenticate(request, env);
     if (!user) return json({ error: '未登录' }, 401);
@@ -684,14 +957,21 @@ async function handleRoute(method, path, request, env, url) {
     if (!old_password || !new_password) return json({ error: '请填写旧密码和新密码' }, 400);
     if (new_password.length < 6) return json({ error: '新密码至少6位' }, 400);
     if (new_password.length > 64) return json({ error: '新密码过长' }, 400);
-    const valid = await env.DB.prepare(
-      'SELECT id FROM users WHERE id = ? AND password_hash = ?'
-    ).bind(user.id, hashPassword(old_password)).first();
+
+    // 使用 verifyPassword 兼容新旧密码格式
+    const current = await env.DB.prepare(
+      'SELECT password_hash FROM users WHERE id = ?'
+    ).bind(user.id).first();
+    if (!current) return json({ error: '用户不存在' }, 404);
+    const valid = await verifyPassword(old_password, current.password_hash);
     if (!valid) return json({ error: '旧密码错误' }, 400);
-    await env.DB.prepare(
-      'UPDATE users SET password_hash = ? WHERE id = ?'
-    ).bind(hashPassword(new_password), user.id).run();
-    return json({ ok: true, message: '密码修改成功' });
+
+    const newHash = await hashPassword(new_password);
+    await env.DB.prepare('UPDATE users SET password_hash = ? WHERE id = ?')
+      .bind(newHash, user.id).run();
+    // 清除所有 session，强制重新登录
+    await env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(user.id).run();
+    return json({ ok: true, message: '密码修改成功，请重新登录' });
   }
 
   if (path === '/api/user/profile' && method === 'PUT') {
@@ -857,7 +1137,13 @@ async function handleRoute(method, path, request, env, url) {
     ).bind(code).first();
     if (!coupon) return json({ error: '优惠码无效或已过期' }, 404);
     if (coupon.used_count >= coupon.max_uses) return json({ error: '优惠码已用完' }, 400);
-    return json({ ok: true, discount_percent: coupon.discount_percent, min_amount: coupon.min_amount });
+    return json({
+      ok: true,
+      coupon_type: coupon.coupon_type || 'percent',
+      discount_percent: coupon.discount_percent,
+      fixed_amount: coupon.fixed_amount || 0,
+      min_amount: coupon.min_amount
+    });
   }
 
   // ── Config ──────────────────────────────────────
@@ -986,13 +1272,17 @@ async function handleRoute(method, path, request, env, url) {
   }
 
   // ── Admin: Full User Management ────────────────
+  // ⚠️ [已废弃] admin reset-password — 请使用 functions/api/admin/users/[id]/reset-password.js
   if (path.match(/^\/api\/admin\/users\/(\d+)\/reset-password$/) && method === 'POST') {
     const admin = await authenticate(request, env);
     if (!admin || !admin.is_admin) return json({ error: '无权限' }, 403);
     const targetId = parseInt(path.match(/^\/api\/admin\/users\/(\d+)\/reset-password$/)[1]);
     const { new_password } = body;
     if (!new_password || new_password.length < 6) return json({ error: '密码至少6位' }, 400);
-    await env.DB.prepare('UPDATE users SET password_hash = ? WHERE id = ?').bind(hashPassword(new_password), targetId).run();
+    const hash = await hashPassword(new_password);
+    await env.DB.prepare('UPDATE users SET password_hash = ? WHERE id = ?').bind(hash, targetId).run();
+    // 清除该用户所有 session，强制重新登录
+    await env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(targetId).run();
     return json({ ok: true, message: '密码已重置' });
   }
 
@@ -1114,6 +1404,85 @@ async function handleRoute(method, path, request, env, url) {
     if (popupAd) adsData.popup = popupAd;
     if (sidebarAd) adsData.sidebar = sidebarAd;
     return json({ ok: true, config: cfg, announcement: ann || null, ads: adsData });
+  }
+
+  // ⚠️ [已废弃] 密码重置相关路由已迁移到 functions/api/auth/
+  // 请使用 Pages Functions 路径：/api/auth/forgot-password 和 /api/auth/reset-password
+  // 旧版使用 globalThis.__resetTokens (in-memory Map) 存在 Worker 冷启动丢失问题
+
+  // ── Admin: Detailed Stats ─────────────────────
+  if (path === '/api/admin/stats' && method === 'GET') {
+    const admin = await authenticate(request, env);
+    if (!admin || !admin.is_admin) return json({ error: '无权限' }, 403);
+
+    const [totalUsers, totalOrders, approvedOrders, completedOrders, rejectedOrders, pendingOrders,
+           totalAccounts, onlineAccounts, completedAccounts, errorAccounts,
+           totalRevenue, todayOrders, todayRevenue, weeklyOrders] = await Promise.all([
+      env.DB.prepare('SELECT COUNT(*) as cnt FROM users').first(),
+      env.DB.prepare('SELECT COUNT(*) as cnt FROM orders').first(),
+      env.DB.prepare("SELECT COUNT(*) as cnt FROM orders WHERE status='approved'").first(),
+      env.DB.prepare("SELECT COUNT(*) as cnt FROM orders WHERE status='completed'").first(),
+      env.DB.prepare("SELECT COUNT(*) as cnt FROM orders WHERE status='rejected'").first(),
+      env.DB.prepare("SELECT COUNT(*) as cnt FROM orders WHERE status='pending'").first(),
+      env.DB.prepare('SELECT COUNT(*) as cnt FROM game_accounts').first(),
+      env.DB.prepare("SELECT COUNT(*) as cnt FROM game_accounts WHERE status IN ('farming','active')").first(),
+      env.DB.prepare("SELECT COUNT(*) as cnt FROM game_accounts WHERE status='completed'").first(),
+      env.DB.prepare("SELECT COUNT(*) as cnt FROM game_accounts WHERE status IN ('error','failed')").first(),
+      env.DB.prepare("SELECT COALESCE(SUM(bonus_points), 0) as total FROM orders WHERE status IN ('approved','completed')").first(),
+      env.DB.prepare("SELECT COUNT(*) as cnt FROM orders WHERE created_at >= datetime('now', '-1 day')").first(),
+      env.DB.prepare("SELECT COALESCE(SUM(bonus_points), 0) as total FROM orders WHERE created_at >= datetime('now', '-1 day') AND status IN ('approved','completed')").first(),
+      env.DB.prepare("SELECT COUNT(*) as cnt FROM orders WHERE created_at >= datetime('now', '-7 days')").first(),
+    ]);
+
+    // Level distribution
+    const levelDist = await env.DB.prepare(
+      "SELECT level, COUNT(*) as cnt FROM users GROUP BY level ORDER BY level"
+    ).all();
+
+    // Order status distribution for chart
+    const orderStatusDist = await env.DB.prepare(
+      "SELECT status, COUNT(*) as cnt FROM orders GROUP BY status"
+    ).all();
+
+    // Account status distribution
+    const accountStatusDist = await env.DB.prepare(
+      "SELECT status, COUNT(*) as cnt FROM game_accounts GROUP BY status"
+    ).all();
+
+    // Top users by spending
+    const topSpenders = await env.DB.prepare(
+      "SELECT id, username, display_name, total_spent, total_orders, level FROM users WHERE total_spent > 0 ORDER BY total_spent DESC LIMIT 5"
+    ).all();
+
+    // Recent 7-day order trend
+    const dailyTrend = await env.DB.prepare(
+      "SELECT date(created_at) as day, COUNT(*) as cnt, COALESCE(SUM(price), 0) as revenue FROM orders WHERE created_at >= datetime('now', '-7 days') GROUP BY date(created_at) ORDER BY day"
+    ).all();
+
+    return json({
+      ok: true,
+      stats: {
+        total_users: totalUsers.cnt,
+        total_orders: totalOrders.cnt,
+        approved_orders: approvedOrders.cnt,
+        completed_orders: completedOrders.cnt,
+        rejected_orders: rejectedOrders.cnt,
+        pending_orders: pendingOrders.cnt,
+        total_accounts: totalAccounts.cnt,
+        online_accounts: onlineAccounts.cnt,
+        completed_accounts: completedAccounts.cnt,
+        error_accounts: errorAccounts.cnt,
+        total_revenue: totalRevenue.total || 0,
+        today_orders: todayOrders.cnt,
+        today_revenue: todayRevenue.total || 0,
+        weekly_orders: weeklyOrders.cnt,
+        level_distribution: levelDist.results,
+        order_status_distribution: orderStatusDist.results,
+        account_status_distribution: accountStatusDist.results,
+        top_spenders: topSpenders.results,
+        daily_trend: dailyTrend.results,
+      },
+    });
   }
 
   return json({ error: 'Not found' }, 404);

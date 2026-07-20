@@ -1,0 +1,14 @@
+name = "ider-order-system"
+main = "worker/index.js"
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ider-orders"
+database_id = "9fd8cb75-d10e-4cf3-a0e0-3681e5a59ae8"
+
+[vars]
+API_KEY = ""
+ENVIRONMENT = "production"
+SITE_NAME = "艾德尔修仙工单平台"
+CORS_ORIGIN = ""

@@ -1,0 +1,30 @@
+# 订单扫描工作流 — 每10分钟执行一次
+name: Order Scan
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: gh-actions
+
+      - name: Run order scanner
+        run: node scan_orders.js
+        working-directory: gh-actions
+        env:
+          WORKER_URL: ${{ secrets.WORKER_URL }}
+          API_KEY: ${{ secrets.API_KEY }}

@@ -9,7 +9,8 @@
     "init-db": "wrangler d1 execute ider-orders --file=./schema.sql",
     "preview-db": "wrangler d1 execute ider-orders --local --file=./schema.sql",
     "scan-orders": "node gh-actions/scan_orders.js",
-    "health-check": "node gh-actions/health_check.js"
+    "health-check": "node gh-actions/health_check.js",
+    "trial-test": "node gh-actions/trial_tester.js"
   },
   "dependencies": {
     "libsodium-wrappers": "^0.8.4",

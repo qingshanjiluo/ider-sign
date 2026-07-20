@@ -1,0 +1,56 @@
+name: 试炼自动测试
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: '测试模式 (greedy=贪心, exhaustive=全穷举)'
+        required: true
+        default: 'greedy'
+        type: choice
+        options:
+          - greedy
+          - exhaustive
+  schedule:
+    - cron: '0 4 */3 * *'
+
+jobs:
+  trial-test:
+    name: 试炼词条自动穷举测试
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 运行试炼测试
+        env:
+          WORKER_URL: ${{ secrets.WORKER_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+          API_BASE: ${{ secrets.API_BASE }}
+          SIGN_KEY: ${{ secrets.SIGN_KEY }}
+          CLIENT_VERSION: ${{ secrets.CLIENT_VERSION }}
+          TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+        run: node gh-actions/trial_tester.js
+
+      - name: 上传测试报告
+        uses: actions/upload-artifact@v4
+        with:
+          name: trial-test-report
+          path: trial_test_report.json
+          retention-days: 30
+
+      - name: 发送通知
+        if: always()
+        run: |
+          echo "试炼自动测试完成"
+          echo "查看报告: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"

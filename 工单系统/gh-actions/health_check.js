@@ -7,12 +7,21 @@ const crypto = require('crypto');
 const fetch = require('node-fetch');
 const antiDetect = require('./_anti_detect');
 
-const WORKER_URL = process.env.WORKER_URL || '';
-const API_KEY = process.env.API_KEY || '';
-const API_BASE = process.env.API_BASE || 'https://idlexiuxianzhuan.cn';
-const CLIENT_VERSION = process.env.CLIENT_VERSION || '1.2.4';
-const SIGN_KEY = process.env.SIGN_KEY || 'KDYJ1iHyB02LgyN1Jljb5pQkTHU1ELC6Vg6ox6FC0iX0dW9l';
+const WORKER_URL = process.env.WORKER_URL;
+const API_KEY = process.env.API_KEY;
+const API_BASE = process.env.API_BASE;
+const CLIENT_VERSION = process.env.CLIENT_VERSION;
+const SIGN_KEY = process.env.SIGN_KEY;
 const MAX_LEVEL = 120;
+
+// 启动前验证关键环境变量
+const REQUIRED_ENV = { WORKER_URL, API_KEY, API_BASE, SIGN_KEY };
+for (const [name, val] of Object.entries(REQUIRED_ENV)) {
+  if (!val) {
+    console.error(`错误: 环境变量 ${name} 未设置`);
+    process.exit(1);
+  }
+}
 
 let _apiIdx = 0;
 function setApiIdx(idx) { _apiIdx = idx; }
@@ -47,7 +56,8 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 async function workerApi(path, method = 'GET', body = null) {
   const headers = { 'X-API-Key': API_KEY, 'Content-Type': 'application/json' };
-  const r = await fetch(WORKER_URL + path, { method, headers, body: body ? JSON.stringify(body) : undefined, timeout: 30000 });
+  const url = WORKER_URL.replace(/\/+$/, '') + path;
+  const r = await fetch(url, { method, headers, body: body ? JSON.stringify(body) : undefined, timeout: 30000 });
   return r.json();
 }
 
