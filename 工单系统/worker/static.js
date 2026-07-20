@@ -144,6 +144,8 @@ nav .nav-links .btn-link { border-radius:0; padding:7px 18px; }
 .btn-magenta:hover { background:rgba(255,0,170,0.06); box-shadow:var(--shadow-m); }
 .btn-green { border-color:var(--green); color:var(--green); }
 .btn-green:hover { background:rgba(0,255,136,0.06); box-shadow:0 0 20px rgba(0,255,136,0.1); }
+.btn-purple { border-color:var(--purple); color:var(--purple); }
+.btn-purple:hover { background:rgba(124,58,237,0.12); box-shadow:0 0 20px rgba(124,58,237,0.15); }
 .btn-yellow { border-color:var(--yellow); color:var(--yellow); }
 .btn-red { border-color:var(--red); color:var(--red); }
 .btn-red:hover { background:rgba(255,51,68,0.06); }
@@ -298,6 +300,9 @@ label {
 .badge-registering, .badge-creating { border-color:var(--yellow); color:var(--yellow); }
 .badge-farming, .badge-active { border-color:var(--magenta); color:var(--magenta); }
 .badge-failed, .badge-error { border-color:var(--red); color:var(--red); }
+.badge-resolved { border-color:var(--green); color:var(--green); }
+.badge-after_sales { border-color:var(--purple); color:var(--purple); }
+.badge-registering { border-color:var(--yellow); color:var(--yellow); }
 
 /* ─── Table ────────────────────────── */
 .table-wrap { overflow-x:auto; border-radius:6px; }
@@ -493,6 +498,60 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); curs
   .card { padding:16px; }
 }`;
 
+/* ─── Banner & Ads ─────────────────── */
+.announce-bar { background:linear-gradient(90deg,var(--purple),var(--magenta)); padding:8px 16px; text-align:center; font-size:0.82em; color:#fff; position:relative; z-index:999; overflow:hidden; }
+.announce-bar .close-bar { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:#fff; cursor:pointer; font-size:1em; opacity:0.7; }
+.ad-popup { position:fixed; top:0; left:0; right:0; bottom:0; z-index:9999; background:rgba(0,0,0,0.85); display:none; justify-content:center; align-items:center; backdrop-filter:blur(10px); }
+.ad-popup.show { display:flex; }
+.ad-popup-inner { max-width:360px; width:90%; border-radius:12px; overflow:hidden; border:1px solid var(--border); }
+.ad-popup-inner img { width:100%; display:block; }
+.ad-popup-inner .ad-close { display:block; width:100%; padding:10px; background:var(--bg-card); border:none; color:var(--text); cursor:pointer; text-align:center; font-size:0.85em; }
+.ad-sidebar { position:sticky; top:80px; margin-bottom:16px; }
+.ad-sidebar img { width:100%; border-radius:8px; cursor:pointer; border:1px solid var(--border); }
+
+/* ─── Leaderboard ──────────────────── */
+.lb-card { display:flex; align-items:center; gap:14px; padding:14px 18px; border-bottom:1px solid var(--border); transition:background .3s; cursor:pointer; }
+.lb-card:hover { background:rgba(0,240,255,0.04); }
+.lb-rank { width:32px; text-align:center; font-family:'Orbitron',monospace; font-size:1.1em; font-weight:700; }
+.lb-rank.gold { color:#ffd700; } .lb-rank.silver { color:#c0c0c0; } .lb-rank.bronze { color:#cd7f32; }
+.lb-avatar { width:40px; height:40px; border-radius:50%; background:var(--cyan); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1em; color:var(--bg-deep); flex-shrink:0; }
+.lb-avatar img { width:40px; height:40px; border-radius:50%; object-fit:cover; }
+.lb-info { flex:1; min-width:0; }
+.lb-name { font-weight:500; color:var(--text-bright); font-size:0.92em; }
+.lb-name small { color:var(--text-dim); font-size:0.78em; }
+.lb-stat { color:var(--cyan); font-size:0.85em; font-weight:500; }
+.lb-stat .lbl { color:var(--text-dim); font-weight:300; }
+
+/* ─── Champion Card ────────────────── */
+.champ-card { background:linear-gradient(135deg,rgba(255,215,0,0.08),rgba(255,165,0,0.04)); border:1px solid rgba(255,215,0,0.2); border-radius:16px; padding:28px; text-align:center; margin-bottom:20px; }
+.champ-card .champ-avatar { width:80px; height:80px; border-radius:50%; margin:0 auto 12px; background:linear-gradient(135deg,#ffd700,#ff8c00); display:flex; align-items:center; justify-content:center; font-size:2em; font-weight:900; color:var(--bg-deep); box-shadow:0 0 30px rgba(255,215,0,0.3); }
+.champ-card .champ-avatar img { width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid #ffd700; }
+.champ-card .champ-name { font-size:1.3em; font-weight:700; color:#ffd700; }
+.champ-card .champ-stat { color:var(--text-dim); font-size:0.9em; margin-top:6px; }
+.champ-card .champ-crown { font-size:2.5em; margin-bottom:4px; }
+
+/* ─── Profile Page ─────────────────── */
+.profile-header { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+.profile-avatar { width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,var(--cyan),var(--purple)); display:flex; align-items:center; justify-content:center; font-size:1.5em; font-weight:700; color:var(--bg-deep); flex-shrink:0; overflow:hidden; }
+.profile-avatar img { width:64px; height:64px; border-radius:50%; object-fit:cover; }
+
+/* ─── Avatar Dropdown ──────────────── */
+.avatar-wrap { position:relative; cursor:pointer; }
+.avatar-trigger { display:flex; align-items:center; gap:8px; padding:4px 8px; border-radius:8px; transition:background .2s; }
+.avatar-trigger:hover { background:rgba(0,240,255,0.08); }
+.avatar-mini { width:32px; height:32px; border-radius:50%; background:var(--cyan); display:flex; align-items:center; justify-content:center; font-size:0.75em; font-weight:700; color:var(--bg-deep); overflow:hidden; flex-shrink:0; }
+.avatar-mini img { width:32px; height:32px; border-radius:50%; object-fit:cover; }
+.avatar-dropdown { display:none; position:absolute; top:100%; right:0; min-width:180px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; padding:6px 0; backdrop-filter:blur(16px); z-index:1001; }
+.avatar-dropdown.show { display:block; }
+.avatar-dropdown a { display:flex; align-items:center; gap:10px; padding:10px 16px; color:var(--text); font-size:0.88em; transition:background .2s; }
+.avatar-dropdown a:hover { background:rgba(0,240,255,0.06); color:var(--cyan); }
+.avatar-dropdown .divider { height:1px; background:var(--border); margin:4px 12px; }
+.avatar-name { font-size:0.85em; color:var(--text-bright); max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* ─── Redeem Section ───────────────── */
+.redeem-input { display:flex; gap:10px; }
+.redeem-input input { flex:1; padding:10px 14px; border:1px solid var(--border); background:var(--bg-input); color:var(--text); border-radius:6px; font-size:1.2em; text-align:center; letter-spacing:4px; text-transform:uppercase; }
+
 const HTML = `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -507,8 +566,10 @@ const HTML = `<!DOCTYPE html>
 <div class="bg-glow-2"></div>
 <div class="particles" id="particles"></div>
 <div class="scanline"></div>
+<div id="announce-bar" class="announce-bar" style="display:none"><span id="announce-text"></span><button class="close-bar" onclick="this.parentElement.style.display='none'">&times;</button></div>
 <div id="page-loading" class="page-loading"><div class="bar"></div></div>
 <div id="toast-container" class="toast-container"></div>
+<div id="ad-popup" class="ad-popup"><div class="ad-popup-inner"><a id="ad-popup-link" href="#" target="_blank"><img id="ad-popup-img" src="" alt=""></a><button class="ad-close" onclick="closeAdPopup()">关闭</button></div></div>
 
 <nav id="nav">
   <div class="logo">NEON<span class="dot">⚡</span>IDER</div>
@@ -519,12 +580,26 @@ const HTML = `<!DOCTYPE html>
     <a href="#" data-page="docs">文档</a>
     <a href="#" id="nav-invite" class="hidden" data-page="invite">邀请</a>
     <a href="#" id="nav-settings" class="hidden" data-page="settings">设置</a>
+    <a href="#" data-page="leaderboard">排行榜</a>
+    <a href="#" id="nav-after-sales" class="hidden" data-page="after-sales">售后</a>
     <a href="#" id="nav-notif" class="hidden" data-page="notifications">通知 <span id="notif-badge" class="nav-badge hidden">0</span></a>
     <a href="#" id="nav-admin" class="hidden" data-page="admin">管理</a>
     <a class="btn btn-magenta btn-sm btn-link" id="nav-login" href="#" data-page="login">登录</a>
     <a class="btn btn-sm btn-link" id="nav-register" href="#" data-page="register">注册</a>
     <a class="btn btn-green btn-sm btn-link hidden" id="nav-dashboard" href="#" data-page="dashboard">控制台</a>
-    <a class="btn btn-sm btn-link hidden" id="nav-logout" href="#" onclick="logout()">退出</a>
+    <div class="avatar-wrap hidden" id="avatar-wrap">
+      <div class="avatar-trigger" onclick="toggleAvatarMenu()">
+        <div class="avatar-mini" id="nav-avatar-icon"><span id="nav-avatar-letter">U</span></div>
+        <span class="avatar-name" id="nav-avatar-name">用户</span>
+      </div>
+      <div class="avatar-dropdown" id="avatar-dropdown">
+        <a href="#" data-page="profile"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg> 主页</a>
+        <a href="#" data-page="settings"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> 设置</a>
+        <a href="#" data-page="invite"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg> 邀请</a>
+        <div class="divider"></div>
+        <a href="#" onclick="logout()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> 退出登录</a>
+      </div>
+    </div>
   </div>
 </nav>
 
@@ -537,6 +612,11 @@ let USER = null;
 const API = window.location.origin;
 let notifInterval = null;
 const LD = { 1:0, 2:0, 3:10, 4:20, 5:30, 6:40, 7:45, 8:50, 9:60, 10:70 };
+const XP_LEVELS = [0, 0, 100, 300, 600, 1000, 1600, 2400, 3400, 4600, 6000];
+
+// ─── SVG Icons ──────────────────────────────
+function icon(n) { const s={user:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg>',settings:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><circle cx="12"cy="12"r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',star:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',trophy:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',crown:'<svg width="20"height="20"viewBox="0 0 24 24"fill="none"stroke="#ffd700"stroke-width="2"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><path d="M3 20h18"/></svg>',bolt:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',mail:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',clock:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><circle cx="12"cy="12"r="10"/><polyline points="12 6 12 12 16 14"/></svg>',check:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>',x:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><line x1="18"y1="6"x2="6"y2="18"/><line x1="6"y1="6"x2="18"y2="18"/></svg>',dollar:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><line x1="12"y1="1"x2="12"y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',users:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9"cy="7"r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',shield:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',chevron:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>',copy:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><rect x="9"y="9"width="13"height="13"rx="2"ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'}; return s[n]||''; }
+function iconBig(n){const s={crown:'<svg width="40"height="40"viewBox="0 0 24 24"fill="none"stroke="#ffd700"stroke-width="1.5"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><path d="M3 20h18"/></svg>'};return s[n]||'';}
 
 function toast(m, t = 'info') {
   const c = document.getElementById('toast-container');
@@ -819,6 +899,8 @@ P.admin = () => \`
     <div class="tab" onclick="switchTab(this,'ap-users')">👥 用户</div>
     <div class="tab" onclick="switchTab(this,'ap-appeals')">📮 申诉</div>
     <div class="tab" onclick="switchTab(this,'ap-coupons')">🎫 优惠券</div>
+    <div class="tab" onclick="switchTab(this,'ap-announce')">📢 公告</div>
+    <div class="tab" onclick="switchTab(this,'ap-ads')">🖼️ 广告</div>
     <div class="tab" onclick="switchTab(this,'ap-config')">⚙️ 配置</div>
   </div>
 
@@ -838,7 +920,7 @@ P.admin = () => \`
     <div class="card"><h3>游戏账号</h3><div class="table-wrap"><table><thead><tr><th>ID</th><th>用户</th><th>账号</th><th>等级</th><th>地图</th><th>状态</th><th>技能</th><th>功法</th><th>装备</th><th>检查</th></tr></thead><tbody id="admin-accounts-table"></tbody></table></div></div>
   </div>
   <div class="tab-content" id="ap-users">
-    <div class="card"><h3>用户列表</h3><div class="table-wrap"><table><thead><tr><th>ID</th><th>用户名</th><th>等级</th><th>工单</th><th>消费</th><th>积分</th><th>邀请码</th><th>锁定</th><th>注册时间</th></tr></thead><tbody id="admin-users-table"></tbody></table></div></div>
+    <div class="card"><h3>用户列表</h3><div class="table-wrap"><table><thead><tr><th>ID</th><th>用户名</th><th>等级</th><th>工单</th><th>消费</th><th>邀请</th><th>邀请码</th><th>状态</th><th>管理</th><th>注册</th><th>操作</th></tr></thead><tbody id="admin-users-table"></tbody></table></div></div>
   </div>
   <div class="tab-content" id="ap-appeals">
     <div class="card"><h3>申诉管理</h3><div class="table-wrap"><table><thead><tr><th>#</th><th>用户</th><th>标题</th><th>类型</th><th>状态</th><th>时间</th><th>操作</th></tr></thead><tbody id="admin-appeals-table"></tbody></table></div></div>
@@ -855,6 +937,29 @@ P.admin = () => \`
         <button class="btn btn-green btn-sm" onclick="adminCreateCoupon()">创建</button>
       </div>
       <div class="table-wrap"><table><thead><tr><th>ID</th><th>优惠码</th><th>折扣</th><th>使用数</th><th>上限</th><th>过期</th><th>描述</th><th>创建时间</th><th>操作</th></tr></thead><tbody id="admin-coupons-table"></tbody></table></div>
+    </div>
+  </div>
+  <div class="tab-content" id="ap-announce">
+    <div class="card">
+      <h3>📢 公告管理</h3>
+      <div class="flex gap-10 mb-10 flex-wrap" style="border:1px solid var(--border);padding:16px;border-radius:8px">
+        <textarea id="ann-content" rows="3" placeholder="输入公告内容..." style="flex:1;min-width:200px;padding:8px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px;font-size:0.85em"></textarea>
+        <div style="display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap"><label style="font-size:0.82em;color:var(--text-dim)"><input type="checkbox" id="ann-enabled" checked> 启用</label><button class="btn btn-green btn-sm" onclick="adminCreateAnnouncement()">发布</button></div>
+      </div>
+      <div id="admin-announce-list"><p style="color:var(--text-dim);font-size:0.85em">加载中...</p></div>
+    </div>
+  </div>
+  <div class="tab-content" id="ap-ads">
+    <div class="card">
+      <h3>🖼️ 广告管理</h3>
+      <div class="flex gap-10 mb-10 flex-wrap" style="border:1px solid var(--border);padding:16px;border-radius:8px">
+        <select id="ad-type" style="padding:6px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px"><option value="popup">弹窗广告</option><option value="sidebar">侧栏广告</option></select>
+        <input id="ad-img" placeholder="图片URL" style="flex:1;min-width:140px;padding:6px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px">
+        <input id="ad-link" placeholder="链接URL" style="flex:1;min-width:100px;padding:6px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px">
+        <label style="font-size:0.82em;color:var(--text-dim);display:flex;align-items:center"><input type="checkbox" id="ad-enabled"> 启用</label>
+        <button class="btn btn-green btn-sm" onclick="adminCreateAd()">添加</button>
+      </div>
+      <div id="admin-ads-list"><p style="color:var(--text-dim);font-size:0.85em">加载中...</p></div>
     </div>
   </div>
   <div class="tab-content" id="ap-config">
@@ -936,6 +1041,41 @@ P.appeals = () => \`
 </div>
 \`;
 
+P['after-sales'] = () => \`
+<div class="container animate-in" style="max-width:700px">
+  <div class="flex-between flex-wrap mb-20" style="gap:12px">
+    <h2 class="page-title" style="margin-bottom:0">售后工单</h2>
+    <button class="btn btn-magenta btn-sm" onclick="showAfterSalesForm()">+ 提交售后</button>
+  </div>
+  <div id="after-sales-list"><p class="text-center" style="color:var(--text-dim);padding:30px">加载中...</p></div>
+</div>
+\`;
+
+P.leaderboard = () => \`
+<div class="container animate-in" style="max-width:700px">
+  <div class="flex-between flex-wrap mb-20" style="gap:12px">
+    <h2 class="page-title" style="margin-bottom:0">排行榜</h2>
+    <div class="flex gap-10 flex-wrap">
+      <button class="btn btn-sm" onclick="loadLeaderboard('purchase')">购买榜</button>
+      <button class="btn btn-yellow btn-sm" onclick="loadLeaderboard('invite')">邀请榜</button>
+      <button class="btn btn-purple btn-sm" onclick="loadLeaderboard('level')">等级榜</button>
+    </div>
+  </div>
+  <div id="lb-champion"></div>
+  <div id="lb-list"><p class="text-center" style="color:var(--text-dim);padding:30px">加载中...</p></div>
+</div>
+\`;
+
+P.profile = () => \`
+<div class="container animate-in" style="max-width:640px">
+  <div class="flex-between flex-wrap mb-20" style="gap:12px">
+    <h2 class="page-title" style="margin-bottom:0">个人主页</h2>
+    <button class="btn btn-sm" onclick="showPage('dashboard')">← 返回</button>
+  </div>
+  <div id="profile-content"><p class="text-center" style="color:var(--text-dim);padding:30px">加载中...</p></div>
+</div>
+\`;
+
 // ─── Router ────────────────────────────────
 function showPage(name) {
   closeNav();
@@ -952,6 +1092,10 @@ function showPage(name) {
     if (name === 'accounts' && TOKEN) refreshAccounts();
     if (name === 'notifications' && TOKEN) refreshNotifs();
     if (name === 'appeals' && TOKEN) refreshAppeals();
+    if (name === 'leaderboard') loadLeaderboard('purchase');
+    if (name === 'after-sales' && TOKEN) loadAfterSales();
+    if (name === 'profile' && TOKEN) loadProfile();
+    if (name === 'settings' && TOKEN) { /* settings loaded from P.settings template */ }
   }
 }
 
@@ -967,8 +1111,17 @@ function updateNav(loggedIn, isAdmin) {
   document.getElementById('nav-logout').classList.toggle('hidden', !loggedIn);
   document.getElementById('nav-invite').classList.toggle('hidden', !loggedIn);
   document.getElementById('nav-settings').classList.toggle('hidden', !loggedIn);
+  document.getElementById('nav-after-sales').classList.toggle('hidden', !loggedIn);
   document.getElementById('nav-notif').classList.toggle('hidden', !loggedIn);
   document.getElementById('nav-admin').classList.toggle('hidden', !(loggedIn && isAdmin));
+  document.getElementById('avatar-wrap').classList.toggle('hidden', !loggedIn);
+}
+
+function updateAvatarUI() {
+  const letter = document.getElementById('nav-avatar-letter');
+  const name = document.getElementById('nav-avatar-name');
+  if (letter) letter.textContent = (USER?.display_name || USER?.username || 'U')[0].toUpperCase();
+  if (name) name.textContent = USER?.display_name || USER?.username || '用户';
 }
 
 async function checkAuth() {
@@ -977,6 +1130,9 @@ async function checkAuth() {
   if (r.ok && r.user) {
     USER = r.user;
     updateNav(true, r.user.is_admin);
+    updateAvatarUI();
+    loadAnnouncement();
+    loadAds();
     if (document.getElementById('app').innerHTML === '') showPage('dashboard');
     startNotifPoll();
   } else {
@@ -1278,7 +1434,7 @@ async function submitOrder() {
 }
 
 // ─── Admin ──────────────────────────────────
-async function refreshAdmin() { await Promise.all([adminLoadOrders('pending'), adminLoadAccounts(), adminLoadUsers(), adminLoadAppeals(), adminLoadConfig(), adminLoadCoupons()]); }
+async function refreshAdmin() { await Promise.all([adminLoadOrders('pending'), adminLoadAccounts(), adminLoadUsers(), adminLoadAppeals(), adminLoadConfig(), adminLoadCoupons(), adminLoadAnnouncements(), adminLoadAds()]); }
 
 async function adminLoadOrders(status) {
   const p = status ? '/api/admin/orders?status=' + status : '/api/admin/orders';
@@ -1328,13 +1484,22 @@ async function adminLoadUsers() {
   const tb = document.getElementById('admin-users-table');
   if (!tb) return;
   tb.innerHTML = (r.users||[]).map(u => \`<tr>
-    <td>\${u.id}</td><td>\${esc(u.username)}</td>
-    <td><span class="level-badge">Lv.\${u.level}</span></td>
+    <td>\${u.id}</td>
+    <td>\${esc(u.username)}<br><span style="font-size:0.72em;color:var(--text-dim)">\${esc(u.display_name||'')}</span></td>
+    <td><span class="level-badge">Lv.\${u.level}</span><br><span style="font-size:0.7em;color:var(--text-dim)">\${u.xp||0}XP</span></td>
     <td>\${u.total_orders}</td><td>¥\${(u.total_spent||0).toFixed(1)}</td>
-    <td>\${(u.invite_points||0).toFixed(1)}</td>
+    <td>\${u.total_invited||0}</td>
     <td style="font-size:0.76em">\${u.invite_code||'-'}</td>
-    <td>\${u.locked ? '🔒' : '✅'}</td>
+    <td>\${u.locked ? icon('x')+'封禁': icon('check')}</td>
+    <td>\${u.is_admin ? icon('shield') : ''}</td>
     <td style="font-size:0.76em">\${u.created_at?.split(' ')[0]||'-'}</td>
+    <td>
+      <button class="btn btn-sm" style="padding:2px 8px;font-size:0.68em" onclick="adminResetPass(\${u.id})">密码</button>
+      <button class="btn btn-sm" style="padding:2px 8px;font-size:0.68em" onclick="adminSetLevel(\${u.id})">等级</button>
+      <button class="btn btn-sm" style="padding:2px 8px;font-size:0.68em" onclick="adminToggleAdmin(\${u.id})">\${u.is_admin?'取消':'设为'}</button>
+      <button class="btn btn-sm" style="padding:2px 8px;font-size:0.68em" onclick="adminToggleLock(\${u.id},\${u.locked})">\${u.locked?'解封':'封禁'}</button>
+      <button class="btn btn-red btn-sm" style="padding:2px 8px;font-size:0.68em" onclick="adminDeleteUser(\${u.id})">删除</button>
+    </td>
   </tr>\`).join('');
 }
 
@@ -1398,6 +1563,107 @@ async function adminDeleteCoupon(id) {
   if (!confirm('确认删除此优惠券？')) return;
   const r = await api('DELETE', '/api/admin/coupons/' + id);
   if (r.ok) { toast('已删除', 'success'); adminLoadCoupons(); }
+  else toast(r.error, 'error');
+}
+
+// ─── Admin: User Management ────────────────
+async function adminResetPass(id) {
+  const pwd = prompt('输入新密码（至少6位）：');
+  if (!pwd || pwd.length < 6) return toast('密码至少6位', 'error');
+  const r = await api('POST', '/api/admin/users/' + id + '/reset-password', { new_password: pwd });
+  if (r.ok) toast('密码已重置', 'success');
+  else toast(r.error, 'error');
+}
+async function adminSetLevel(id) {
+  const lv = parseInt(prompt('输入新等级（1-10）：'));
+  if (!lv || lv < 1 || lv > 10) return toast('等级需在1-10之间', 'error');
+  const r = await api('POST', '/api/admin/users/' + id + '/level', { level: lv });
+  if (r.ok) { toast('等级已更新', 'success'); adminLoadUsers(); }
+  else toast(r.error, 'error');
+}
+async function adminToggleAdmin(id) {
+  const confirmMsg = '确认切换此用户的管理员权限？';
+  if (!confirm(confirmMsg)) return;
+  const r = await api('POST', '/api/admin/users/' + id + '/admin', { is_admin: true });
+  if (r.ok) { toast('权限已更新', 'success'); adminLoadUsers(); }
+  else toast(r.error, 'error');
+}
+async function adminToggleLock(id, locked) {
+  if (!confirm(locked ? '确认解封此用户？' : '确认封禁此用户？')) return;
+  const r = await api('POST', '/api/admin/users/' + id + '/lock', { locked: !locked });
+  if (r.ok) { toast(locked ? '已解封' : '已封禁', 'success'); adminLoadUsers(); }
+  else toast(r.error, 'error');
+}
+async function adminDeleteUser(id) {
+  if (!confirm('⚠️ 确认永久删除此用户？此操作不可恢复！')) return;
+  if (!confirm('再次确认：删除用户 #' + id + '？')) return;
+  const r = await api('DELETE', '/api/admin/users/' + id + '/delete');
+  if (r.ok) { toast('用户已删除', 'success'); adminLoadUsers(); }
+  else toast(r.error, 'error');
+}
+
+// ─── Admin: Announcements ──────────────────
+async function adminLoadAnnouncements() {
+  const el = document.getElementById('admin-announce-list');
+  if (!el) return;
+  const r = await api('GET', '/api/admin/announcements');
+  if (!r.ok) { el.innerHTML = '<p style="color:var(--text-dim)">加载失败</p>'; return; }
+  if (!r.announcements || !r.announcements.length) { el.innerHTML = '<p style="color:var(--text-dim)">暂无公告</p>'; return; }
+  el.innerHTML = r.announcements.map(a => \`
+    <div class="flex-between" style="border-bottom:1px solid var(--border);padding:10px 0;font-size:0.85em">
+      <div style="flex:1;min-width:0"><span style="color:\${a.enabled?'var(--green)':'var(--text-dim)'}">\${a.enabled?'●':'○'}</span> \${esc(a.content)}<br><span style="font-size:0.75em;color:var(--text-dim)">\${a.created_at}</span></div>
+      <button class="btn btn-red btn-sm" style="padding:2px 10px;font-size:0.72em" onclick="adminDeleteAnnouncement(\${a.id})">删除</button>
+    </div>
+  \`).join('');
+}
+async function adminCreateAnnouncement() {
+  const content = document.getElementById('ann-content')?.value;
+  const enabled = document.getElementById('ann-enabled')?.checked ? 1 : 0;
+  if (!content) return toast('请输入公告内容', 'error');
+  const r = await api('POST', '/api/admin/announcements', { content, enabled });
+  if (r.ok) { toast('公告已发布', 'success'); document.getElementById('ann-content').value = ''; adminLoadAnnouncements(); loadAnnouncement(); }
+  else toast(r.error, 'error');
+}
+async function adminDeleteAnnouncement(id) {
+  if (!confirm('确认删除此公告？')) return;
+  const r = await api('DELETE', '/api/admin/announcements/' + id);
+  if (r.ok) { toast('已删除', 'success'); adminLoadAnnouncements(); }
+  else toast(r.error, 'error');
+}
+
+// ─── Admin: Ads ──────────────────────────
+async function adminLoadAds() {
+  const el = document.getElementById('admin-ads-list');
+  if (!el) return;
+  const r = await api('GET', '/api/admin/ads');
+  if (!r.ok) { el.innerHTML = '<p style="color:var(--text-dim)">加载失败</p>'; return; }
+  if (!r.ads || !r.ads.length) { el.innerHTML = '<p style="color:var(--text-dim)">暂无广告</p>'; return; }
+  el.innerHTML = r.ads.map(a => \`
+    <div class="flex-between" style="border-bottom:1px solid var(--border);padding:10px 0;font-size:0.85em">
+      <div style="flex:1;min-width:0">
+        <span style="color:\${a.enabled?'var(--green)':'var(--text-dim)'}">\${a.enabled?'●':'○'}</span>
+        <span style="color:var(--cyan)">\${a.type}</span>
+        \${a.title ? '<span style="color:var(--text-bright)">' + esc(a.title) + '</span>' : ''}
+        <br><span style="font-size:0.75em;color:var(--text-dim)">\${esc(a.image_url||'').slice(0,50)}</span>
+      </div>
+      <button class="btn btn-red btn-sm" style="padding:2px 10px;font-size:0.72em" onclick="adminDeleteAd(\${a.id})">删除</button>
+    </div>
+  \`).join('');
+}
+async function adminCreateAd() {
+  const type = document.getElementById('ad-type')?.value;
+  const image_url = document.getElementById('ad-img')?.value;
+  const link_url = document.getElementById('ad-link')?.value;
+  const enabled = document.getElementById('ad-enabled')?.checked ? 1 : 0;
+  if (!image_url) return toast('请填写图片URL', 'error');
+  const r = await api('POST', '/api/admin/ads', { type, image_url, link_url, enabled });
+  if (r.ok) { toast('广告已添加', 'success'); document.getElementById('ad-img').value = ''; document.getElementById('ad-link').value = ''; adminLoadAds(); }
+  else toast(r.error, 'error');
+}
+async function adminDeleteAd(id) {
+  if (!confirm('确认删除此广告？')) return;
+  const r = await api('DELETE', '/api/admin/ads/' + id);
+  if (r.ok) { toast('已删除', 'success'); adminLoadAds(); }
   else toast(r.error, 'error');
 }
 
@@ -1516,6 +1782,278 @@ function switchTab(el, id) {
   const t = document.getElementById(id);
   if (t) t.classList.add('active');
 }
+
+// ─── Announcement & Ads ─────────────────────
+async function loadAnnouncement() {
+  const r = await api('GET', '/api/announcements/active');
+  if (r.ok && r.announcement) {
+    const bar = document.getElementById('announce-bar');
+    document.getElementById('announce-text').textContent = r.announcement.content;
+    bar.style.display = 'block';
+  }
+}
+async function loadAds() {
+  const r = await api('GET', '/api/ads/active');
+  if (!r.ok) return;
+  if (r.popup && !sessionStorage.getItem('ad_closed')) {
+    document.getElementById('ad-popup-img').src = r.popup.image_url;
+    document.getElementById('ad-popup-link').href = r.popup.link_url || '#';
+    document.getElementById('ad-popup').classList.add('show');
+  }
+}
+function closeAdPopup() { document.getElementById('ad-popup').classList.remove('show'); sessionStorage.setItem('ad_closed', '1'); }
+
+// ─── Avatar Menu ───────────────────────────
+function toggleAvatarMenu() {
+  document.getElementById('avatar-dropdown').classList.toggle('show');
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.avatar-wrap')) document.getElementById('avatar-dropdown')?.classList.remove('show');
+});
+
+// ─── Leaderboard ────────────────────────────
+let LB_TYPE = 'purchase';
+async function loadLeaderboard(type) {
+  LB_TYPE = type;
+  const r = await api('GET', '/api/leaderboard/' + type);
+  if (!r.ok || !r.leaderboard) return;
+  const data = r.leaderboard;
+  const champion = document.getElementById('lb-champion');
+  const list = document.getElementById('lb-list');
+  if (!champion || !list) return;
+
+  // Champion (top 1)
+  if (data.length > 0) {
+    const c = data[0];
+    const statLabel = type === 'purchase' ? '消费 ¥' + (c.total_spent || 0).toFixed(1) :
+                      type === 'invite' ? '邀请 ' + (c.total_invited || 0) + ' 人' :
+                      'Lv.' + (c.level || 1) + ' (' + (c.xp || 0) + ' XP)';
+    champion.innerHTML = \`
+      <div class="champ-card animate-in" onclick="showPublicProfile(\${c.id})">
+        <div class="champ-crown">\${iconBig('crown')}</div>
+        <div class="champ-avatar"><img src="\${esc(c.avatar_url||'')}" onerror="this.style.display='none';this.nextSibling.style.display='flex'" alt=""><span style="display:\${c.avatar_url?'none':'flex'}">\${(c.display_name||c.username||'?')[0].toUpperCase()}</span></div>
+        <div class="champ-name">\${esc(c.display_name||c.username)}</div>
+        <div class="champ-stat">\${statLabel}</div>
+      </div>
+    \`;
+  }
+  // Rest
+  const typeMap = { purchase: 'total_spent', invite: 'total_invited', level: 'level' };
+  const valKey = typeMap[type] || 'total_spent';
+  list.innerHTML = data.map((u, i) => \`
+    <div class="lb-card animate-in" style="animation-delay:\${i*0.05}s" onclick="showPublicProfile(\${u.id})">
+      <div class="lb-rank \${i===0?'gold':i===1?'silver':i===2?'bronze':''}">#\${i+1}</div>
+      <div class="lb-avatar"><img src="\${esc(u.avatar_url||'')}" onerror="this.style.display='none'" alt=""><span style="display:\${u.avatar_url?'none':'flex'};font-size:0.85em">\${(u.display_name||u.username||'?')[0]}</span></div>
+      <div class="lb-info">
+        <div class="lb-name">\${esc(u.display_name||u.username)} <small>Lv.\${u.level||1}</small></div>
+      </div>
+      <div class="lb-stat">\${type==='purchase'?'¥'+(u.total_spent||0).toFixed(1):type==='invite'?(u.total_invited||0)+'人':'Lv.'+(u.level||1)}</div>
+    </div>
+  \`).join('');
+}
+
+// ─── Public Profile ─────────────────────────
+async function showPublicProfile(uid) {
+  const r = await api('GET', '/api/user/' + uid + '/public');
+  if (!r.ok || !r.user) return toast('用户不存在', 'error');
+  const u = r.user;
+  const app = document.getElementById('app');
+  app.innerHTML = \`
+  <div class="container animate-in" style="max-width:600px">
+    <div class="flex-between mb-20 flex-wrap" style="gap:12px">
+      <h2 class="page-title" style="margin-bottom:0">\${esc(u.display_name || u.username)}</h2>
+      <button class="btn btn-sm" onclick="showPage(TOKEN?'dashboard':'landing')">← 返回</button>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--purple));margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:1.8em;font-weight:700;color:var(--bg-deep);overflow:hidden"><img src="\${esc(u.avatar_url||'')}" onerror="this.style.display='none'" style="width:72px;height:72px;object-fit:cover"><span style="display:\${u.avatar_url?'none':'flex'}">\${(u.display_name||u.username||'?')[0]}</span></div>
+      <h3 style="color:var(--text-bright);font-size:1.2em">\${esc(u.display_name||u.username)}</h3>
+      <p style="color:var(--text-dim);font-size:0.85em;margin-top:4px">Lv.\${u.level||1}</p>
+      <p style="color:var(--text-dim);font-size:0.85em">\${esc(u.bio||'这个人很懒，什么都没写')}</p>
+      <div class="grid grid-3 mt-16" style="gap:12px;text-align:center">
+        <div><div style="color:var(--cyan);font-size:1.1em;font-weight:600">\${u.total_orders||0}</div><div style="color:var(--text-dim);font-size:0.78em">工单</div></div>
+        <div><div style="color:var(--green);font-size:1.1em;font-weight:600">¥\${(u.total_spent||0).toFixed(1)}</div><div style="color:var(--text-dim);font-size:0.78em">消费</div></div>
+        <div><div style="color:var(--yellow);font-size:1.1em;font-weight:600">\${u.total_invited||0}</div><div style="color:var(--text-dim);font-size:0.78em">邀请</div></div>
+      </div>
+      <button class="btn btn-sm mt-16" onclick="copyText('\${u.invite_code||''}')" style="font-size:0.82em">复制邀请码</button>
+    </div>
+  </div>\`;
+}
+
+// ─── After-Sales ────────────────────────────
+async function loadAfterSales() {
+  const list = document.getElementById('after-sales-list');
+  if (!list) return;
+  const r = await api('GET', '/api/after-sales');
+  if (!r.ok) { list.innerHTML = '<p class="text-center" style="color:var(--text-dim);padding:30px">加载失败</p>'; return; }
+  if (!r.items.length) { list.innerHTML = '<p class="text-center" style="color:var(--text-dim);padding:30px">暂无售后记录</p>'; return; }
+  list.innerHTML = r.items.map(a => \`
+    <div class="card mb-10">
+      <div class="flex-between" style="gap:8px">
+        <strong style="color:var(--cyan);font-size:0.9em">\${esc(a.title)}</strong>
+        <span class="badge badge-\${a.status}">\${a.status==='pending'?'待回复':a.status==='resolved'?'已解决':'处理中'}</span>
+      </div>
+      <p style="color:var(--text-dim);font-size:0.82em;margin-top:4px">\${esc(a.content)}</p>
+      <div class="flex-between mt-8" style="font-size:0.78em;color:var(--text-dim)">
+        <span>工单 #\${a.order_id||'无'}</span>
+        <span>\${a.created_at}</span>
+      </div>
+      \${a.admin_reply ? '<div style="border-top:1px solid var(--border);margin-top:8px;padding-top:8px"><span style="color:var(--green);font-size:0.78em">管理员回复：</span><span style="color:var(--text);font-size:0.82em">' + esc(a.admin_reply) + '</span></div>' : ''}
+      \${a.status === 'pending' ? '<button class="btn btn-sm mt-8" onclick="afterSalesReply('+a.id+')">回复</button>' : ''}
+    </div>
+  \`).join('');
+}
+function showAfterSalesForm() {
+  showModal(\`
+    <h2 class="mb-20" style="color:var(--cyan)">提交售后</h2>
+    <div class="form-group"><label>相关工单 #</label><input id="as-order" type="number" placeholder="输入工单编号"></div>
+    <div class="form-group"><label>标题</label><input id="as-title" placeholder="售后标题"></div>
+    <div class="form-group"><label>内容</label><textarea id="as-content" rows="4" placeholder="详细描述问题"></textarea></div>
+    <button class="btn btn-magenta btn-block" onclick="submitAfterSales()">提交</button>
+    <button class="btn btn-sm btn-block mt-10" onclick="closeModal()">取消</button>
+  \`);
+}
+async function submitAfterSales() {
+  const order_id = document.getElementById('as-order')?.value;
+  const title = document.getElementById('as-title')?.value;
+  const content = document.getElementById('as-content')?.value;
+  if (!order_id || !title || !content) return toast('请填写完整', 'error');
+  const r = await api('POST', '/api/after-sales', { order_id: parseInt(order_id), title, content });
+  if (r.ok) { toast('售后已提交', 'success'); closeModal(); loadAfterSales(); }
+  else toast(r.error, 'error');
+}
+async function afterSalesReply(id) {
+  const reply = prompt('请输入回复内容：');
+  if (!reply) return;
+  const r = await api('POST', '/api/after-sales/' + id + '/reply', { content: reply });
+  if (r.ok) { toast('已回复', 'success'); loadAfterSales(); }
+  else toast(r.error, 'error');
+}
+
+// ─── Profile ────────────────────────────────
+async function loadProfile() {
+  const el = document.getElementById('profile-content');
+  if (!el) return;
+  const info = await api('GET', '/api/user/info');
+  if (!info.ok || !info.user) return;
+  const u = info.user;
+  const xpNext = u.xp_next || 0;
+  const xpCur = u.xp || 0;
+  const xpPrev = XP_LEVELS[Math.min(u.level, XP_LEVELS.length - 1)] || 0;
+  const xpMax = xpNext - xpPrev;
+  const xpNow = xpCur - xpPrev;
+  const xpPct = xpMax > 0 ? Math.min(100, Math.round(xpNow / xpMax * 100)) : 100;
+  el.innerHTML = \`
+    <div class="card">
+      <div class="profile-header">
+        <div class="profile-avatar"><img src="\${esc(u.avatar_url||'')}" onerror="this.style.display='none'" alt=""><span style="display:\${u.avatar_url?'none':'flex'}">\${(u.display_name||u.username||'?')[0].toUpperCase()}</span></div>
+        <div style="flex:1;min-width:0">
+          <h3 style="color:var(--text-bright);margin-bottom:2px">\${esc(u.display_name||u.username)}</h3>
+          <p style="color:var(--text-dim);font-size:0.82em">@\${esc(u.username)}</p>
+          <p style="color:var(--text-dim);font-size:0.85em;margin-top:4px">\${esc(u.bio||'这个用户很懒，什么都没有写~')}</p>
+        </div>
+      </div>
+      <div class="mt-16">
+        <div class="flex-between" style="font-size:0.82em;margin-bottom:4px"><span>Lv.\${u.level||1}</span><span style="color:var(--cyan)">\${xpNow}/\${xpMax} XP</span></div>
+        <div style="height:6px;background:var(--bg-input);border-radius:3px;overflow:hidden"><div style="width:\${xpPct}%;height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:3px;transition:width 1s"></div></div>
+      </div>
+      <div class="grid grid-3 mt-16" style="gap:8px;text-align:center">
+        <div><div style="color:var(--cyan);font-weight:600">\${u.total_orders||0}</div><div style="font-size:0.75em;color:var(--text-dim)">工单</div></div>
+        <div><div style="color:var(--green);font-weight:600">¥\${(u.total_spent||0).toFixed(1)}</div><div style="font-size:0.75em;color:var(--text-dim)">消费</div></div>
+        <div><div style="color:var(--yellow);font-weight:600">\${u.total_invited||0}</div><div style="font-size:0.75em;color:var(--text-dim)">邀请</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>编辑资料</h3>
+      <div class="form-group"><label>显示名称</label><input id="pf-name" value="\${esc(u.display_name||'')}" placeholder="昵称" maxlength="30"></div>
+      <div class="form-group"><label>个人简介</label><textarea id="pf-bio" rows="3" maxlength="200" placeholder="介绍一下自己">\${esc(u.bio||'')}</textarea></div>
+      <div class="form-group"><label>头像URL</label><input id="pf-avatar" value="\${esc(u.avatar_url||'')}" placeholder="https://..."></div>
+      <button class="btn btn-green" onclick="saveProfile()">保存资料</button>
+    </div>
+    <div class="card">
+      <h3>兑换码</h3>
+      <div class="redeem-input"><input id="redeem-input" placeholder="输入兑换码" onkeydown="if(event.key==='Enter')redeemCode()"><button class="btn btn-magenta" onclick="redeemCode()">兑换</button></div>
+      <p class="mt-8" style="font-size:0.78em;color:var(--text-dim)">输入兑换码获取经验值，提升等级享受更多折扣！</p>
+    </div>
+    <div class="card">
+      <h3>等级任务</h3>
+      <div class="stat"><span class="label">购买工单</span><span class="value">每单 +50 XP</span></div>
+      <div class="stat"><span class="label">邀请好友</span><span class="value">每人 +50 XP</span></div>
+      <div class="stat"><span class="label">兑换码</span><span class="value">视兑换码而定</span></div>
+      <div class="mt-10" style="font-size:0.82em;color:var(--text-dim)">下一级所需: \${xpPrev} → \${xpNext} XP</div>
+    </div>
+  \`;
+}
+async function saveProfile() {
+  const display_name = document.getElementById('pf-name')?.value;
+  const bio = document.getElementById('pf-bio')?.value;
+  const avatar_url = document.getElementById('pf-avatar')?.value;
+  const r = await api('PUT', '/api/user/profile', { display_name, bio, avatar_url });
+  if (r.ok) { toast('资料已保存', 'success'); loadProfile(); updateAvatarUI(); }
+  else toast(r.error, 'error');
+}
+async function redeemCode() {
+  const code = document.getElementById('redeem-input')?.value;
+  if (!code) return toast('请输入兑换码', 'error');
+  const r = await api('POST', '/api/redeem', { code });
+  if (r.ok) { toast(r.message, 'success'); document.getElementById('redeem-input').value = ''; loadProfile(); }
+  else toast(r.error, 'error');
+}
+
+// ─── Account Logs ──────────────────────────
+async function showAccountDetail(id) {
+  const r = await api('GET', '/api/accounts/' + id);
+  if (!r.ok) return toast(r.error, 'error');
+  const a = r.account;
+  const logsR = await api('GET', '/api/accounts/' + id + '/logs');
+  const logs = logsR.ok ? logsR.logs : [];
+  const app = document.getElementById('app');
+  app.innerHTML = \`
+  <div class="container animate-in" style="max-width:800px">
+    <div class="flex-between mb-20 flex-wrap" style="gap:12px">
+      <h2 class="page-title" style="margin-bottom:0">账号详情</h2>
+      <button class="btn btn-sm" onclick="showPage('accounts')">← 返回</button>
+    </div>
+    <div class="grid grid-2 mb-20">
+      <div class="card">
+        <h3>账号信息</h3>
+        <div class="stat"><span class="label">账号</span><span class="value">\${esc(a.server_username||a.username)}</span></div>
+        <div class="stat"><span class="label">等级</span><span class="value"><strong>\${a.level||0}</strong></span></div>
+        <div class="stat"><span class="label">状态</span><span class="value">\${sb(a.status)}</span></div>
+        <div class="stat"><span class="label">地图</span><span class="value">\${esc(a.map_name||'-')}</span></div>
+      </div>
+      <div class="card">
+        <h3>时间信息</h3>
+        <div class="stat"><span class="label">创建</span><span class="value" style="font-size:0.82em">\${a.created_at||'-'}</span></div>
+        <div class="stat"><span class="label">最后检查</span><span class="value" style="font-size:0.82em">\${a.last_check_at||'-'}</span></div>
+        <div class="stat"><span class="label">健康状况</span><span class="value">\${a.health_status||'ok'}</span></div>
+        \${a.error_msg ? '<div class="stat"><span class="label" style="color:var(--red)">错误</span><span class="value" style="color:var(--red);font-size:0.82em">' + esc(a.error_msg) + '</span></div>' : ''}
+      </div>
+    </div>
+    <div class="card">
+      <h3>运行日志</h3>
+      \${logs.length === 0 ? '<p style="color:var(--text-dim);font-size:0.85em">暂无日志</p>' : \`
+      <div style="max-height:400px;overflow-y:auto;background:var(--bg-input);border-radius:6px;padding:12px;font-size:0.78em;font-family:monospace">
+        \${logs.map(l => '<div style="padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.03)"><span style="color:var(--text-dim)">['+l.created_at+']</span> <span style="color:'+(l.log_type==='error'?'var(--red)':'var(--cyan)')+'">'+esc(l.log_type)+'</span> '+esc(l.message||'')+'</div>').join('')}
+      </div>\`}
+    </div>
+  </div>\`;
+}
+
+// ─── Modal Helper ──────────────────────────
+function showModal(html) {
+  const m = document.createElement('div');
+  m.className = 'modal-overlay show';
+  m.innerHTML = '<div class="modal">' + html + '</div>';
+  m.onclick = function(e) { if (e.target === m) closeModal(); };
+  document.body.appendChild(m);
+}
+function closeModal() {
+  const m = document.querySelector('.modal-overlay.show');
+  if (m) m.remove();
+}
+
+// ─── Copy Helper ───────────────────────────
+function copyText(t) { navigator.clipboard.writeText(t).then(() => toast('已复制', 'success')).catch(() => {}); }
 
 // ─── Stats ──────────────────────────────────
 async function loadStats() {
