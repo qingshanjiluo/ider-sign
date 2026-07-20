@@ -566,8 +566,8 @@ const HTML = `<!DOCTYPE html>
 <div id="ad-popup" class="ad-popup"><div class="ad-popup-inner"><a id="ad-popup-link" href="#" target="_blank"><img id="ad-popup-img" src="" alt=""></a><button class="ad-close" onclick="closeAdPopup()">关闭</button></div></div>
 
 <nav id="nav">
-  <div class="logo">NEON<span class="dot">⚡</span>IDER</div>
-  <button class="nav-toggle" id="nav-toggle" onclick="toggleNav()">☰</button>
+  <div class="logo">NEON<span class="dot">${icon("zap")}</span>IDER</div>
+  <button class="nav-toggle" id="nav-toggle" onclick="toggleNav()">${icon("menu")}</button>
   <div class="nav-links" id="nav-links">
     <a href="#" data-page="landing">首页</a>
     <a href="#" data-page="control">功能</a>
@@ -616,9 +616,82 @@ const INVITE_PACKAGES = [
   { id: 'legend',  name: '至尊无敌', points: 120000, price: 1000,color: '#ff00aa', desc: '满级倍率(3.0x)+专属标识', badge: 'LEGEND' },
 ];
 
-// ─── SVG Icons ──────────────────────────────
-function icon(n) { const s={user:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg>',settings:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><circle cx="12"cy="12"r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',star:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',trophy:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',crown:'<svg width="20"height="20"viewBox="0 0 24 24"fill="none"stroke="#ffd700"stroke-width="2"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><path d="M3 20h18"/></svg>',bolt:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',mail:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',clock:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><circle cx="12"cy="12"r="10"/><polyline points="12 6 12 12 16 14"/></svg>',check:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>',x:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><line x1="18"y1="6"x2="6"y2="18"/><line x1="6"y1="6"x2="18"y2="18"/></svg>',dollar:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><line x1="12"y1="1"x2="12"y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',users:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9"cy="7"r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',shield:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',chevron:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>',copy:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><rect x="9"y="9"width="13"height="13"rx="2"ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'}; return s[n]||''; }
-function iconBig(n){const s={crown:'<svg width="40"height="40"viewBox="0 0 24 24"fill="none"stroke="#ffd700"stroke-width="1.5"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><path d="M3 20h18"/></svg>'};return s[n]||'';}
+// ─── SVG Icons (Lucide-based) ─────────────
+const ICONS = {
+user:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><circle cx="12"cy="8"r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg>',
+users:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5"cy="7"r="4"/><path d="M20 8v6"/><path d="M23 11h-6"/></svg>',
+settings:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><circle cx="12"cy="12"r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+star:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+trophy:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',
+crown:'<svg w="20"h="20"viewBox="0 0 24 24"fill="none"stroke="#ffd700"sw="2"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><path d="M3 20h18"/></svg>',
+zap:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+mail:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><rect x="2"y="4"width="20"height="16"rx="2"/><path d="M22 4 12 13 2 4"/></svg>',
+shield:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+check:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><polyline points="20 6 9 17 4 12"/></svg>',
+x:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><line x1="18"y1="6"x2="6"y2="18"/><line x1="6"y1="6"x2="18"y2="18"/></svg>',
+menu:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><line x1="4"y1="6"x2="20"y2="6"/><line x1="4"y1="12"x2="20"y2="12"/><line x1="4"y1="18"x2="20"y2="18"/></svg>',
+hourglass:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="#ffd700"sw="2"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>',
+sparkles:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M9 3h3l-1.5 3 1.5 3H9"/><path d="M15 3h3l-1.5 3 1.5 3h-3"/><path d="M5 15h3l1.5-3L9 9H6"/><path d="M8 21h3l1.5-3-1.5-3H8"/></svg>',
+pencil:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>',
+swords:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13"y1="19"x2="19"y2="13"/><line x1="16"y1="16"x2="20"y2="20"/><line x1="19"y1="21"x2="21"y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5"y1="11"x2="11"y2="5"/></svg>',
+alert:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+rocket:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>',
+book:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M18 2v6l-2-2-2 2V2"/></svg>',
+monitor:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><rect x="2"y="3"width="20"height="14"rx="2"/><line x1="8"y1="21"x2="16"y2="21"/><line x1="12"y1="17"x2="12"y2="21"/></svg>',
+handshake:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M11 17a1 1 0 0 1 1 1c0 .5-.34 1-.76 1.22L8.5 21.5l-3.74-3.74A2 2 0 0 1 4 16.38V5.5a2.5 2.5 0 0 1 5 0v5"/><path d="M13 17a1 1 0 0 0 1 1c.5 0 .34 1 .76 1.22L15.5 21.5l3.74-3.74A2 2 0 0 0 20 16.38V5.5a2.5 2.5 0 0 0-5 0v5"/><path d="M6 12h4"/><path d="M14 12h4"/><path d="M8 8h3"/><path d="M13 8h3"/></svg>',
+chart:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M3 3v18h18"/><path d="M7 16v-3"/><path d="M12 16v-6"/><path d="M17 16V8"/></svg>',
+crosshair:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><circle cx="12"cy="12"r="10"/><line x1="22"y1="12"x2="18"y2="12"/><line x1="6"y1="12"x2="2"y2="12"/><line x1="12"y1="6"x2="12"y2="2"/><line x1="12"y1="22"x2="12"y2="18"/></svg>',
+gem:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M12 22 2 9h20"/><path d="M2 9h20"/><path d="M10 3 8 9"/><path d="M14 3l2 6"/></svg>',
+clipboard:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><rect x="8"y="2"width="8"height="4"rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>',
+bot:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><rect x="3"y="11"width="18"height="10"rx="2"/><circle cx="12"cy="5"r="2"/><path d="M12 7v4"/><line x1="8"y1="15"x2="8"y2="15"/><line x1="16"y1="15"x2="16"y2="15"/></svg>',
+coins:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><circle cx="8"cy="8"r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="M16.42 17.08a6 6 0 0 1-3.25 1.42"/></svg>',
+timer:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><line x1="10"y1="2"x2="14"y2="2"/><line x1="12"y1="14"x2="12"y2="8"/><circle cx="12"cy="14"r="8"/></svg>',
+lifebuoy:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><circle cx="12"cy="12"r="10"/><circle cx="12"cy="12"r="4"/><path d="M4.93 4.93l4.24 4.24"/><path d="M14.83 14.83l4.24 4.24"/><path d="M4.93 19.07l4.24-4.24"/><path d="M14.83 9.17l4.24-4.24"/></svg>',
+creditcard:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><rect x="1"y="4"width="22"height="16"rx="2"/><line x1="1"y1="10"x2="23"y2="10"/></svg>',
+search:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><circle cx="11"cy="11"r="8"/><line x1="21"y1="21"x2="16.65"y2="16.65"/></svg>',
+gamepad:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><line x1="6"y1="11"x2="10"y2="11"/><line x1="8"y1="9"x2="8"y2="13"/><line x1="15"y1="12"x2="15.01"y2="12"/><line x1="18"y1="10"x2="18.01"y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg>',
+ticket:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>',
+megaphone:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="m3 11 18-5v12L3 13"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>',
+image:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><rect x="3"y="3"width="18"height="18"rx="2"/><circle cx="8.5"cy="8.5"r="1.5"/><path d="m21 15-5-5L5 21"/></svg>',
+key:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><circle cx="8"cy="21"r="2"/><path d="m16 16-4 4-1-1-2 2"/><circle cx="16"cy="7"r="5"/><line x1="19"y1="4"x2="12"y2="11"/></svg>',
+bell:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>',
+calendar:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><rect x="3"y="4"width="18"height="18"rx="2"/><line x1="16"y1="2"x2="16"y2="6"/><line x1="8"y1="2"x2="8"y2="6"/><line x1="3"y1="10"x2="21"y2="10"/></svg>',
+scroll:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M8 21h12a2 2 0 0 0 2-2v-2H4v2a2 2 0 0 0 2 2z"/><path d="M20 15V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10"/><path d="M9 9h6"/><path d="M9 13h6"/><path d="M4 5h16"/></svg>',
+lock:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><rect x="3"y="11"width="18"height="11"rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+trending:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
+copy:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><rect x="9"y="9"width="13"height="13"rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+logOut:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21"y1="12"x2="9"y2="12"/></svg>',
+arrowUp:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><line x1="12"y1="19"x2="12"y2="5"/><polyline points="5 12 12 5 19 12"/></svg>',
+arrowDown:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><line x1="12"y1="5"x2="12"y2="19"/><polyline points="19 12 12 19 5 12"/></svg>',
+refresh:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>',
+plus:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><line x1="12"y1="5"x2="12"y2="19"/><line x1="5"y1="12"x2="19"y2="12"/></svg>',
+link:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+trash:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+external:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>',
+globe:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><circle cx="12"cy="12"r="10"/><line x1="2"y1="12"x2="22"y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+message:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+heart:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M19 14c1.5-1.5 2.5-3.5 2.5-5.5A4.5 4.5 0 0 0 12 7.5 4.5 4.5 0 0 0 2.5 8.5c0 2 1 4 2.5 5.5L12 22z"/></svg>',
+info:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><circle cx="12"cy="12"r="10"/><line x1="12"y1="16"x2="12"y2="12"/><line x1="12"y1="8"x2="12.01"y2="8"/></svg>',
+upload:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12"y1="3"x2="12"y2="15"/></svg>',
+download:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12"y1="15"x2="12"y2="3"/></svg>',
+home:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+filter:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>',
+flame:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
+dollar:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="#00ff88"sw="2"><line x1="12"y1="1"x2="12"y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
+wallet:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>',
+package:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+activity:'<svg w="16"h="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
+};
+function icon(n) { return ICONS[n]||''; }
+function iconBig(n) {
+  const b = {
+    crown:'<svg w="40"h="40"viewBox="0 0 24 24"fill="none"stroke="#ffd700"sw="1.5"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><path d="M3 20h18"/></svg>',
+    trophy:'<svg w="36"h="36"viewBox="0 0 24 24"fill="none"stroke="#ffd700"sw="1.5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',
+    handshake:'<svg w="36"h="36"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="1.5"><path d="M11 17a1 1 0 0 1 1 1c0 .5-.34 1-.76 1.22L8.5 21.5l-3.74-3.74A2 2 0 0 1 4 16.38V5.5a2.5 2.5 0 0 1 5 0v5"/><path d="M13 17a1 1 0 0 0 1 1c.5 0 .34 1 .76 1.22L15.5 21.5l3.74-3.74A2 2 0 0 0 20 16.38V5.5a2.5 2.5 0 0 0-5 0v5"/><path d="M6 12h4"/><path d="M14 12h4"/><path d="M8 8h3"/><path d="M13 8h3"/></svg>',
+    rocket:'<svg w="36"h="36"viewBox="0 0 24 24"fill="none"stroke="currentColor"sw="1.5"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>',
+  };
+  return b[n]||'';
+}
 
 function toast(m, t = 'info') {
   const c = document.getElementById('toast-container');
@@ -639,8 +712,8 @@ async function api(method, path, body) {
 function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\\n/g,'<br>'); }
 
 function sb(s) {
-  const m = { pending:'⏳审核中', approved:'✅已通过', rejected:'❌已拒绝', completed:'🎉已完成',
-    registering:'📝注册中', creating:'📝创建中', farming:'⚔️挂机中', active:'⚔️活跃', failed:'❌失败', error:'⚠️异常' };
+  const m = { pending:'${icon("hourglass")}审核中', approved:'${icon("check")}已通过', rejected:'${icon("x")}已拒绝', completed:'${icon("sparkles")}已完成',
+    registering:'${icon("pencil")}注册中', creating:'${icon("pencil")}创建中', farming:'${icon("swords")}️挂机中', active:'${icon("swords")}️活跃', failed:'${icon("x")}失败', error:'${icon("alert")}️异常' };
   return '<span class="badge badge-' + s + '">' + (m[s] || s) + '</span>';
 }
 
@@ -684,12 +757,12 @@ const P = {};
 
 P.landing = () => \`
 <div class="hero animate-in">
-  <h1 class="glitch">⚡ 赛博修仙 <span class="hl">自动化平台</span></h1>
+  <h1 class="glitch">${icon("zap")} 赛博修仙 <span class="hl">自动化平台</span></h1>
   <p>艾德尔修仙传 · 专业邀请积分代练平台<br>一键提交工单 · 全自动注册 · 智能升级至120级 · 全程实时监控</p>
   <div class="btn-group">
-    <a class="btn btn-magenta" href="#" onclick="showPage('register');return false">🚀 立即注册</a>
-    <a class="btn" href="#" onclick="showPage('control');return false">📖 功能介绍</a>
-    <a class="btn btn-green" href="#" onclick="showPage('dashboard');return false">💻 控制台</a>
+    <a class="btn btn-magenta" href="#" onclick="showPage('register');return false">${icon("rocket")} 立即注册</a>
+    <a class="btn" href="#" onclick="showPage('control');return false">${icon("book")} 功能介绍</a>
+    <a class="btn btn-green" href="#" onclick="showPage('dashboard');return false">${icon("monitor")} 控制台</a>
   </div>
   <div class="hero-stats" id="hero-stats">
     <div class="hero-stat"><div class="num">-</div><div class="label">注册用户</div></div>
@@ -702,18 +775,18 @@ P.landing = () => \`
 <div class="container animate-in">
   <h2 class="page-title">核心功能</h2>
   <div class="grid grid-3">
-    <div class="feature-card"><h3>⚡ 自动注册</h3><p>提交工单后自动注册游戏账号，配置全满金灵根，自动装配铁剑、学习基础技能和功法。</p></div>
-    <div class="feature-card"><h3>🏯 智能升级</h3><p>每日自动检测账号状态，自动点击升级/突破，直达120级后自动停止，全程无需人工干预。</p></div>
-    <div class="feature-card"><h3>🤝 邀请分成</h3><p>生成专属邀请码分享给好友，好友成交后获得30%积分返还，多邀多得，上不封顶。</p></div>
-    <div class="feature-card"><h3>📊 实时监控</h3><p>实时查看每个账号的等级、地图位置、技能功法、装备信息，进度一目了然。</p></div>
-    <div class="feature-card"><h3>🎯 等级优惠</h3><p>成交越多等级越高，最高Lv.10享70%折扣。优惠码可与等级折扣叠加，超值实惠。</p></div>
-    <div class="feature-card"><h3>🛡️ 防封保障</h3><p>每账号独立运营商IP · 随机机器码 · 浏览器指纹轮换 · 智能延迟 · 自动暂停，全方位防检测。</p></div>
+    <div class="feature-card"><h3>${icon("zap")} 自动注册</h3><p>提交工单后自动注册游戏账号，配置全满金灵根，自动装配铁剑、学习基础技能和功法。</p></div>
+    <div class="feature-card"><h3>${icon("home")} 智能升级</h3><p>每日自动检测账号状态，自动点击升级/突破，直达120级后自动停止，全程无需人工干预。</p></div>
+    <div class="feature-card"><h3>${icon("handshake")} 邀请分成</h3><p>生成专属邀请码分享给好友，好友成交后获得30%积分返还，多邀多得，上不封顶。</p></div>
+    <div class="feature-card"><h3>${icon("chart")} 实时监控</h3><p>实时查看每个账号的等级、地图位置、技能功法、装备信息，进度一目了然。</p></div>
+    <div class="feature-card"><h3>${icon("crosshair")} 等级优惠</h3><p>成交越多等级越高，最高Lv.10享70%折扣。优惠码可与等级折扣叠加，超值实惠。</p></div>
+    <div class="feature-card"><h3>${icon("shield")}️ 防封保障</h3><p>每账号独立运营商IP · 随机机器码 · 浏览器指纹轮换 · 智能延迟 · 自动暂停，全方位防检测。</p></div>
   </div>
 
   <h2 class="page-title mt-20">价格方案</h2>
   <div class="grid grid-3">
     <div class="price-card">
-      <h3>💎 基础款</h3>
+      <h3>${icon("gem")} 基础款</h3>
       <div class="price">1 <span>元</span></div>
       <ul>
         <li>120 邀请积分</li>
@@ -725,7 +798,7 @@ P.landing = () => \`
       <a class="btn btn-block" href="#" onclick="showPage('register');return false">开始下单</a>
     </div>
     <div class="price-card featured">
-      <h3>💎 灵石款</h3>
+      <h3>${icon("gem")} 灵石款</h3>
       <div class="price">100万 <span>灵石</span></div>
       <ul>
         <li>10 邀请积分</li>
@@ -737,7 +810,7 @@ P.landing = () => \`
       <a class="btn btn-magenta btn-block" href="#" onclick="showPage('register');return false">开始下单</a>
     </div>
     <div class="price-card">
-      <h3>🏆 高级会员</h3>
+      <h3>${icon("trophy")} 高级会员</h3>
       <div class="price">量大 <span>优惠</span></div>
       <ul>
         <li>等级越高折扣越多</li>
@@ -768,12 +841,12 @@ P.control = () => \`
 <div class="container animate-in">
   <h2 class="page-title">功能介绍</h2>
   <div class="grid grid-2">
-    <div class="card"><h3>📋 工单系统</h3><p style="color:var(--text-dim);font-size:0.88em;line-height:1.8">提交购买工单，填写邀请码、支付方式和金额。管理员审核到账后自动开始处理流程。</p></div>
-    <div class="card"><h3>🤖 自动化流程</h3><p style="color:var(--text-dim);font-size:0.88em;line-height:1.8">审核通过 → GitHub Actions 扫描 → 自动注册 → 全满金灵根 → 装配铁剑/技能/功法 → 切换荒石村 → 开始刷怪 → 每日健康检测 → 自动升级到120级 → 2天后停止监控</p></div>
-    <div class="card"><h3>💎 账号规格</h3><p style="color:var(--text-dim);font-size:0.88em;line-height:1.8">✅ 全满金属性灵根<br>✅ 自动装配铁剑<br>✅ 学习重击+火球术技能<br>✅ 修炼吐纳法功法<br>✅ 自动切换荒石村刷怪<br>✅ 每日自动检测升级</p></div>
-    <div class="card"><h3>🛡️ 防封策略</h3><p style="color:var(--text-dim);font-size:0.88em;line-height:1.8">✅ 每账号独立伪造运营商IP(31段池)<br>✅ 独立机器码(6种格式轮换)<br>✅ 浏览器指纹轮换(12种UA)<br>✅ 多CDN代理头模拟<br>✅ 操作间随机延迟<br>✅ 每3-5账号智能暂停</p></div>
-    <div class="card"><h3>📊 数据监控</h3><p style="color:var(--text-dim);font-size:0.88em;line-height:1.8">实时查看账号等级、地图位置、技能装备、在线状态。到达120级后2天自动停止检测，发送完成通知。</p></div>
-    <div class="card"><h3>🎯 交付标准</h3><p style="color:var(--text-dim);font-size:0.88em;line-height:1.8">等级到达120级即视为完成。完成后保留2天监控期，期间如有异常可申诉。支持售后和退款申请。</p></div>
+    <div class="card"><h3>${icon("clipboard")} 工单系统</h3><p style="color:var(--text-dim);font-size:0.88em;line-height:1.8">提交购买工单，填写邀请码、支付方式和金额。管理员审核到账后自动开始处理流程。</p></div>
+    <div class="card"><h3>${icon("bot")} 自动化流程</h3><p style="color:var(--text-dim);font-size:0.88em;line-height:1.8">审核通过 → GitHub Actions 扫描 → 自动注册 → 全满金灵根 → 装配铁剑/技能/功法 → 切换荒石村 → 开始刷怪 → 每日健康检测 → 自动升级到120级 → 2天后停止监控</p></div>
+    <div class="card"><h3>${icon("gem")} 账号规格</h3><p style="color:var(--text-dim);font-size:0.88em;line-height:1.8">${icon("check")} 全满金属性灵根<br>${icon("check")} 自动装配铁剑<br>${icon("check")} 学习重击+火球术技能<br>${icon("check")} 修炼吐纳法功法<br>${icon("check")} 自动切换荒石村刷怪<br>${icon("check")} 每日自动检测升级</p></div>
+    <div class="card"><h3>${icon("shield")}️ 防封策略</h3><p style="color:var(--text-dim);font-size:0.88em;line-height:1.8">${icon("check")} 每账号独立伪造运营商IP(31段池)<br>${icon("check")} 独立机器码(6种格式轮换)<br>${icon("check")} 浏览器指纹轮换(12种UA)<br>${icon("check")} 多CDN代理头模拟<br>${icon("check")} 操作间随机延迟<br>${icon("check")} 每3-5账号智能暂停</p></div>
+    <div class="card"><h3>${icon("chart")} 数据监控</h3><p style="color:var(--text-dim);font-size:0.88em;line-height:1.8">实时查看账号等级、地图位置、技能装备、在线状态。到达120级后2天自动停止检测，发送完成通知。</p></div>
+    <div class="card"><h3>${icon("crosshair")} 交付标准</h3><p style="color:var(--text-dim);font-size:0.88em;line-height:1.8">等级到达120级即视为完成。完成后保留2天监控期，期间如有异常可申诉。支持售后和退款申请。</p></div>
   </div>
 </div>
 \`;
@@ -782,12 +855,12 @@ P.docs = () => \`
 <div class="container animate-in">
   <h2 class="page-title">使用文档</h2>
   <div class="grid grid-2">
-    <div class="card"><h3>📝 如何下单</h3><p style="color:var(--text-dim);font-size:0.85em;line-height:1.9">1. 注册账号并登录<br>2. 进入控制台，点击「提交工单」<br>3. 填写需要注册的邀请码<br>4. 选择支付方式（微信/灵石）<br>5. 填写付款账号名方便核实<br>6. 可填写优惠码获得额外折扣<br>7. 提交后等待管理员审核<br>8. 审核通过后自动开始处理</p></div>
-    <div class="card"><h3>💰 价格说明</h3><p style="color:var(--text-dim);font-size:0.85em;line-height:1.9">微信支付：1 元 = 120 邀请积分<br>灵石支付：100 万灵石 = 10 邀请积分<br>每单可以要求多个账号（按积分计算）<br>最高可享70%等级折扣（Lv.10）<br>优惠码可叠加使用，折上折！</p></div>
-    <div class="card"><h3>🎯 用户等级</h3><p style="color:var(--text-dim);font-size:0.85em;line-height:1.9">每完成一单提升一级，等级越高折扣越多：<br>Lv.1 基础价 · Lv.2 解锁邀请<br>Lv.3 10% · Lv.4 20% · Lv.5 30%<br>Lv.6 40% · Lv.7 45% · Lv.8 50%<br>Lv.9 60% · Lv.10 70% 🏆</p></div>
-    <div class="card"><h3>🤝 邀请分成</h3><p style="color:var(--text-dim);font-size:0.85em;line-height:1.9">在邀请页面生成专属邀请码，分享给好友<br>好友注册时填写你的邀请码<br>好友订单审核通过后，你获得30%返利<br>邀请积分可以提现或消费<br>邀请越多，赚得越多！</p></div>
-    <div class="card"><h3>⏱️ 预计时间</h3><p style="color:var(--text-dim);font-size:0.85em;line-height:1.9">工单审核：管理员确认到账后通过（通常24h内）<br>注册时间：审核通过后开始自动注册<br>升级周期：约5天到达120级<br>完成后：到达120级后2天停止检测<br>全程进度可在「账号列表」查看</p></div>
-    <div class="card"><h3>🆘 售后申诉</h3><p style="color:var(--text-dim);font-size:0.85em;line-height:1.9">如遇问题可在「申诉售后」页面提交申诉<br>包括：账号异常、超时未完成、等级不符等<br>管理员24小时内回复处理<br>必要时可联系客服机器人咨询进度</p></div>
+    <div class="card"><h3>${icon("pencil")} 如何下单</h3><p style="color:var(--text-dim);font-size:0.85em;line-height:1.9">1. 注册账号并登录<br>2. 进入控制台，点击「提交工单」<br>3. 填写需要注册的邀请码<br>4. 选择支付方式（微信/灵石）<br>5. 填写付款账号名方便核实<br>6. 可填写优惠码获得额外折扣<br>7. 提交后等待管理员审核<br>8. 审核通过后自动开始处理</p></div>
+    <div class="card"><h3>${icon("coins")} 价格说明</h3><p style="color:var(--text-dim);font-size:0.85em;line-height:1.9">微信支付：1 元 = 120 邀请积分<br>灵石支付：100 万灵石 = 10 邀请积分<br>每单可以要求多个账号（按积分计算）<br>最高可享70%等级折扣（Lv.10）<br>优惠码可叠加使用，折上折！</p></div>
+    <div class="card"><h3>${icon("crosshair")} 用户等级</h3><p style="color:var(--text-dim);font-size:0.85em;line-height:1.9">每完成一单提升一级，等级越高折扣越多：<br>Lv.1 基础价 · Lv.2 解锁邀请<br>Lv.3 10% · Lv.4 20% · Lv.5 30%<br>Lv.6 40% · Lv.7 45% · Lv.8 50%<br>Lv.9 60% · Lv.10 70% ${icon("trophy")}</p></div>
+    <div class="card"><h3>${icon("handshake")} 邀请分成</h3><p style="color:var(--text-dim);font-size:0.85em;line-height:1.9">在邀请页面生成专属邀请码，分享给好友<br>好友注册时填写你的邀请码<br>好友订单审核通过后，你获得30%返利<br>邀请积分可以提现或消费<br>邀请越多，赚得越多！</p></div>
+    <div class="card"><h3>${icon("timer")}️ 预计时间</h3><p style="color:var(--text-dim);font-size:0.85em;line-height:1.9">工单审核：管理员确认到账后通过（通常24h内）<br>注册时间：审核通过后开始自动注册<br>升级周期：约5天到达120级<br>完成后：到达120级后2天停止检测<br>全程进度可在「账号列表」查看</p></div>
+    <div class="card"><h3>${icon("lifebuoy")} 售后申诉</h3><p style="color:var(--text-dim);font-size:0.85em;line-height:1.9">如遇问题可在「申诉售后」页面提交申诉<br>包括：账号异常、超时未完成、等级不符等<br>管理员24小时内回复处理<br>必要时可联系客服机器人咨询进度</p></div>
   </div>
 </div>
 \`;
@@ -831,7 +904,7 @@ P.register = () => \`
       <input id="reg-invite" placeholder="填写邀请人的邀请码">
     </div>
     <div class="form-group">
-      <label style="color:var(--text-dim);font-size:0.7em">⚠️ 每IP仅可注册一个账号</label>
+      <label style="color:var(--text-dim);font-size:0.7em">${icon("alert")}️ 每IP仅可注册一个账号</label>
     </div>
     <button class="btn btn-magenta btn-block" onclick="doRegister()">注册</button>
     <p class="mt-20 text-center" style="color:var(--text-dim);font-size:0.82em">已有账号？<a href="#" onclick="showPage('login');return false">登录</a></p>
@@ -845,24 +918,24 @@ P.dashboard = () => \`
     <h2 class="page-title" style="margin-bottom:0">控制台</h2>
     <div class="flex gap-10 flex-wrap">
       <button class="btn btn-magenta btn-sm" onclick="showNewOrder()">+ 提交工单</button>
-      <button class="btn btn-yellow btn-sm" onclick="showPage('invite')">🤝 邀请</button>
-      <button class="btn btn-green btn-sm" onclick="showPage('accounts')">📊 账号</button>
-      <button class="btn btn-sm" onclick="showPage('appeals')">📮 申诉</button>
+      <button class="btn btn-yellow btn-sm" onclick="showPage('invite')">${icon("handshake")} 邀请</button>
+      <button class="btn btn-green btn-sm" onclick="showPage('accounts')">${icon("chart")} 账号</button>
+      <button class="btn btn-sm" onclick="showPage('appeals')">${icon("mail")} 申诉</button>
     </div>
   </div>
 
   <div class="grid grid-4" id="dash-stats">
-    <div class="card"><h3>👤 <span id="d-username">用户</span></h3><div class="stat"><span class="label">等级</span><span class="value" id="d-level">-</span></div><div class="stat"><span class="label">工单数</span><span class="value" id="d-orders">-</span></div><div class="stat"><span class="label">邮箱</span><span class="value" id="d-email" style="font-size:0.82em;color:var(--text-dim)">未设置</span></div></div>
-    <div class="card"><h3>💳 财务</h3><div class="stat"><span class="label">总消费</span><span class="value" id="d-spent">¥0</span></div><div class="stat"><span class="label">邀请积分</span><span class="value" id="d-points">0</span></div></div>
-    <div class="card"><h3>🤝 邀请</h3><div class="stat"><span class="label">邀请码</span><span class="value" id="d-invite" style="font-size:0.82em">-</span></div><div class="stat"><span class="label">已邀请</span><span class="value" id="d-invited">0</span></div><div class="stat"><span class="label">倍率</span><span class="value" id="d-boost" style="color:var(--purple)">1.0x</span></div></div>
-    <div class="card"><h3>🏆 优惠</h3><div class="stat"><span class="label">当前等级</span><span class="value" id="d-level2">-</span></div><div class="stat"><span class="label">折扣</span><span class="value" id="d-discount" style="color:var(--green)">0%</span></div></div>
+    <div class="card"><h3>${icon("user")} <span id="d-username">用户</span></h3><div class="stat"><span class="label">等级</span><span class="value" id="d-level">-</span></div><div class="stat"><span class="label">工单数</span><span class="value" id="d-orders">-</span></div><div class="stat"><span class="label">邮箱</span><span class="value" id="d-email" style="font-size:0.82em;color:var(--text-dim)">未设置</span></div></div>
+    <div class="card"><h3>${icon("creditcard")} 财务</h3><div class="stat"><span class="label">总消费</span><span class="value" id="d-spent">¥0</span></div><div class="stat"><span class="label">邀请积分</span><span class="value" id="d-points">0</span></div></div>
+    <div class="card"><h3>${icon("handshake")} 邀请</h3><div class="stat"><span class="label">邀请码</span><span class="value" id="d-invite" style="font-size:0.82em">-</span></div><div class="stat"><span class="label">已邀请</span><span class="value" id="d-invited">0</span></div><div class="stat"><span class="label">倍率</span><span class="value" id="d-boost" style="color:var(--purple)">1.0x</span></div></div>
+    <div class="card"><h3>${icon("trophy")} 优惠</h3><div class="stat"><span class="label">当前等级</span><span class="value" id="d-level2">-</span></div><div class="stat"><span class="label">折扣</span><span class="value" id="d-discount" style="color:var(--green)">0%</span></div></div>
   </div>
 
   <div class="grid grid-2 mt-20" style="grid-template-columns:1.2fr 0.8fr">
     <div class="card" style="overflow:hidden">
-      <h3>📋 我的工单 <span class="sub" style="font-size:0.72em">点击行查看详情</span></h3>
+      <h3>${icon("clipboard")} 我的工单 <span class="sub" style="font-size:0.72em">点击行查看详情</span></h3>
       <div class="flex gap-10 mb-10 flex-wrap">
-        <input id="dash-order-search" placeholder="🔍 搜邀请码/ID..." style="flex:1;min-width:140px;padding:6px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px;font-size:0.85em" oninput="filterDashOrders()">
+        <input id="dash-order-search" placeholder="${icon("search")} 搜邀请码/ID..." style="flex:1;min-width:140px;padding:6px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px;font-size:0.85em" oninput="filterDashOrders()">
         <select id="dash-order-status-filter" style="padding:6px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px;font-size:0.85em" onchange="filterDashOrders()">
           <option value="">全部状态</option>
           <option value="pending">待审核</option>
@@ -879,9 +952,9 @@ P.dashboard = () => \`
       </div>
     </div>
     <div class="card">
-      <h3>🤖 客服助手</h3>
+      <h3>${icon("bot")} 客服助手</h3>
       <div class="chat-box" id="chat-box">
-        <div class="chat-msg"><div class="sender sender-bot">🤖 助手</div><div class="text">你好！我是艾德尔工单助手，你可以问我：\n- "我的订单状态"\n- "价格说明"\n- "预计多久到账"</div></div>
+        <div class="chat-msg"><div class="sender sender-bot">${icon("bot")} 助手</div><div class="text">你好！我是艾德尔工单助手，你可以问我：\n- "我的订单状态"\n- "价格说明"\n- "预计多久到账"</div></div>
       </div>
       <div class="chat-row">
         <input id="chat-input" placeholder="输入问题..." onkeydown="if(event.key==='Enter')askBot()">
@@ -896,14 +969,14 @@ P.admin = () => \`
 <div class="container animate-in">
   <h2 class="page-title">管理后台 <span class="sub">管理员</span></h2>
   <div class="tabs">
-    <div class="tab active" onclick="switchTab(this,'ap-orders')">📋 工单</div>
-    <div class="tab" onclick="switchTab(this,'ap-accounts')">🎮 账号</div>
-    <div class="tab" onclick="switchTab(this,'ap-users')">👥 用户</div>
-    <div class="tab" onclick="switchTab(this,'ap-appeals')">📮 申诉</div>
-    <div class="tab" onclick="switchTab(this,'ap-coupons')">🎫 优惠券</div>
-    <div class="tab" onclick="switchTab(this,'ap-announce')">📢 公告</div>
-    <div class="tab" onclick="switchTab(this,'ap-ads')">🖼️ 广告</div>
-    <div class="tab" onclick="switchTab(this,'ap-config')">⚙️ 配置</div>
+    <div class="tab active" onclick="switchTab(this,'ap-orders')">${icon("clipboard")} 工单</div>
+    <div class="tab" onclick="switchTab(this,'ap-accounts')">${icon("gamepad")} 账号</div>
+    <div class="tab" onclick="switchTab(this,'ap-users')">${icon("users")} 用户</div>
+    <div class="tab" onclick="switchTab(this,'ap-appeals')">${icon("mail")} 申诉</div>
+    <div class="tab" onclick="switchTab(this,'ap-coupons')">${icon("ticket")} 优惠券</div>
+    <div class="tab" onclick="switchTab(this,'ap-announce')">${icon("megaphone")} 公告</div>
+    <div class="tab" onclick="switchTab(this,'ap-ads')">${icon("image")}️ 广告</div>
+    <div class="tab" onclick="switchTab(this,'ap-config')">${icon("settings")}️ 配置</div>
   </div>
 
   <div class="tab-content active" id="ap-orders">
@@ -929,7 +1002,7 @@ P.admin = () => \`
   </div>
   <div class="tab-content" id="ap-coupons">
     <div class="card">
-      <h3>🎫 优惠券管理</h3>
+      <h3>${icon("ticket")} 优惠券管理</h3>
       <div class="flex gap-10 mb-10 flex-wrap" style="border:1px solid var(--border);padding:16px;border-radius:8px">
         <input id="cp-code" placeholder="优惠码（自动大写）" style="flex:1;min-width:90px;padding:6px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px">
         <input id="cp-discount" type="number" placeholder="折扣 %" style="width:80px;padding:6px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px">
@@ -943,7 +1016,7 @@ P.admin = () => \`
   </div>
   <div class="tab-content" id="ap-announce">
     <div class="card">
-      <h3>📢 公告管理</h3>
+      <h3>${icon("megaphone")} 公告管理</h3>
       <div class="flex gap-10 mb-10 flex-wrap" style="border:1px solid var(--border);padding:16px;border-radius:8px">
         <textarea id="ann-content" rows="3" placeholder="输入公告内容..." style="flex:1;min-width:200px;padding:8px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px;font-size:0.85em"></textarea>
         <div style="display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap"><label style="font-size:0.82em;color:var(--text-dim)"><input type="checkbox" id="ann-enabled" checked> 启用</label><button class="btn btn-green btn-sm" onclick="adminCreateAnnouncement()">发布</button></div>
@@ -953,7 +1026,7 @@ P.admin = () => \`
   </div>
   <div class="tab-content" id="ap-ads">
     <div class="card">
-      <h3>🖼️ 广告管理</h3>
+      <h3>${icon("image")}️ 广告管理</h3>
       <div class="flex gap-10 mb-10 flex-wrap" style="border:1px solid var(--border);padding:16px;border-radius:8px">
         <select id="ad-type" style="padding:6px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px"><option value="popup">弹窗广告</option><option value="sidebar">侧栏广告</option></select>
         <input id="ad-img" placeholder="图片URL" style="flex:1;min-width:140px;padding:6px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px">
@@ -974,13 +1047,13 @@ P.settings = () => \`
 <div class="container animate-in" style="max-width:560px">
   <h2 class="page-title">用户设置</h2>
   <div class="card">
-    <h3>🔑 修改密码</h3>
+    <h3>${icon("key")} 修改密码</h3>
     <div class="form-group"><label>旧密码</label><input type="password" id="set-old-pass" placeholder="输入旧密码"></div>
     <div class="form-group"><label>新密码</label><input type="password" id="set-new-pass" placeholder="输入新密码（至少6位）"></div>
     <button class="btn btn-green" onclick="changePassword()">更新密码</button>
   </div>
   <div class="card">
-    <h3>📧 绑定邮箱</h3>
+    <h3>${icon("mail")} 绑定邮箱</h3>
     <div class="form-group"><label>邮箱地址</label><input type="email" id="set-email" placeholder="your@email.com"></div>
     <button class="btn btn-green" onclick="updateProfile()">保存邮箱</button>
   </div>
@@ -993,7 +1066,7 @@ P.invite = () => \`
   <div class="grid" style="gap:18px">
     <div class="grid-2" style="gap:18px">
       <div class="card card-glow">
-        <h3>🤝 我的邀请</h3>
+        <h3>${icon("handshake")} 我的邀请</h3>
         <div class="stat"><span class="label">邀请码</span><span class="value" id="inv-code" style="font-size:1.2em;color:var(--magenta);letter-spacing:3px;font-family:'Orbitron',monospace">-</span></div>
         <div class="stat"><span class="label">已邀请人数</span><span class="value" id="inv-count" style="font-size:1.3em">0</span></div>
         <div class="stat"><span class="label">成交返利</span><span class="value" id="inv-orders">0</span></div>
@@ -1002,21 +1075,21 @@ P.invite = () => \`
         <div class="stat"><span class="label">当前倍率</span><span class="value" id="inv-boost" style="color:var(--purple)">1.0x</span></div>
         <div id="inv-tier-progress" style="margin:8px 0"></div>
         <div class="flex gap-10 mt-10">
-          <button class="btn btn-sm" onclick="copyInvite()">📋 复制链接</button>
-          <button class="btn btn-green btn-sm" onclick="withdrawInvite()">💳 提现</button>
+          <button class="btn btn-sm" onclick="copyInvite()">${icon("clipboard")} 复制链接</button>
+          <button class="btn btn-green btn-sm" onclick="withdrawInvite()">${icon("creditcard")} 提现</button>
         </div>
       </div>
       <div class="card">
-        <h3>📖 邀请说明</h3>
-        <p style="color:var(--text-dim);font-size:0.85em;line-height:2">1️⃣ 你的专属邀请码可以在下方复制<br>2️⃣ 分享给好友，好友注册时填写<br>3️⃣ 好友工单审核通过后你获得返利<br>4️⃣ 返利 = 订单金额 × 当前倍率 邀请积分<br>5️⃣ 邀请积分可以提现或用于消费<br>6️⃣ 多邀多得，上不封顶！</p>
+        <h3>${icon("book")} 邀请说明</h3>
+        <p style="color:var(--text-dim);font-size:0.85em;line-height:2">1.  你的专属邀请码可以在下方复制<br>2.  分享给好友，好友注册时填写<br>3.  好友工单审核通过后你获得返利<br>4.  返利 = 订单金额 × 当前倍率 邀请积分<br>5.  邀请积分可以提现或用于消费<br>6.  多邀多得，上不封顶！</p>
         <div class="mt-10" style="padding:10px;border:1px solid var(--border);border-radius:6px;font-size:0.8em">
-          <div style="color:var(--cyan);margin-bottom:6px;font-weight:500">🏆 倍率解锁</div>
+          <div style="color:var(--cyan);margin-bottom:6px;font-weight:500">${icon("trophy")} 倍率解锁</div>
           <div id="inv-tier-list"></div>
         </div>
       </div>
     </div>
     <div class="card">
-      <h3>🚀 积分套餐</h3>
+      <h3>${icon("rocket")} 积分套餐</h3>
       <p style="color:var(--text-dim);font-size:0.82em;margin-bottom:16px">购买积分套餐可提升邀请分成倍率，邀请好友赚更多！</p>
       <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px" id="pkg-grid"></div>
       <div id="pkg-detail" class="mt-16" style="display:none"></div>
@@ -1211,7 +1284,7 @@ async function refreshNotifs() {
   if (!r.ok) return;
   const list = document.getElementById('notif-list');
   if (!r.notifications || !r.notifications.length) {
-    list.innerHTML = '<div class="empty-state"><div class="icon">🔔</div><p>暂无通知</p></div>'; return;
+    list.innerHTML = '<div class="empty-state"><div class="icon">${icon("bell")}</div><p>暂无通知</p></div>'; return;
   }
   list.innerHTML = r.notifications.map(n => \`
     <div class="card" style="\${n.is_read ? '' : 'border-color:rgba(0,240,255,0.25)'}">
@@ -1268,7 +1341,7 @@ function filterDashOrders() {
   if (q) filtered = filtered.filter(o => String(o.id).includes(q) || (o.invite_code||'').toLowerCase().includes(q));
   if (st) filtered = filtered.filter(o => o.status === st);
   if (!filtered.length) { tb.innerHTML = '<tr><td colspan="6" class="text-center" style="color:var(--text-dim);padding:30px">没有匹配工单</td></tr>'; return; }
-  const s = { pending:'⏳审核中', approved:'✅已通过', rejected:'❌已拒绝', completed:'🎉已完成' };
+  const s = { pending:'${icon("hourglass")}审核中', approved:'${icon("check")}已通过', rejected:'${icon("x")}已拒绝', completed:'${icon("sparkles")}已完成' };
   tb.innerHTML = filtered.map(o => \`
     <tr style="cursor:pointer" onclick="showOrderDetail(\${o.id})">
       <td>#\${o.id}</td>
@@ -1287,7 +1360,7 @@ async function showOrderDetail(id) {
   const r = await api('GET', '/api/orders/' + id);
   if (!r.ok) return toast(r.error, 'error');
   const o = r.order; const accounts = r.accounts || [];
-  const s = { pending:'⏳审核中', approved:'✅已通过', rejected:'❌已拒绝', completed:'🎉已完成' };
+  const s = { pending:'${icon("hourglass")}审核中', approved:'${icon("check")}已通过', rejected:'${icon("x")}已拒绝', completed:'${icon("sparkles")}已完成' };
   const app = document.getElementById('app');
   app.innerHTML = \`
   <div class="container animate-in" style="max-width:800px">
@@ -1297,7 +1370,7 @@ async function showOrderDetail(id) {
     </div>
     <div class="grid grid-2">
       <div class="card">
-        <h3>📋 基本信息</h3>
+        <h3>${icon("clipboard")} 基本信息</h3>
         <div class="stat"><span class="label">邀请码</span><span class="value">\${esc(o.invite_code)}</span></div>
         <div class="stat"><span class="label">支付方式</span><span class="value">\${o.payment_method === 'wechat' ? '微信支付' : '灵石'}</span></div>
         <div class="stat"><span class="label">金额</span><span class="value">¥\${o.price.toFixed(2)}</span></div>
@@ -1306,7 +1379,7 @@ async function showOrderDetail(id) {
         <div class="stat"><span class="label">状态</span><span class="value">\${s[o.status]||o.status}</span></div>
       </div>
       <div class="card">
-        <h3>📅 时间信息</h3>
+        <h3>${icon("calendar")} 时间信息</h3>
         <div class="stat"><span class="label">创建</span><span class="value" style="font-size:0.85em">\${o.created_at || '-'}</span></div>
         <div class="stat"><span class="label">更新</span><span class="value" style="font-size:0.85em">\${o.updated_at || '-'}</span></div>
         <div class="stat"><span class="label">预计完成</span><span class="value" style="color:var(--yellow)">\${o.est_complete_date || '审核中'}</span></div>
@@ -1315,12 +1388,12 @@ async function showOrderDetail(id) {
       </div>
     </div>
     <div class="card mt-20">
-      <h3>📜 操作记录</h3>
+      <h3>${icon("scroll")} 操作记录</h3>
       <div class="timeline" id="order-timeline-\${o.id}"><p style="color:var(--text-dim);font-size:0.85em">加载中...</p></div>
     </div>
 
     <div class="card mt-20">
-      <h3>🎮 账号列表 (\${accounts.length})</h3>
+      <h3>${icon("gamepad")} 账号列表 (\${accounts.length})</h3>
       \${accounts.length === 0 ? '<p style="color:var(--text-dim);font-size:0.88em">暂无账号数据</p>' : \`
       <div class="table-wrap"><table>
         <thead><tr><th>账号</th><th>等级</th><th>地图</th><th>状态</th><th>技能</th><th>功法</th><th>装备</th><th>检查</th></tr></thead>
@@ -1429,8 +1502,8 @@ async function validateCoupon() {
   const res = document.getElementById('o-coupon-res');
   if (!code || !res) { validatedDiscount = 0; return; }
   const r = await api('POST', '/api/coupon/validate', { code });
-  if (r.ok) { validatedDiscount = r.discount_percent; res.innerHTML = '✅ 优惠码有效，享 <strong>' + r.discount_percent + '%</strong> 折扣'; res.style.color = 'var(--green)'; }
-  else { validatedDiscount = 0; res.innerHTML = '❌ ' + (r.error || '无效'); res.style.color = 'var(--red)'; }
+  if (r.ok) { validatedDiscount = r.discount_percent; res.innerHTML = '${icon("check")} 优惠码有效，享 <strong>' + r.discount_percent + '%</strong> 折扣'; res.style.color = 'var(--green)'; }
+  else { validatedDiscount = 0; res.innerHTML = '${icon("x")} ' + (r.error || '无效'); res.style.color = 'var(--red)'; }
 }
 
 async function submitOrder() {
@@ -1461,7 +1534,7 @@ async function adminLoadOrders(status) {
   const tb = document.getElementById('admin-orders-table');
   if (!tb) return;
   if (!r.orders || !r.orders.length) { tb.innerHTML = '<tr><td colspan="9" class="text-center" style="color:var(--text-dim);padding:30px">暂无工单</td></tr>'; return; }
-  const s = { pending:'⏳审核中', approved:'✅已通过', rejected:'❌已拒绝', completed:'🎉已完成' };
+  const s = { pending:'${icon("hourglass")}审核中', approved:'${icon("check")}已通过', rejected:'${icon("x")}已拒绝', completed:'${icon("sparkles")}已完成' };
   tb.innerHTML = r.orders.map(o => \`<tr>
     <td>#\${o.id}</td><td>\${esc(o.user_name)}</td>
     <td style="max-width:90px;overflow:hidden;text-overflow:ellipsis">\${esc(o.invite_code)}</td>
@@ -1614,7 +1687,7 @@ async function adminToggleLock(id, locked) {
   else toast(r.error, 'error');
 }
 async function adminDeleteUser(id) {
-  if (!confirm('⚠️ 确认永久删除此用户？此操作不可恢复！')) return;
+  if (!confirm('${icon("alert")}️ 确认永久删除此用户？此操作不可恢复！')) return;
   if (!confirm('再次确认：删除用户 #' + id + '？')) return;
   const r = await api('DELETE', '/api/admin/users/' + id + '/delete');
   if (r.ok) { toast('用户已删除', 'success'); adminLoadUsers(); }
@@ -1706,7 +1779,7 @@ async function refreshInvite() {
       const pct = Math.min(100, Math.round((nt.need > 0 ? 1 - (nt.need / (nt.need + total)) : 0) * 100));
       tpEl.innerHTML = '<div style="font-size:0.75em;color:var(--text-dim);margin-bottom:4px">距 <strong>' + nt.label + '</strong> 还需 ' + nt.need + ' 积分</div><div style="height:4px;background:var(--bg-input);border-radius:2px;overflow:hidden"><div style="width:' + pct + '%;height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan));border-radius:2px"></div></div>';
     } else {
-      tpEl.innerHTML = '<div style="font-size:0.75em;color:var(--cyan)">🏆 已达最高倍率！</div>';
+      tpEl.innerHTML = '<div style="font-size:0.75em;color:var(--cyan)">${icon("trophy")} 已达最高倍率！</div>';
     }
     // Tier list
     const tiers = [
@@ -1720,7 +1793,7 @@ async function refreshInvite() {
     tlEl.innerHTML = tiers.map(t => {
       const unlocked = total >= t.min;
       return '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:0.85em">' +
-        '<span>' + (unlocked ? '✅' : '🔒') + ' ' + t.label + '</span>' +
+        '<span>' + (unlocked ? '${icon("check")}' : '${icon("lock")}') + ' ' + t.label + '</span>' +
         '<span style="color:' + (unlocked ? 'var(--green)' : 'var(--text-dim)') + '">' + t.rate + '% (' + t.mult + ')</span></div>';
     }).join('');
     // Package grid
@@ -1806,7 +1879,7 @@ async function refreshAppeals() {
   const r = await api('GET', '/api/appeals');
   const list = document.getElementById('appeal-list');
   if (!list) return;
-  if (!r.ok || !r.appeals || !r.appeals.length) { list.innerHTML = '<div class="empty-state"><div class="icon">📮</div><p>暂无申诉记录</p></div>'; return; }
+  if (!r.ok || !r.appeals || !r.appeals.length) { list.innerHTML = '<div class="empty-state"><div class="icon">${icon("mail")}</div><p>暂无申诉记录</p></div>'; return; }
   list.innerHTML = r.appeals.map(a => \`
     <div class="card">
       <div class="flex-between">
@@ -1848,18 +1921,18 @@ async function askBot() {
   const box = document.getElementById('chat-box');
   if (!input || !input.value.trim()) return;
   const q = input.value.trim();
-  box.innerHTML += '<div class="chat-msg"><div class="sender">👤 我</div><div class="text">' + esc(q) + '</div></div>';
+  box.innerHTML += '<div class="chat-msg"><div class="sender">${icon("user")} 我</div><div class="text">' + esc(q) + '</div></div>';
   input.value = ''; box.scrollTop = box.scrollHeight;
 
   // Show typing indicator
   const typingId = 'typing-' + Date.now();
-  box.innerHTML += '<div class="chat-msg" id="' + typingId + '"><div class="sender sender-bot">🤖 助手</div><div class="text"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>';
+  box.innerHTML += '<div class="chat-msg" id="' + typingId + '"><div class="sender sender-bot">${icon("bot")} 助手</div><div class="text"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>';
   box.scrollTop = box.scrollHeight;
 
   const r = await api('POST', '/api/bot/ask', { question: q });
   const typingEl = document.getElementById(typingId);
   if (typingEl) {
-    typingEl.outerHTML = '<div class="chat-msg"><div class="sender sender-bot">🤖 助手</div><div class="text">' + esc(r.answer || '抱歉，我不太理解') + '</div></div>';
+    typingEl.outerHTML = '<div class="chat-msg"><div class="sender sender-bot">${icon("bot")} 助手</div><div class="text">' + esc(r.answer || '抱歉，我不太理解') + '</div></div>';
   }
   box.scrollTop = box.scrollHeight;
 }
@@ -2096,7 +2169,7 @@ async function loadProfile() {
       </div>
     </div>
     <div class="card">
-      <h3>📈 邀请倍率</h3>
+      <h3>${icon("trending")} 邀请倍率</h3>
       <div class="stat"><span class="label">当前倍率</span><span class="value" id="pf-boost" style="color:var(--purple)">-</span></div>
       <div class="stat"><span class="label">已购积分</span><span class="value" id="pf-purchased" style="color:var(--yellow)">0</span></div>
       <div id="pf-tier-list" class="mt-10"></div>
