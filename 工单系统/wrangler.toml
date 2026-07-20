@@ -5,7 +5,7 @@ compatibility_date = "2025-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "ider-orders"
-database_id = ""
+database_id = "9fd8cb75-d10e-4cf3-a0e0-3681e5a59ae8"
 migrations_dir = "migrations"
 
 [vars]

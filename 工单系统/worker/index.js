@@ -70,9 +70,17 @@ async function logActivity(env, orderId, userId, action, detail) {
 
 // ─── Simple Rate Limiter (in-memory) ──────────
 const rateLimitMap = new Map();
+let lastCleanup = Date.now();
 function checkRateLimit(ip, key, max = 30, windowSec = 60) {
-  const k = ip + ':' + key;
+  // Lazy cleanup every 100 checks
   const now = Date.now();
+  if (now - lastCleanup > 60000) {
+    lastCleanup = now;
+    for (const [k, v] of rateLimitMap) {
+      if (now - v.reset > 120000) rateLimitMap.delete(k);
+    }
+  }
+  const k = ip + ':' + key;
   const entry = rateLimitMap.get(k);
   if (!entry || now - entry.reset > windowSec * 1000) {
     rateLimitMap.set(k, { count: 1, reset: now });
@@ -82,13 +90,7 @@ function checkRateLimit(ip, key, max = 30, windowSec = 60) {
   entry.count++;
   return true;
 }
-// Clean up rate limit map every 5 min
-setInterval(() => {
-  const now = Date.now();
-  for (const [k, v] of rateLimitMap) {
-    if (now - v.reset > 120000) rateLimitMap.delete(k);
-  }
-}, 300000).unref?.();
+// Rate limit map entries are cleaned lazily in checkRateLimit
 
 export default {
   async fetch(request, env) {
