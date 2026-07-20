@@ -1,4 +1,5 @@
 -- 艾德尔工单系统 - D1 数据库 Schema
+-- 赛博朋克修仙工单平台
 
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -11,11 +12,14 @@ CREATE TABLE IF NOT EXISTS users (
   invite_code TEXT UNIQUE,
   invited_by INTEGER DEFAULT 0,
   invite_points REAL DEFAULT 0,
-  commission_rate REAL DEFAULT 0,
+  commission_rate REAL DEFAULT 0.3,
+  avatar_url TEXT DEFAULT '',
+  bio TEXT DEFAULT '',
   created_at TEXT DEFAULT (datetime('now')),
   last_login TEXT,
   ip_address TEXT DEFAULT '',
-  locked INTEGER DEFAULT 0
+  locked INTEGER DEFAULT 0,
+  is_admin INTEGER DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS sessions (
@@ -45,6 +49,7 @@ CREATE TABLE IF NOT EXISTS orders (
   created_at TEXT DEFAULT (datetime('now')),
   updated_at TEXT DEFAULT (datetime('now')),
   completed_at TEXT,
+  est_complete_date TEXT,
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
@@ -80,6 +85,7 @@ CREATE TABLE IF NOT EXISTS coupons (
   discount_percent INTEGER NOT NULL,
   max_uses INTEGER DEFAULT 1,
   used_count INTEGER DEFAULT 0,
+  min_amount REAL DEFAULT 0,
   expires_at TEXT,
   created_at TEXT DEFAULT (datetime('now'))
 );
@@ -89,9 +95,25 @@ CREATE TABLE IF NOT EXISTS notifications (
   user_id INTEGER NOT NULL,
   title TEXT NOT NULL,
   content TEXT DEFAULT '',
+  type TEXT DEFAULT 'info',
   is_read INTEGER DEFAULT 0,
   created_at TEXT DEFAULT (datetime('now')),
   FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS appeals (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  order_id INTEGER DEFAULT 0,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  type TEXT DEFAULT 'appeal',
+  status TEXT DEFAULT 'pending',
+  admin_reply TEXT DEFAULT '',
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now')),
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (order_id) REFERENCES orders(id)
 );
 
 CREATE TABLE IF NOT EXISTS bot_logs (
@@ -124,8 +146,13 @@ INSERT OR IGNORE INTO config (key, value) VALUES ('price_per_120_points', '1');
 INSERT OR IGNORE INTO config (key, value) VALUES ('spirit_stone_per_10_points', '1000000');
 INSERT OR IGNORE INTO config (key, value) VALUES ('commission_rate', '30');
 INSERT OR IGNORE INTO config (key, value) VALUES ('est_delivery_days', '5');
+INSERT OR IGNORE INTO config (key, value) VALUES ('max_level', '120');
+INSERT OR IGNORE INTO config (key, value) VALUES ('site_name', '艾德尔修仙工单平台');
 
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
 CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token);
 CREATE INDEX IF NOT EXISTS idx_game_accounts_order ON game_accounts(order_id);
+CREATE INDEX IF NOT EXISTS idx_game_accounts_status ON game_accounts(status);
+CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id);
+CREATE INDEX IF NOT EXISTS idx_appeals_user ON appeals(user_id);
