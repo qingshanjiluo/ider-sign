@@ -61,6 +61,35 @@ function getClientIP(request) {
          'unknown';
 }
 
+// ─── Activity Log Helper ──────────────────────
+async function logActivity(env, orderId, userId, action, detail) {
+  await env.DB.prepare(
+    "INSERT INTO order_activities (order_id, user_id, action, detail, created_at) VALUES (?, ?, ?, ?, datetime('now'))"
+  ).bind(orderId, userId, action, detail || '').run();
+}
+
+// ─── Simple Rate Limiter (in-memory) ──────────
+const rateLimitMap = new Map();
+function checkRateLimit(ip, key, max = 30, windowSec = 60) {
+  const k = ip + ':' + key;
+  const now = Date.now();
+  const entry = rateLimitMap.get(k);
+  if (!entry || now - entry.reset > windowSec * 1000) {
+    rateLimitMap.set(k, { count: 1, reset: now });
+    return true;
+  }
+  if (entry.count >= max) return false;
+  entry.count++;
+  return true;
+}
+// Clean up rate limit map every 5 min
+setInterval(() => {
+  const now = Date.now();
+  for (const [k, v] of rateLimitMap) {
+    if (now - v.reset > 120000) rateLimitMap.delete(k);
+  }
+}, 300000).unref?.();
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -79,6 +108,15 @@ export default {
       const asset = await renderStaticAsset(path.slice(1), env);
       if (asset) return new Response(asset, { headers: { ...CORS_HEADERS, 'Content-Type': getContentType(path) } });
       return json({ error: 'Not found' }, 404);
+    }
+
+    // Rate limiting for API routes
+    if (path.startsWith('/api/')) {
+      const ip = getClientIP(request);
+      const isAuthRoute = path.includes('/auth/');
+      if (!checkRateLimit(ip, path.split('/')[3] || 'api', isAuthRoute ? 10 : 60)) {
+        return json({ error: '请求过于频繁，请稍后再试' }, 429);
+      }
     }
 
     try {
@@ -235,6 +273,8 @@ async function handleRoute(method, path, request, env, url) {
     await env.DB.prepare(
       "INSERT INTO notifications (user_id, title, content, type) VALUES (?, '工单已提交', '工单 #' || ? || ' 已提交，等待管理员审核中', 'order')"
     ).bind(user.id, result.meta.last_row_id).run();
+
+    await logActivity(env, result.meta.last_row_id, user.id, 'created', '提交工单: ' + (game_account_count || bonusPoints/120) + ' 个账号');
 
     return json({ ok: true, message: '工单已提交，等待审核', order_id: result.meta.last_row_id });
   }
@@ -405,13 +445,14 @@ async function handleRoute(method, path, request, env, url) {
     await env.DB.prepare(
       "UPDATE orders SET status = ?, admin_notes = ?, updated_at = datetime('now') WHERE id = ?"
     ).bind(status, admin_notes || '', orderId).run();
+    const order = await env.DB.prepare('SELECT * FROM orders WHERE id = ?').bind(orderId).first();
 
     if (status === 'approved') {
-      const order = await env.DB.prepare('SELECT * FROM orders WHERE id = ?').bind(orderId).first();
       await env.DB.prepare(
         'UPDATE users SET total_orders = total_orders + 1, total_spent = total_spent + ? WHERE id = ?'
       ).bind(order.price, order.user_id).run();
       await recalcUserLevel(env, order.user_id);
+      await logActivity(env, orderId, order.user_id, 'approved', '工单已审核通过');
 
       if (order.user_id) {
         const buyer = await env.DB.prepare('SELECT invited_by FROM users WHERE id = ?').bind(order.user_id).first();
@@ -423,6 +464,7 @@ async function handleRoute(method, path, request, env, url) {
           await env.DB.prepare(
             "INSERT INTO notifications (user_id, title, content, type) VALUES (?, '邀请分成到账', '下线成交获得 ' || ? || ' 邀请积分奖励', 'commission')"
           ).bind(buyer.invited_by, commission.toFixed(1)).run();
+          await logActivity(env, orderId, buyer.invited_by, 'commission', '获得分成 ' + commission.toFixed(1) + ' 积分');
         }
       }
 
@@ -430,10 +472,12 @@ async function handleRoute(method, path, request, env, url) {
         "INSERT INTO notifications (user_id, title, content, type) VALUES (?, '工单已通过', '工单 #' || ? || ' 已审核通过，正在处理中', 'order')"
       ).bind(order.user_id, orderId).run();
     } else if (status === 'rejected') {
-      const order = await env.DB.prepare('SELECT * FROM orders WHERE id = ?').bind(orderId).first();
       await env.DB.prepare(
         "INSERT INTO notifications (user_id, title, content, type) VALUES (?, '工单被拒绝', '工单 #' || ? || ' 被拒绝: ' || ?, 'order')"
       ).bind(order.user_id, orderId, admin_notes || '无原因').run();
+      await logActivity(env, orderId, order.user_id, 'rejected', '拒绝原因: ' + (admin_notes || '未说明'));
+    } else if (status === 'completed') {
+      await logActivity(env, orderId, order.user_id, 'completed', '工单已完成');
     }
 
     return json({ ok: true, message: '状态已更新' });
@@ -508,6 +552,82 @@ async function handleRoute(method, path, request, env, url) {
     return json({ ok: true });
   }
 
+  // ── Order Activities ────────────────────────────────
+  if (path.match(/^\/api\/orders\/(\d+)\/activities$/) && method === 'GET') {
+    const user = await authenticate(request, env);
+    if (!user) return json({ error: '未登录' }, 401);
+    const orderId = parseInt(path.match(/^\/api\/orders\/(\d+)\/activities$/)[1]);
+    const order = await env.DB.prepare('SELECT user_id FROM orders WHERE id = ?').bind(orderId).first();
+    if (!order) return json({ error: '工单不存在' }, 404);
+    if (order.user_id !== user.id && !user.is_admin) return json({ error: '无权限' }, 403);
+    const activities = await env.DB.prepare(
+      'SELECT * FROM order_activities WHERE order_id = ? ORDER BY created_at ASC'
+    ).bind(orderId).all();
+    return json({ ok: true, activities: activities.results });
+  }
+
+  // ── User Settings ────────────────────────────────────
+  if (path === '/api/user/change-password' && method === 'POST') {
+    const user = await authenticate(request, env);
+    if (!user) return json({ error: '未登录' }, 401);
+    const { old_password, new_password } = body;
+    if (!old_password || !new_password) return json({ error: '请填写旧密码和新密码' }, 400);
+    if (new_password.length < 6) return json({ error: '新密码至少6位' }, 400);
+    if (new_password.length > 64) return json({ error: '新密码过长' }, 400);
+    const valid = await env.DB.prepare(
+      'SELECT id FROM users WHERE id = ? AND password = ?'
+    ).bind(user.id, hashPassword(old_password)).first();
+    if (!valid) return json({ error: '旧密码错误' }, 400);
+    await env.DB.prepare(
+      'UPDATE users SET password = ? WHERE id = ?'
+    ).bind(hashPassword(new_password), user.id).run();
+    return json({ ok: true, message: '密码修改成功' });
+  }
+
+  if (path === '/api/user/profile' && method === 'PUT') {
+    const user = await authenticate(request, env);
+    if (!user) return json({ error: '未登录' }, 401);
+    const { email, avatar } = body;
+    if (email !== undefined) {
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ error: '邮箱格式不正确' }, 400);
+      await env.DB.prepare('UPDATE users SET email = ? WHERE id = ?').bind(email || '', user.id).run();
+    }
+    return json({ ok: true, message: '资料已更新' });
+  }
+
+  // ── Admin: Coupons ──────────────────────────────────
+  if (path === '/api/admin/coupons' && method === 'GET') {
+    const user = await authenticate(request, env);
+    if (!user || !user.is_admin) return json({ error: '无权限' }, 403);
+    const coupons = await env.DB.prepare(
+      'SELECT * FROM coupons ORDER BY created_at DESC'
+    ).all();
+    return json({ ok: true, coupons: coupons.results });
+  }
+
+  if (path === '/api/admin/coupons' && method === 'POST') {
+    const user = await authenticate(request, env);
+    if (!user || !user.is_admin) return json({ error: '无权限' }, 403);
+    const { code, discount_percent, max_uses, expires_at, description } = body;
+    if (!code || discount_percent === undefined) return json({ error: '参数不全' }, 400);
+    if (discount_percent < 1 || discount_percent > 100) return json({ error: '折扣比例需在1-100之间' }, 400);
+    const cleanCode = code.trim().toUpperCase();
+    const existing = await env.DB.prepare('SELECT id FROM coupons WHERE code = ?').bind(cleanCode).first();
+    if (existing) return json({ error: '优惠码已存在' }, 400);
+    await env.DB.prepare(
+      "INSERT INTO coupons (code, discount_percent, max_uses, expires_at, description) VALUES (?, ?, ?, ?, ?)"
+    ).bind(cleanCode, discount_percent, max_uses || 0, expires_at || null, description || '').run();
+    return json({ ok: true, message: '优惠券已创建' });
+  }
+
+  if (path.match(/^\/api\/admin\/coupons\/(\d+)$/) && method === 'DELETE') {
+    const user = await authenticate(request, env);
+    if (!user || !user.is_admin) return json({ error: '无权限' }, 403);
+    const id = parseInt(path.match(/^\/api\/admin\/coupons\/(\d+)$/)[1]);
+    await env.DB.prepare('DELETE FROM coupons WHERE id = ?').bind(id).run();
+    return json({ ok: true, message: '优惠券已删除' });
+  }
+
   // ── API: GitHub Actions ─────────────────────────
   if (path === '/api/gh/approved-orders' && method === 'GET') {
     if (!authenticateApi(request, env)) return json({ error: '无效API密钥' }, 403);
@@ -529,6 +649,8 @@ async function handleRoute(method, path, request, env, url) {
         await env.DB.prepare(
           "INSERT INTO game_accounts (order_id, username, password, server_username, server_password, status, created_at) VALUES (?, ?, ?, ?, ?, 'registering', datetime('now'))"
         ).bind(order_id, username, password, server_username || '', server_password || '').run();
+        const ord = await env.DB.prepare('SELECT user_id FROM orders WHERE id = ?').bind(order_id).first();
+        await logActivity(env, order_id, ord?.user_id || 0, 'account_created', '创建账号: ' + username);
       }
     } else if (status === 'farming' || status === 'active') {
       await env.DB.prepare(
@@ -586,6 +708,7 @@ async function handleRoute(method, path, request, env, url) {
         await env.DB.prepare(
           "INSERT INTO notifications (user_id, title, content, type) VALUES (?, '工单已完成', '工单 #' || ? || ' 已全部完成，账号已到达120级', 'order')"
         ).bind(order.user_id, order_id).run();
+        await logActivity(env, order_id, order.user_id, 'completed', '所有账号已到120级，工单自动完成');
       }
       return json({ ok: true, message: '订单已完成' });
     }

@@ -313,6 +313,25 @@ th {
 tr:hover td { background:rgba(0,240,255,0.04); }
 tr:last-child td { border-bottom:none; }
 
+/* ─── Search/Select inputs ──────────── */
+select { appearance:auto; -webkit-appearance:auto; cursor:pointer; }
+input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); cursor:pointer; }
+
+/* ─── Timeline ──────────────────────── */
+.timeline { position:relative; padding-left:28px; }
+.timeline::before { content:''; position:absolute; left:8px; top:4px; bottom:4px; width:2px; background:var(--border); }
+.tl-item { position:relative; padding:5px 0 10px; font-size:0.85em; }
+.tl-item::before { content:''; position:absolute; left:-20px; top:9px; width:10px; height:10px; border-radius:50%; background:var(--cyan); border:2px solid var(--bg-deep); }
+.tl-item.tl-created::before { background:var(--cyan); }
+.tl-item.tl-approved::before { background:var(--green); }
+.tl-item.tl-rejected::before { background:var(--red); }
+.tl-item.tl-completed::before { background:var(--yellow); }
+.tl-item.tl-account_created::before { background:var(--purple); }
+.tl-item.tl-commission::before { background:var(--magenta); }
+.tl-item .tl-time { font-size:0.75em; color:var(--text-dim); }
+.tl-item .tl-action { color:var(--text-bright); font-weight:400; }
+.tl-item .tl-detail { color:var(--text-dim); font-size:0.9em; }
+
 /* ─── Modal ────────────────────────── */
 .modal-overlay {
   display:none; position:fixed; top:0; left:0; right:0; bottom:0;
@@ -499,6 +518,7 @@ const HTML = `<!DOCTYPE html>
     <a href="#" data-page="control">功能</a>
     <a href="#" data-page="docs">文档</a>
     <a href="#" id="nav-invite" class="hidden" data-page="invite">邀请</a>
+    <a href="#" id="nav-settings" class="hidden" data-page="settings">设置</a>
     <a href="#" id="nav-notif" class="hidden" data-page="notifications">通知 <span id="notif-badge" class="nav-badge hidden">0</span></a>
     <a href="#" id="nav-admin" class="hidden" data-page="admin">管理</a>
     <a class="btn btn-magenta btn-sm btn-link" id="nav-login" href="#" data-page="login">登录</a>
@@ -750,7 +770,7 @@ P.dashboard = () => \`
   </div>
 
   <div class="grid grid-4" id="dash-stats">
-    <div class="card"><h3>👤 用户</h3><div class="stat"><span class="label">等级</span><span class="value" id="d-level">-</span></div><div class="stat"><span class="label">工单数</span><span class="value" id="d-orders">-</span></div></div>
+    <div class="card"><h3>👤 <span id="d-username">用户</span></h3><div class="stat"><span class="label">等级</span><span class="value" id="d-level">-</span></div><div class="stat"><span class="label">工单数</span><span class="value" id="d-orders">-</span></div><div class="stat"><span class="label">邮箱</span><span class="value" id="d-email" style="font-size:0.82em;color:var(--text-dim)">未设置</span></div></div>
     <div class="card"><h3>💳 财务</h3><div class="stat"><span class="label">总消费</span><span class="value" id="d-spent">¥0</span></div><div class="stat"><span class="label">邀请积分</span><span class="value" id="d-points">0</span></div></div>
     <div class="card"><h3>🤝 邀请</h3><div class="stat"><span class="label">邀请码</span><span class="value" id="d-invite" style="font-size:0.82em">-</span></div><div class="stat"><span class="label">已邀请</span><span class="value" id="d-invited">0</span></div></div>
     <div class="card"><h3>🏆 优惠</h3><div class="stat"><span class="label">当前等级</span><span class="value" id="d-level2">-</span></div><div class="stat"><span class="label">折扣</span><span class="value" id="d-discount" style="color:var(--green)">0%</span></div></div>
@@ -758,7 +778,17 @@ P.dashboard = () => \`
 
   <div class="grid grid-2 mt-20" style="grid-template-columns:1.2fr 0.8fr">
     <div class="card" style="overflow:hidden">
-      <h3>📋 我的工单</h3>
+      <h3>📋 我的工单 <span class="sub" style="font-size:0.72em">点击行查看详情</span></h3>
+      <div class="flex gap-10 mb-10 flex-wrap">
+        <input id="dash-order-search" placeholder="🔍 搜邀请码/ID..." style="flex:1;min-width:140px;padding:6px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px;font-size:0.85em" oninput="filterDashOrders()">
+        <select id="dash-order-status-filter" style="padding:6px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px;font-size:0.85em" onchange="filterDashOrders()">
+          <option value="">全部状态</option>
+          <option value="pending">待审核</option>
+          <option value="approved">已通过</option>
+          <option value="completed">已完成</option>
+          <option value="rejected">已拒绝</option>
+        </select>
+      </div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>#</th><th>邀请码</th><th>金额</th><th>状态</th><th>进度</th><th>时间</th></tr></thead>
@@ -788,6 +818,7 @@ P.admin = () => \`
     <div class="tab" onclick="switchTab(this,'ap-accounts')">🎮 账号</div>
     <div class="tab" onclick="switchTab(this,'ap-users')">👥 用户</div>
     <div class="tab" onclick="switchTab(this,'ap-appeals')">📮 申诉</div>
+    <div class="tab" onclick="switchTab(this,'ap-coupons')">🎫 优惠券</div>
     <div class="tab" onclick="switchTab(this,'ap-config')">⚙️ 配置</div>
   </div>
 
@@ -812,8 +843,39 @@ P.admin = () => \`
   <div class="tab-content" id="ap-appeals">
     <div class="card"><h3>申诉管理</h3><div class="table-wrap"><table><thead><tr><th>#</th><th>用户</th><th>标题</th><th>类型</th><th>状态</th><th>时间</th><th>操作</th></tr></thead><tbody id="admin-appeals-table"></tbody></table></div></div>
   </div>
+  <div class="tab-content" id="ap-coupons">
+    <div class="card">
+      <h3>🎫 优惠券管理</h3>
+      <div class="flex gap-10 mb-10 flex-wrap" style="border:1px solid var(--border);padding:16px;border-radius:8px">
+        <input id="cp-code" placeholder="优惠码（自动大写）" style="flex:1;min-width:90px;padding:6px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px">
+        <input id="cp-discount" type="number" placeholder="折扣 %" style="width:80px;padding:6px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px">
+        <input id="cp-max" type="number" placeholder="最大使用" style="width:90px;padding:6px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px">
+        <input id="cp-expires" type="date" style="padding:6px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px">
+        <input id="cp-desc" placeholder="描述" style="flex:1;min-width:90px;padding:6px 12px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px">
+        <button class="btn btn-green btn-sm" onclick="adminCreateCoupon()">创建</button>
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>ID</th><th>优惠码</th><th>折扣</th><th>使用数</th><th>上限</th><th>过期</th><th>描述</th><th>创建时间</th><th>操作</th></tr></thead><tbody id="admin-coupons-table"></tbody></table></div>
+    </div>
+  </div>
   <div class="tab-content" id="ap-config">
     <div class="card"><h3>系统配置</h3><div id="admin-config"></div></div>
+  </div>
+</div>
+\`;
+
+P.settings = () => \`
+<div class="container animate-in" style="max-width:560px">
+  <h2 class="page-title">用户设置</h2>
+  <div class="card">
+    <h3>🔑 修改密码</h3>
+    <div class="form-group"><label>旧密码</label><input type="password" id="set-old-pass" placeholder="输入旧密码"></div>
+    <div class="form-group"><label>新密码</label><input type="password" id="set-new-pass" placeholder="输入新密码（至少6位）"></div>
+    <button class="btn btn-green" onclick="changePassword()">更新密码</button>
+  </div>
+  <div class="card">
+    <h3>📧 绑定邮箱</h3>
+    <div class="form-group"><label>邮箱地址</label><input type="email" id="set-email" placeholder="your@email.com"></div>
+    <button class="btn btn-green" onclick="updateProfile()">保存邮箱</button>
   </div>
 </div>
 \`;
@@ -904,6 +966,7 @@ function updateNav(loggedIn, isAdmin) {
   document.getElementById('nav-dashboard').classList.toggle('hidden', !loggedIn);
   document.getElementById('nav-logout').classList.toggle('hidden', !loggedIn);
   document.getElementById('nav-invite').classList.toggle('hidden', !loggedIn);
+  document.getElementById('nav-settings').classList.toggle('hidden', !loggedIn);
   document.getElementById('nav-notif').classList.toggle('hidden', !loggedIn);
   document.getElementById('nav-admin').classList.toggle('hidden', !(loggedIn && isAdmin));
 }
@@ -995,6 +1058,8 @@ async function refreshNotifs() {
 async function markNotifRead(id) { await api('POST', '/api/notifications/read', { id }); refreshNotifs(); }
 
 // ─── Dashboard ──────────────────────────────
+let DASH_ORDERS = [];
+
 async function refreshDashboard() {
   if (!TOKEN) return;
   const info = await api('GET', '/api/user/info');
@@ -1007,28 +1072,39 @@ async function refreshDashboard() {
     document.getElementById('d-invite').textContent = u.invite_code || '-';
     document.getElementById('d-points').textContent = (u.invite_points || 0).toFixed(1);
     document.getElementById('d-discount').textContent = (LD[u.level] || 0) + '%';
+    document.getElementById('d-username').textContent = esc(u.username) || '用户';
+    document.getElementById('d-email').textContent = u.email || '未设置';
   }
   const inviteInfo = await api('GET', '/api/invite/info');
   if (inviteInfo.ok) document.getElementById('d-invited').textContent = inviteInfo.total_invited || 0;
 
   const orders = await api('GET', '/api/orders');
   if (orders.ok && orders.orders) {
-    const tb = document.getElementById('dash-orders');
-    if (!orders.orders.length) {
-      tb.innerHTML = '<tr><td colspan="6" class="text-center" style="color:var(--text-dim);padding:30px">暂无工单，点击右上角提交工单</td></tr>'; return;
-    }
-    const s = { pending:'⏳审核中', approved:'✅已通过', rejected:'❌已拒绝', completed:'🎉已完成' };
-    tb.innerHTML = orders.orders.slice(0, 10).map(o => \`
-      <tr style="cursor:pointer" onclick="showOrderDetail(\${o.id})">
-        <td>#\${o.id}</td>
-        <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis">\${esc(o.invite_code)}</td>
-        <td>¥\${o.price.toFixed(1)}</td>
-        <td><span class="badge badge-\${o.status}">\${s[o.status]||o.status}</span></td>
-        <td style="font-size:0.78em">\${o.account_count||0} 账号</td>
-        <td style="font-size:0.78em;color:var(--text-dim)">\${o.created_at?.split(' ')[0]||''}</td>
-      </tr>
-    \`).join('');
+    DASH_ORDERS = orders.orders;
+    filterDashOrders();
   }
+}
+
+function filterDashOrders() {
+  const tb = document.getElementById('dash-orders');
+  if (!tb) return;
+  const q = (document.getElementById('dash-order-search')?.value || '').toLowerCase();
+  const st = document.getElementById('dash-order-status-filter')?.value || '';
+  let filtered = DASH_ORDERS;
+  if (q) filtered = filtered.filter(o => String(o.id).includes(q) || (o.invite_code||'').toLowerCase().includes(q));
+  if (st) filtered = filtered.filter(o => o.status === st);
+  if (!filtered.length) { tb.innerHTML = '<tr><td colspan="6" class="text-center" style="color:var(--text-dim);padding:30px">没有匹配工单</td></tr>'; return; }
+  const s = { pending:'⏳审核中', approved:'✅已通过', rejected:'❌已拒绝', completed:'🎉已完成' };
+  tb.innerHTML = filtered.map(o => \`
+    <tr style="cursor:pointer" onclick="showOrderDetail(\${o.id})">
+      <td>#\${o.id}</td>
+      <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis">\${esc(o.invite_code)}</td>
+      <td>¥\${o.price.toFixed(1)}</td>
+      <td><span class="badge badge-\${o.status}">\${s[o.status]||o.status}</span></td>
+      <td style="font-size:0.78em">\${o.account_count||0} 账号</td>
+      <td style="font-size:0.78em;color:var(--text-dim)">\${o.created_at?.split(' ')[0]||''}</td>
+    </tr>
+  \`).join('');
 }
 
 // ─── Order Detail ───────────────────────────
@@ -1065,6 +1141,11 @@ async function showOrderDetail(id) {
       </div>
     </div>
     <div class="card mt-20">
+      <h3>📜 操作记录</h3>
+      <div class="timeline" id="order-timeline-\${o.id}"><p style="color:var(--text-dim);font-size:0.85em">加载中...</p></div>
+    </div>
+
+    <div class="card mt-20">
       <h3>🎮 账号列表 (\${accounts.length})</h3>
       \${accounts.length === 0 ? '<p style="color:var(--text-dim);font-size:0.88em">暂无账号数据</p>' : \`
       <div class="table-wrap"><table>
@@ -1081,9 +1162,47 @@ async function showOrderDetail(id) {
         </tr>\`).join('')}</tbody></table></div>\`}
     </div>
   </div>\`;
+  loadOrderActivities(id);
+  }
+
+  function fl(j) { try { return JSON.parse(j||'[]').map(x => x.name||x).join(', ') || '-'; } catch(e) { return j||'-'; } }
+
+// ─── Order Activities ──────────────────────
+async function loadOrderActivities(orderId) {
+  const el = document.getElementById('order-timeline-' + orderId);
+  if (!el) return;
+  const r = await api('GET', '/api/orders/' + orderId + '/activities');
+  if (!r.ok || !r.activities || !r.activities.length) {
+    el.innerHTML = '<p style="color:var(--text-dim);font-size:0.85em">暂无操作记录</p>'; return;
+  }
+  const ac = { created:'创建工单', approved:'审核通过', rejected:'已拒绝', completed:'已完成', account_created:'创建账号', commission:'分成到账' };
+  el.innerHTML = r.activities.map(a => \`
+    <div class="tl-item tl-\${a.action}">
+      <div class="tl-time">\${a.created_at}</div>
+      <div class="tl-action">\${ac[a.action] || a.action}</div>
+      \${a.detail ? '<div class="tl-detail">' + esc(a.detail) + '</div>' : ''}
+    </div>
+  \`).join('');
 }
 
-function fl(j) { try { return JSON.parse(j||'[]').map(x => x.name||x).join(', ') || '-'; } catch(e) { return j||'-'; } }
+// ─── Settings ──────────────────────────────
+async function changePassword() {
+  const oldP = document.getElementById('set-old-pass')?.value;
+  const newP = document.getElementById('set-new-pass')?.value;
+  if (!oldP || !newP) return toast('请填写完整', 'error');
+  if (newP.length < 6) return toast('新密码至少6位', 'error');
+  const r = await api('POST', '/api/user/change-password', { old_password: oldP, new_password: newP });
+  if (r.ok) { toast('密码修改成功', 'success'); document.getElementById('set-old-pass').value = ''; document.getElementById('set-new-pass').value = ''; }
+  else toast(r.error, 'error');
+}
+async function updateProfile() {
+  const email = document.getElementById('set-email')?.value;
+  if (!email) return toast('请填写邮箱', 'error');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast('邮箱格式不正确', 'error');
+  const r = await api('PUT', '/api/user/profile', { email });
+  if (r.ok) toast('邮箱已更新', 'success');
+  else toast(r.error, 'error');
+}
 
 // ─── New Order ──────────────────────────────
 function showNewOrder() {
@@ -1159,7 +1278,7 @@ async function submitOrder() {
 }
 
 // ─── Admin ──────────────────────────────────
-async function refreshAdmin() { await Promise.all([adminLoadOrders('pending'), adminLoadAccounts(), adminLoadUsers(), adminLoadAppeals(), adminLoadConfig()]); }
+async function refreshAdmin() { await Promise.all([adminLoadOrders('pending'), adminLoadAccounts(), adminLoadUsers(), adminLoadAppeals(), adminLoadConfig(), adminLoadCoupons()]); }
 
 async function adminLoadOrders(status) {
   const p = status ? '/api/admin/orders?status=' + status : '/api/admin/orders';
@@ -1243,6 +1362,44 @@ async function adminLoadConfig() {
   \`).join('') + '</div>';
 }
 async function adminSaveConfig(key) { const val = document.getElementById('cfg-' + key)?.value; if (!val) return; await api('POST', '/api/admin/config', { key, value: val }); toast('配置已更新', 'success'); }
+
+// ─── Coupon Admin ──────────────────────────
+async function adminLoadCoupons() {
+  const tb = document.getElementById('admin-coupons-table');
+  if (!tb) return;
+  const r = await api('GET', '/api/admin/coupons');
+  if (!r.ok || !r.coupons) { tb.innerHTML = '<tr><td colspan="9" class="text-center" style="color:var(--text-dim);padding:20px">暂无优惠券</td></tr>'; return; }
+  tb.innerHTML = r.coupons.map(c => \`
+    <tr>
+      <td>#\${c.id}</td>
+      <td style="color:var(--magenta);font-weight:700;letter-spacing:2px">\${esc(c.code)}</td>
+      <td style="color:var(--green)">\${c.discount_percent}%</td>
+      <td>\${c.used_count||0}</td>
+      <td>\${c.max_uses||'∞'}</td>
+      <td style="font-size:0.82em">\${c.expires_at || '永久'}</td>
+      <td style="font-size:0.82em;max-width:180px;overflow:hidden;text-overflow:ellipsis">\${esc(c.description||'-')}</td>
+      <td style="font-size:0.82em">\${c.created_at}</td>
+      <td><button class="btn btn-red btn-sm" style="padding:3px 10px;font-size:0.72em" onclick="adminDeleteCoupon(\${c.id})">删除</button></td>
+    </tr>
+  \`).join('');
+}
+async function adminCreateCoupon() {
+  const code = document.getElementById('cp-code')?.value;
+  const discount = parseInt(document.getElementById('cp-discount')?.value);
+  const max_uses = parseInt(document.getElementById('cp-max')?.value) || 0;
+  const expires_at = document.getElementById('cp-expires')?.value || null;
+  const description = document.getElementById('cp-desc')?.value || '';
+  if (!code || !discount) return toast('请填写优惠码和折扣', 'error');
+  const r = await api('POST', '/api/admin/coupons', { code, discount_percent: discount, max_uses, expires_at, description });
+  if (r.ok) { toast('优惠券已创建', 'success'); document.getElementById('cp-code').value = ''; document.getElementById('cp-discount').value = ''; document.getElementById('cp-max').value = ''; document.getElementById('cp-expires').value = ''; document.getElementById('cp-desc').value = ''; adminLoadCoupons(); }
+  else toast(r.error, 'error');
+}
+async function adminDeleteCoupon(id) {
+  if (!confirm('确认删除此优惠券？')) return;
+  const r = await api('DELETE', '/api/admin/coupons/' + id);
+  if (r.ok) { toast('已删除', 'success'); adminLoadCoupons(); }
+  else toast(r.error, 'error');
+}
 
 // ─── Invite ─────────────────────────────────
 async function refreshInvite() {

@@ -156,3 +156,16 @@ CREATE INDEX IF NOT EXISTS idx_game_accounts_order ON game_accounts(order_id);
 CREATE INDEX IF NOT EXISTS idx_game_accounts_status ON game_accounts(status);
 CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id);
 CREATE INDEX IF NOT EXISTS idx_appeals_user ON appeals(user_id);
+
+CREATE TABLE IF NOT EXISTS order_activities (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  order_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  action TEXT NOT NULL,
+  detail TEXT DEFAULT '',
+  created_at TEXT DEFAULT (datetime('now')),
+  FOREIGN KEY (order_id) REFERENCES orders(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_order_activities_order ON order_activities(order_id);
