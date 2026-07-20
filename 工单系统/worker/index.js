@@ -45,7 +45,7 @@ async function authenticate(request, env) {
     return null;
   }
   const user = await env.DB.prepare(
-    'SELECT id, username, display_name, level, xp, total_orders, total_spent, invite_code, invited_by, invite_points, total_invited, commission_rate, email, avatar_url, bio, is_admin, locked FROM users WHERE id = ?'
+    'SELECT id, username, display_name, level, xp, total_orders, total_spent, invite_code, invited_by, invite_points, total_invited, total_purchased_points, commission_rate, email, avatar_url, bio, is_admin, locked FROM users WHERE id = ?'
   ).bind(result.user_id).first();
   return user;
 }
@@ -92,8 +92,33 @@ function checkRateLimit(ip, key, max = 30, windowSec = 60) {
 }
 // Rate limit map entries are cleaned lazily in checkRateLimit
 
-// ─── XP/Level System ──────────────────────
-const XP_LEVELS = [0, 0, 100, 300, 600, 1000, 1600, 2400, 3400, 4600, 6000];
+// ─── XP/Level System (exponential) ────────
+// Formula: XP_LEVELS[i] = 100 * (2^(i-1) - 1), i ≥ 1
+const XP_LEVELS = [0, 0, 100, 300, 700, 1500, 3100, 6300, 12700, 25500, 51100];
+
+// ─── Invite Boost Tiers ──────────────────
+// total_purchased_points → commission multiplier
+const INVITE_BOOST_TIERS = [
+  { min: 0,      max: 4999,   mult: 1.0, label: '基础',   rate: 30 },
+  { min: 5000,   max: 19999,  mult: 1.2, label: '青铜',   rate: 36 },
+  { min: 20000,  max: 49999,  mult: 1.5, label: '白银',   rate: 45 },
+  { min: 50000,  max: 99999,  mult: 2.0, label: '黄金',   rate: 60 },
+  { min: 100000, max: Infinity, mult: 3.0, label: '至尊',  rate: 90 },
+];
+
+// ─── Invite Packages for Purchase ────────
+const INVITE_PACKAGES = [
+  { id: 'bronze',  name: '小试牛刀', points: 6000,   price: 50,   desc: '解锁青铜倍率(1.2x)' },
+  { id: 'silver',  name: '渐入佳境', points: 12000,  price: 100,  desc: '解锁白银倍率(1.5x)' },
+  { id: 'gold',    name: '如虎添翼', points: 30000,  price: 250,  desc: '解锁黄金倍率(2.0x)' },
+  { id: 'diamond', name: '登峰造极', points: 60000,  price: 500,  desc: '解锁至尊倍率(3.0x)' },
+  { id: 'legend',  name: '至尊无敌', points: 120000, price: 1000, desc: '满级倍率(3.0x)+专属标识' },
+];
+
+function getInviteBoost(totalPurchased) {
+  const tier = INVITE_BOOST_TIERS.find(t => totalPurchased >= t.min && totalPurchased < t.max) || INVITE_BOOST_TIERS[0];
+  return tier;
+}
 
 async function recalcUserLevelAndXP(env, userId) {
   const user = await env.DB.prepare('SELECT id, xp FROM users WHERE id = ?').bind(userId).first();
@@ -412,6 +437,9 @@ async function handleRoute(method, path, request, env, url) {
     const inviteEarnings = await env.DB.prepare(
       "SELECT COALESCE(SUM(o.price * 0.3), 0) as total FROM orders o JOIN users u ON o.user_id = u.id WHERE u.invited_by = ? AND o.status = 'approved'"
     ).bind(user.id).first();
+    const totalPurchased = user.total_purchased_points || 0;
+    const boost = getInviteBoost(totalPurchased);
+    const nextTier = INVITE_BOOST_TIERS.find(t => t.mult > boost.mult);
     return json({
       ok: true,
       invite_code: user.invite_code,
@@ -419,11 +447,46 @@ async function handleRoute(method, path, request, env, url) {
       invite_orders: inviteOrders.cnt,
       invite_points: user.invite_points,
       invite_earnings: inviteEarnings.total,
-      commission_rate: 30,
-      invite_link: (request.headers.get('Host') || '') + '/?invite=' + user.invite_code,
+      commission_rate: boost.rate,
+      base_rate: 30,
+      boost_mult: boost.mult,
+      boost_label: boost.label,
+      total_purchased_points: totalPurchased,
+      next_tier: nextTier ? { label: nextTier.label, need: nextTier.min - totalPurchased, rate: nextTier.rate } : null,
+      packages: INVITE_PACKAGES,
     });
   }
 
+  // ── Invite Package Purchase ──────────────────────
+  if (path === '/api/invite/packages' && method === 'GET') {
+    return json({ ok: true, packages: INVITE_PACKAGES });
+  }
+
+  if (path === '/api/invite/purchase' && method === 'POST') {
+    const user = await authenticate(request, env);
+    if (!user) return json({ error: '未登录' }, 401);
+    const { package_id, payment_method, payment_account } = body;
+    if (!package_id || !payment_method || !payment_account) return json({ error: '请填写完整信息' }, 400);
+    const pkg = INVITE_PACKAGES.find(p => p.id === package_id);
+    if (!pkg) return json({ error: '无效套餐' }, 400);
+    if (!['wechat', 'spirit_stone'].includes(payment_method)) return json({ error: '无效支付方式' }, 400);
+
+    const price = payment_method === 'wechat' ? pkg.price : pkg.price * 1000000;
+    const bonusPoints = payment_method === 'wechat' ? pkg.points : Math.floor(pkg.points / 12);
+
+    // Create order with special invite_package marker in invite_code field
+    const result = await env.DB.prepare(
+      "INSERT INTO orders (user_id, invite_code, payment_method, payment_account, amount, price, bonus_points, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now'))"
+    ).bind(user.id, 'PKG:' + package_id + ':' + pkg.name, payment_method, payment_account, pkg.price, price, bonusPoints).run();
+
+    await env.DB.prepare(
+      "INSERT INTO notifications (user_id, title, content, type) VALUES (?, '套餐购买已提交', '邀请积分套餐「' + ? + '」购买订单已提交，等待管理员审核', 'order')"
+    ).bind(user.id, pkg.name).run();
+
+    return json({ ok: true, message: '购买申请已提交，等待管理员审核', order_id: result.meta.last_row_id });
+  }
+
+  // ── Invite Withdraw ──────────────────────────────
   if (path === '/api/invite/withdraw' && method === 'POST') {
     const user = await authenticate(request, env);
     if (!user) return json({ error: '未登录' }, 401);
@@ -481,21 +544,37 @@ async function handleRoute(method, path, request, env, url) {
       await env.DB.prepare(
         'UPDATE users SET total_orders = total_orders + 1, total_spent = total_spent + ? WHERE id = ?'
       ).bind(order.price, order.user_id).run();
-      const xpGain = Math.max(50, Math.floor(order.price));
-      await addXP(env, order.user_id, xpGain, '工单 #' + orderId + ' 审核通过');
-      await logActivity(env, orderId, order.user_id, 'approved', '工单已审核通过');
 
-      if (order.user_id) {
-        const buyer = await env.DB.prepare('SELECT invited_by FROM users WHERE id = ?').bind(order.user_id).first();
-        if (buyer && buyer.invited_by > 0) {
-          const commission = order.price * 0.3;
-          await env.DB.prepare(
-            'UPDATE users SET invite_points = invite_points + ? WHERE id = ?'
-          ).bind(commission, buyer.invited_by).run();
-          await env.DB.prepare(
-            "INSERT INTO notifications (user_id, title, content, type) VALUES (?, '邀请分成到账', '下线成交获得 ' || ? || ' 邀请积分奖励', 'commission')"
-          ).bind(buyer.invited_by, commission.toFixed(1)).run();
-          await logActivity(env, orderId, buyer.invited_by, 'commission', '获得分成 ' + commission.toFixed(1) + ' 积分');
+      // Handle invite package purchase orders
+      const isPackage = order.invite_code && order.invite_code.startsWith('PKG:');
+      if (isPackage) {
+        const pkgPoints = order.bonus_points || 0;
+        await env.DB.prepare(
+          'UPDATE users SET total_purchased_points = COALESCE(total_purchased_points, 0) + ?, invite_points = invite_points + ? WHERE id = ?'
+        ).bind(pkgPoints, pkgPoints, order.user_id).run();
+        const pkgName = order.invite_code.replace('PKG:', '').split(':')[1] || '邀请套餐';
+        await env.DB.prepare(
+          "INSERT INTO notifications (user_id, title, content, type) VALUES (?, '套餐已到账', '「' || ? || '」' || ? || ' 邀请积分已到账，当前倍率已提升！', 'commission')"
+        ).bind(order.user_id, pkgName, pkgPoints).run();
+        await logActivity(env, orderId, order.user_id, 'commission', '购买套餐到账 ' + pkgPoints + ' 积分');
+      } else {
+        const xpGain = Math.max(50, Math.floor(order.price));
+        await addXP(env, order.user_id, xpGain, '工单 #' + orderId + ' 审核通过');
+        await logActivity(env, orderId, order.user_id, 'approved', '工单已审核通过');
+
+        if (order.user_id) {
+          const buyer = await env.DB.prepare('SELECT invited_by FROM users WHERE id = ?').bind(order.user_id).first();
+          if (buyer && buyer.invited_by > 0) {
+            const boostInfo = getInviteBoost((await env.DB.prepare('SELECT total_purchased_points FROM users WHERE id = ?').bind(buyer.invited_by).first())?.total_purchased_points || 0);
+            const commission = order.price * (boostInfo.rate / 100);
+            await env.DB.prepare(
+              'UPDATE users SET invite_points = invite_points + ? WHERE id = ?'
+            ).bind(commission, buyer.invited_by).run();
+            await env.DB.prepare(
+              "INSERT INTO notifications (user_id, title, content, type) VALUES (?, '邀请分成到账', '下线成交获得 ' || ? || ' 邀请积分奖励（' || ? || '倍率）', 'commission')"
+            ).bind(buyer.invited_by, commission.toFixed(1), boostInfo.label).run();
+            await logActivity(env, orderId, buyer.invited_by, 'commission', '获得分成 ' + commission.toFixed(1) + ' 积分（' + boostInfo.label + '倍率）');
+          }
         }
       }
 
@@ -518,7 +597,7 @@ async function handleRoute(method, path, request, env, url) {
     const user = await authenticate(request, env);
     if (!user || !user.is_admin) return json({ error: '无权限' }, 403);
     const users = await env.DB.prepare(
-      "SELECT id, username, display_name, level, xp, total_orders, total_spent, total_invited, invite_code, invite_points, email, avatar_url, bio, is_admin, locked, created_at, last_login FROM users ORDER BY id DESC"
+      "SELECT id, username, display_name, level, xp, total_orders, total_spent, total_invited, invite_code, invite_points, total_purchased_points, email, avatar_url, bio, is_admin, locked, created_at, last_login FROM users ORDER BY id DESC"
     ).all();
     return json({ ok: true, users: users.results });
   }

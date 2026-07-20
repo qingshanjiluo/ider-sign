@@ -459,6 +459,12 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); curs
 .typing-dots span:nth-child(2) { animation-delay:0.2s; }
 .typing-dots span:nth-child(3) { animation-delay:0.4s; }
 @keyframes dotBounce { 0%,60%,100% { transform:translateY(0); opacity:0.3; } 30% { transform:translateY(-6px); opacity:1; } }
+@keyframes glowPulse { 0%,100% { opacity:0.5; } 50% { opacity:1; } }
+@keyframes borderGlow { 0%,100% { border-color:var(--border); box-shadow:0 0 6px transparent; } 50% { border-color:var(--cyan); box-shadow:0 0 20px rgba(0,240,255,0.2); } }
+@keyframes shimmer { 0% { background-position:-200% 0; } 100% { background-position:200% 0; } }
+@keyframes scaleIn { 0% { transform:scale(0.95); opacity:0; } 100% { transform:scale(1); opacity:1; } }
+.card-glow { animation:borderGlow 3s ease-in-out infinite; }
+.shimmer { background:linear-gradient(90deg,transparent,rgba(0,240,255,0.05),transparent); background-size:200% 100%; animation:shimmer 3s ease-in-out infinite; }
 
 /* ─── Table Scroll Hint ────────────── */
 .table-wrap { position:relative; }
@@ -600,7 +606,15 @@ let USER = null;
 const API = window.location.origin;
 let notifInterval = null;
 const LD = { 1:0, 2:0, 3:10, 4:20, 5:30, 6:40, 7:45, 8:50, 9:60, 10:70 };
-const XP_LEVELS = [0, 0, 100, 300, 600, 1000, 1600, 2400, 3400, 4600, 6000];
+const XP_LEVELS = [0, 0, 100, 300, 700, 1500, 3100, 6300, 12700, 25500, 51100];
+
+const INVITE_PACKAGES = [
+  { id: 'bronze',  name: '小试牛刀', points: 6000,   price: 50,  color: '#cd7f32', desc: '解锁青铜倍率(1.2x)', badge: 'BRONZE' },
+  { id: 'silver',  name: '渐入佳境', points: 12000,  price: 100, color: '#c0c0c0', desc: '解锁白银倍率(1.5x)', badge: 'SILVER' },
+  { id: 'gold',    name: '如虎添翼', points: 30000,  price: 250, color: '#ffd700', desc: '解锁黄金倍率(2.0x)', badge: 'GOLD' },
+  { id: 'diamond', name: '登峰造极', points: 60000,  price: 500, color: '#00f0ff', desc: '解锁至尊倍率(3.0x)', badge: 'DIAMOND' },
+  { id: 'legend',  name: '至尊无敌', points: 120000, price: 1000,color: '#ff00aa', desc: '满级倍率(3.0x)+专属标识', badge: 'LEGEND' },
+];
 
 // ─── SVG Icons ──────────────────────────────
 function icon(n) { const s={user:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg>',settings:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><circle cx="12"cy="12"r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',star:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',trophy:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',crown:'<svg width="20"height="20"viewBox="0 0 24 24"fill="none"stroke="#ffd700"stroke-width="2"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><path d="M3 20h18"/></svg>',bolt:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',mail:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',clock:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><circle cx="12"cy="12"r="10"/><polyline points="12 6 12 12 16 14"/></svg>',check:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>',x:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><line x1="18"y1="6"x2="6"y2="18"/><line x1="6"y1="6"x2="18"y2="18"/></svg>',dollar:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><line x1="12"y1="1"x2="12"y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',users:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9"cy="7"r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',shield:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',chevron:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>',copy:'<svg width="16"height="16"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"><rect x="9"y="9"width="13"height="13"rx="2"ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'}; return s[n]||''; }
@@ -840,7 +854,7 @@ P.dashboard = () => \`
   <div class="grid grid-4" id="dash-stats">
     <div class="card"><h3>👤 <span id="d-username">用户</span></h3><div class="stat"><span class="label">等级</span><span class="value" id="d-level">-</span></div><div class="stat"><span class="label">工单数</span><span class="value" id="d-orders">-</span></div><div class="stat"><span class="label">邮箱</span><span class="value" id="d-email" style="font-size:0.82em;color:var(--text-dim)">未设置</span></div></div>
     <div class="card"><h3>💳 财务</h3><div class="stat"><span class="label">总消费</span><span class="value" id="d-spent">¥0</span></div><div class="stat"><span class="label">邀请积分</span><span class="value" id="d-points">0</span></div></div>
-    <div class="card"><h3>🤝 邀请</h3><div class="stat"><span class="label">邀请码</span><span class="value" id="d-invite" style="font-size:0.82em">-</span></div><div class="stat"><span class="label">已邀请</span><span class="value" id="d-invited">0</span></div></div>
+    <div class="card"><h3>🤝 邀请</h3><div class="stat"><span class="label">邀请码</span><span class="value" id="d-invite" style="font-size:0.82em">-</span></div><div class="stat"><span class="label">已邀请</span><span class="value" id="d-invited">0</span></div><div class="stat"><span class="label">倍率</span><span class="value" id="d-boost" style="color:var(--purple)">1.0x</span></div></div>
     <div class="card"><h3>🏆 优惠</h3><div class="stat"><span class="label">当前等级</span><span class="value" id="d-level2">-</span></div><div class="stat"><span class="label">折扣</span><span class="value" id="d-discount" style="color:var(--green)">0%</span></div></div>
   </div>
 
@@ -908,7 +922,7 @@ P.admin = () => \`
     <div class="card"><h3>游戏账号</h3><div class="table-wrap"><table><thead><tr><th>ID</th><th>用户</th><th>账号</th><th>等级</th><th>地图</th><th>状态</th><th>技能</th><th>功法</th><th>装备</th><th>检查</th></tr></thead><tbody id="admin-accounts-table"></tbody></table></div></div>
   </div>
   <div class="tab-content" id="ap-users">
-    <div class="card"><h3>用户列表</h3><div class="table-wrap"><table><thead><tr><th>ID</th><th>用户名</th><th>等级</th><th>工单</th><th>消费</th><th>邀请</th><th>邀请码</th><th>状态</th><th>管理</th><th>注册</th><th>操作</th></tr></thead><tbody id="admin-users-table"></tbody></table></div></div>
+    <div class="card"><h3>用户列表</h3><div class="table-wrap"><table><thead><tr><th>ID</th><th>用户名</th><th>等级</th><th>工单</th><th>消费</th><th>邀请</th><th>邀请码</th><th>状态</th><th>管理</th><th>已购积分</th><th>注册</th><th>操作</th></tr></thead><tbody id="admin-users-table"></tbody></table></div></div>
   </div>
   <div class="tab-content" id="ap-appeals">
     <div class="card"><h3>申诉管理</h3><div class="table-wrap"><table><thead><tr><th>#</th><th>用户</th><th>标题</th><th>类型</th><th>状态</th><th>时间</th><th>操作</th></tr></thead><tbody id="admin-appeals-table"></tbody></table></div></div>
@@ -974,25 +988,38 @@ P.settings = () => \`
 \`;
 
 P.invite = () => \`
-<div class="container animate-in" style="max-width:640px">
+<div class="container animate-in" style="max-width:900px">
   <h2 class="page-title">邀请系统</h2>
-  <div class="grid grid-2">
-    <div class="card">
-      <h3>🤝 我的邀请码</h3>
-      <div class="stat"><span class="label">邀请码</span><span class="value" id="inv-code" style="font-size:1.2em;color:var(--magenta);letter-spacing:3px">-</span></div>
-      <div class="stat"><span class="label">已邀请人数</span><span class="value" id="inv-count">0</span></div>
-      <div class="stat"><span class="label">成交返利</span><span class="value" id="inv-orders">0</span></div>
-      <div class="stat"><span class="label">累计收益</span><span class="value" id="inv-earnings" style="color:var(--green)">¥0</span></div>
-      <div class="stat"><span class="label">可提现积分</span><span class="value" id="inv-points">0</span></div>
-      <div class="stat"><span class="label">分成比例</span><span class="value" style="color:var(--green)">30%</span></div>
-      <div class="flex gap-10 mt-10">
-        <button class="btn btn-sm" onclick="copyInvite()">📋 复制链接</button>
-        <button class="btn btn-green btn-sm" onclick="withdrawInvite()">💳 提现</button>
+  <div class="grid" style="gap:18px">
+    <div class="grid-2" style="gap:18px">
+      <div class="card card-glow">
+        <h3>🤝 我的邀请</h3>
+        <div class="stat"><span class="label">邀请码</span><span class="value" id="inv-code" style="font-size:1.2em;color:var(--magenta);letter-spacing:3px;font-family:'Orbitron',monospace">-</span></div>
+        <div class="stat"><span class="label">已邀请人数</span><span class="value" id="inv-count" style="font-size:1.3em">0</span></div>
+        <div class="stat"><span class="label">成交返利</span><span class="value" id="inv-orders">0</span></div>
+        <div class="stat"><span class="label">累计收益</span><span class="value" id="inv-earnings" style="color:var(--green)">¥0</span></div>
+        <div class="stat"><span class="label">可提现积分</span><span class="value" id="inv-points" style="font-size:1.2em;color:var(--yellow)">0</span></div>
+        <div class="stat"><span class="label">当前倍率</span><span class="value" id="inv-boost" style="color:var(--purple)">1.0x</span></div>
+        <div id="inv-tier-progress" style="margin:8px 0"></div>
+        <div class="flex gap-10 mt-10">
+          <button class="btn btn-sm" onclick="copyInvite()">📋 复制链接</button>
+          <button class="btn btn-green btn-sm" onclick="withdrawInvite()">💳 提现</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>📖 邀请说明</h3>
+        <p style="color:var(--text-dim);font-size:0.85em;line-height:2">1️⃣ 你的专属邀请码可以在下方复制<br>2️⃣ 分享给好友，好友注册时填写<br>3️⃣ 好友工单审核通过后你获得返利<br>4️⃣ 返利 = 订单金额 × 当前倍率 邀请积分<br>5️⃣ 邀请积分可以提现或用于消费<br>6️⃣ 多邀多得，上不封顶！</p>
+        <div class="mt-10" style="padding:10px;border:1px solid var(--border);border-radius:6px;font-size:0.8em">
+          <div style="color:var(--cyan);margin-bottom:6px;font-weight:500">🏆 倍率解锁</div>
+          <div id="inv-tier-list"></div>
+        </div>
       </div>
     </div>
     <div class="card">
-      <h3>📖 邀请说明</h3>
-      <p style="color:var(--text-dim);font-size:0.85em;line-height:2">1️⃣ 你的专属邀请码可以在下方复制<br>2️⃣ 分享给好友，好友注册时填写<br>3️⃣ 好友工单审核通过后你获得返利<br>4️⃣ 返利 = 订单金额 × 30% 邀请积分<br>5️⃣ 邀请积分可以提现或用于消费<br>6️⃣ 多邀多得，上不封顶！</p>
+      <h3>🚀 积分套餐</h3>
+      <p style="color:var(--text-dim);font-size:0.82em;margin-bottom:16px">购买积分套餐可提升邀请分成倍率，邀请好友赚更多！</p>
+      <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px" id="pkg-grid"></div>
+      <div id="pkg-detail" class="mt-16" style="display:none"></div>
     </div>
   </div>
 </div>
@@ -1219,7 +1246,11 @@ async function refreshDashboard() {
     document.getElementById('d-email').textContent = u.email || '未设置';
   }
   const inviteInfo = await api('GET', '/api/invite/info');
-  if (inviteInfo.ok) document.getElementById('d-invited').textContent = inviteInfo.total_invited || 0;
+  if (inviteInfo.ok) {
+    document.getElementById('d-invited').textContent = inviteInfo.total_invited || 0;
+    const dBoost = document.getElementById('d-boost');
+    if (dBoost) dBoost.textContent = (inviteInfo.boost_mult || 1) + 'x (' + (inviteInfo.boost_label || '基础') + ')';
+  }
 
   const orders = await api('GET', '/api/orders');
   if (orders.ok && orders.orders) {
@@ -1479,6 +1510,7 @@ async function adminLoadUsers() {
     <td style="font-size:0.76em">\${u.invite_code||'-'}</td>
     <td>\${u.locked ? icon('x')+'封禁': icon('check')}</td>
     <td>\${u.is_admin ? icon('shield') : ''}</td>
+    <td style="font-size:0.76em;color:var(--yellow)">\${(u.total_purchased_points||0).toLocaleString()}</td>
     <td style="font-size:0.76em">\${u.created_at?.split(' ')[0]||'-'}</td>
     <td>
       <button class="btn btn-sm" style="padding:2px 8px;font-size:0.68em" onclick="adminResetPass(\${u.id})">密码</button>
@@ -1663,7 +1695,78 @@ async function refreshInvite() {
     document.getElementById('inv-orders').textContent = r.invite_orders || 0;
     document.getElementById('inv-points').textContent = (r.invite_points || 0).toFixed(1);
     document.getElementById('inv-earnings').textContent = '¥' + (r.invite_earnings || 0).toFixed(1);
+    const mult = r.boost_mult || 1;
+    const label = r.boost_label || '基础';
+    document.getElementById('inv-boost').innerHTML = '<span style="font-size:0.78em;color:var(--text-dim)">' + label + '</span> ' + mult + 'x';
+    // Tier progress bar
+    const total = r.total_purchased_points || 0;
+    const nt = r.next_tier;
+    const tpEl = document.getElementById('inv-tier-progress');
+    if (nt) {
+      const pct = Math.min(100, Math.round((nt.need > 0 ? 1 - (nt.need / (nt.need + total)) : 0) * 100));
+      tpEl.innerHTML = '<div style="font-size:0.75em;color:var(--text-dim);margin-bottom:4px">距 <strong>' + nt.label + '</strong> 还需 ' + nt.need + ' 积分</div><div style="height:4px;background:var(--bg-input);border-radius:2px;overflow:hidden"><div style="width:' + pct + '%;height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan));border-radius:2px"></div></div>';
+    } else {
+      tpEl.innerHTML = '<div style="font-size:0.75em;color:var(--cyan)">🏆 已达最高倍率！</div>';
+    }
+    // Tier list
+    const tiers = [
+      { min: 0,      label: '基础', rate: 30,  mult: '1.0x' },
+      { min: 5000,   label: '青铜', rate: 36,  mult: '1.2x' },
+      { min: 20000,  label: '白银', rate: 45,  mult: '1.5x' },
+      { min: 50000,  label: '黄金', rate: 60,  mult: '2.0x' },
+      { min: 100000, label: '至尊', rate: 90,  mult: '3.0x' },
+    ];
+    const tlEl = document.getElementById('inv-tier-list');
+    tlEl.innerHTML = tiers.map(t => {
+      const unlocked = total >= t.min;
+      return '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:0.85em">' +
+        '<span>' + (unlocked ? '✅' : '🔒') + ' ' + t.label + '</span>' +
+        '<span style="color:' + (unlocked ? 'var(--green)' : 'var(--text-dim)') + '">' + t.rate + '% (' + t.mult + ')</span></div>';
+    }).join('');
+    // Package grid
+    renderInvitePackages(r.packages);
   }
+}
+function renderInvitePackages(pkgs) {
+  const el = document.getElementById('pkg-grid');
+  if (!el) return;
+  el.innerHTML = (pkgs||INVITE_PACKAGES).map(p => \`
+    <div class="card" style="cursor:pointer;padding:16px;text-align:center;transition:all .3s;animation:scaleIn .4s ease" onclick="selectPackage('\${p.id}')">
+      <div style="font-size:1.6em;margin-bottom:6px;color:\${p.color || 'var(--cyan)'}">◆</div>
+      <div style="font-weight:600;font-size:0.95em;color:var(--text-bright)">\${p.name}</div>
+      <div style="font-size:1.3em;font-family:'Orbitron',monospace;color:\${p.color || 'var(--cyan)'};margin:6px 0">\${p.points.toLocaleString()}</div>
+      <div style="font-size:0.72em;color:var(--text-dim)">积分</div>
+      <div style="margin:8px 0;font-size:0.78em;color:var(--text-dim)">\${p.desc}</div>
+      <div style="font-size:1.1em;color:var(--magenta);font-weight:600">¥\${p.price}</div>
+    </div>
+  \`).join('');
+}
+function selectPackage(id) {
+  const pkg = (INVITE_PACKAGES).find(p => p.id === id);
+  if (!pkg) return;
+  const el = document.getElementById('pkg-detail');
+  el.style.display = 'block';
+  el.innerHTML = \`
+    <div class="card" style="border:1px solid \${pkg.color || 'var(--cyan)'};animation:scaleIn .3s ease">
+      <h3 style="color:\${pkg.color || 'var(--cyan)'}">\${pkg.name} ◆</h3>
+      <p style="font-size:0.9em;color:var(--text-dim);margin-bottom:14px">\${pkg.desc}</p>
+      <div class="form-row">
+        <div class="form-group"><label>支付方式</label><select id="pkg-pay" class="form-input" style="padding:10px 14px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px"><option value="wechat">微信支付</option><option value="spirit_stone">灵石支付</option></select></div>
+        <div class="form-group"><label>付款账号名</label><input id="pkg-account" class="form-input" placeholder="你的微信昵称/游戏ID" style="padding:10px 14px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);border-radius:6px"></div>
+      </div>
+      <div style="font-size:0.85em;color:var(--text-dim);margin-bottom:12px">套餐价格: <strong style="color:var(--magenta)">¥\${pkg.price}</strong> | 获得积分: <strong style="color:var(--yellow)">\${pkg.points.toLocaleString()}</strong></div>
+      <button class="btn btn-magenta btn-block" onclick="purchasePackage('\${pkg.id}')">立即购买 \${pkg.name}</button>
+      <button class="btn btn-sm btn-block mt-10" onclick="document.getElementById('pkg-detail').style.display='none'">取消</button>
+    </div>
+  \`;
+}
+async function purchasePackage(id) {
+  const pay = document.getElementById('pkg-pay')?.value;
+  const account = document.getElementById('pkg-account')?.value;
+  if (!account) return toast('请填写付款账号', 'error');
+  const r = await api('POST', '/api/invite/purchase', { package_id: id, payment_method: pay, payment_account: account });
+  if (r.ok) { toast('购买申请已提交，等待管理员审核', 'success'); document.getElementById('pkg-detail').style.display = 'none'; }
+  else toast(r.error, 'error');
 }
 function copyInvite() {
   const code = document.getElementById('inv-code')?.textContent;
@@ -1920,7 +2023,10 @@ async function afterSalesReply(id) {
 async function loadProfile() {
   const el = document.getElementById('profile-content');
   if (!el) return;
-  const info = await api('GET', '/api/user/info');
+  const [info, inviteInfo] = await Promise.all([
+    api('GET', '/api/user/info'),
+    api('GET', '/api/invite/info'),
+  ]);
   if (!info.ok || !info.user) return;
   const u = info.user;
   const xpNext = u.xp_next || 0;
@@ -1929,6 +2035,15 @@ async function loadProfile() {
   const xpMax = xpNext - xpPrev;
   const xpNow = xpCur - xpPrev;
   const xpPct = xpMax > 0 ? Math.min(100, Math.round(xpNow / xpMax * 100)) : 100;
+  const boost = inviteInfo.ok ? inviteInfo : null;
+  const totalPts = boost?.total_purchased_points || 0;
+  const tiers = [
+    { min: 0, label: '基础', mult: '1.0x', rate: '30%' },
+    { min: 5000, label: '青铜', mult: '1.2x', rate: '36%' },
+    { min: 20000, label: '白银', mult: '1.5x', rate: '45%' },
+    { min: 50000, label: '黄金', mult: '2.0x', rate: '60%' },
+    { min: 100000, label: '至尊', mult: '3.0x', rate: '90%' },
+  ];
   el.innerHTML = \`
     <div class="card">
       <div class="profile-header">
@@ -1963,10 +2078,28 @@ async function loadProfile() {
     </div>
     <div class="card">
       <h3>等级任务</h3>
-      <div class="stat"><span class="label">购买工单</span><span class="value">每单 +50 XP</span></div>
+      <div class="stat"><span class="label">购买工单</span><span class="value">每单 +50 XP起（按金额）</span></div>
       <div class="stat"><span class="label">邀请好友</span><span class="value">每人 +50 XP</span></div>
       <div class="stat"><span class="label">兑换码</span><span class="value">视兑换码而定</span></div>
-      <div class="mt-10" style="font-size:0.82em;color:var(--text-dim)">下一级所需: \${xpPrev} → \${xpNext} XP</div>
+      <div class="mt-10" style="font-size:0.82em;color:var(--text-dim)">
+        下一级所需 XP: <strong style="color:var(--cyan)">\${xpNow}/\${xpMax}</strong>
+        <span style="margin:0 8px">·</span>
+        累计: <strong style="color:var(--purple)">\${xpCur}</strong>
+        <div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap">
+          \${XP_LEVELS.filter((v,i) => i > 0).map((v,i) =>
+            '<span style="padding:2px 8px;font-size:0.7em;border-radius:10px;background:' +
+            (xpCur >= v ? 'rgba(0,240,255,0.12);color:var(--cyan);border:1px solid var(--cyan)' :
+             i + 1 === (u.level||1)+1 && i < 10 ? 'rgba(124,58,237,0.12);color:var(--purple);border:1px solid var(--purple)' :
+             'rgba(255,255,255,0.04);color:var(--text-dim);border:1px solid transparent') + '">Lv.' + (i + 1) + '</span>'
+          ).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>📈 邀请倍率</h3>
+      <div class="stat"><span class="label">当前倍率</span><span class="value" id="pf-boost" style="color:var(--purple)">-</span></div>
+      <div class="stat"><span class="label">已购积分</span><span class="value" id="pf-purchased" style="color:var(--yellow)">0</span></div>
+      <div id="pf-tier-list" class="mt-10"></div>
     </div>
   \`;
 }
