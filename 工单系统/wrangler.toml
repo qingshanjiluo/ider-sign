@@ -1,0 +1,28 @@
+name = "ider-order-system"
+main = "worker/index.js"
+compatibility_date = "2024-12-01"
+
+# D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "ider-orders"
+database_id = ""
+migrations_dir = "migrations"
+
+# Environment variables
+[vars]
+API_KEY = ""
+ENVIRONMENT = "production"
+
+# Routes
+routes = [
+  { pattern = "ider-order.example.com", custom_domain = true }
+]
+
+# Dev configuration
+[env.dev]
+vars = { ENVIRONMENT = "development" }
+
+# Production
+[env.production]
+vars = { ENVIRONMENT = "production" }

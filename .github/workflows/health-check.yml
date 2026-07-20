@@ -1,0 +1,35 @@
+# ════════════════════════════════════════════════════════════
+#  账号健康检测 - 每日检查并自动升级
+# ════════════════════════════════════════════════════════════
+
+name: 🩺 账号健康检测
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1,13 * * *'
+
+jobs:
+  health-check:
+    name: 🩺 健康检测
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 工单系统
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: 📦 安装依赖
+        run: npm install
+
+      - name: 🚀 执行健康检测
+        run: |
+          node gh-actions/health_check.js
+        env:
+          WORKER_URL: ${{ secrets.WORKER_URL || '' }}
+          API_KEY: ${{ secrets.API_KEY || '' }}
+          CI: true

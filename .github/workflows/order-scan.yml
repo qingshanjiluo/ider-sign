@@ -1,0 +1,40 @@
+# ════════════════════════════════════════════════════════════
+#  工单扫描 - 自动注册账号并入刷怪
+# ════════════════════════════════════════════════════════════
+
+name: 📋 工单扫描 - 自动注册
+
+on:
+  workflow_dispatch:
+    inputs:
+      order_id:
+        description: '指定工单ID（留空处理全部待审核工单）'
+        required: false
+        default: ''
+  schedule:
+    - cron: '0 */6 * * *'
+
+jobs:
+  scan-orders:
+    name: 📋 扫描并注册
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 工单系统
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: 📦 安装依赖
+        run: npm install
+
+      - name: 🚀 执行工单扫描
+        run: |
+          node gh-actions/scan_orders.js
+        env:
+          WORKER_URL: ${{ secrets.WORKER_URL || '' }}
+          API_KEY: ${{ secrets.API_KEY || '' }}
+          CI: true
