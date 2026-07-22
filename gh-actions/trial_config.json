@@ -1,0 +1,28 @@
+{
+  "dungeons": [
+    {
+      "dungeon_id": 3,
+      "name": "枯骨墓穴",
+      "multiplier": 1.27,
+      "affixes": ["enemy_cc_immune", "atk_boost_l", "player_heal_forbidden", "def_boost_l", "spd_boost_l", "hp_atk_mix"],
+      "label": "铁律屏障+锋刃II+绝脉封疗+护甲II+迅捷II+血怒",
+      "expected_coins": 99
+    },
+    {
+      "dungeon_id": 2,
+      "name": "竹林秘境",
+      "multiplier": 1.12,
+      "affixes": ["enemy_cc_immune", "player_heal_forbidden", "atk_boost_l", "def_boost_l", "spd_boost_l", "all_boost_m"],
+      "label": "铁律屏障+绝脉封疗+锋刃II+护甲II+迅捷II+灾厄共鸣",
+      "expected_coins": 87
+    },
+    {
+      "dungeon_id": 1,
+      "name": "荒石村试炼",
+      "multiplier": 1,
+      "affixes": ["enemy_cc_immune", "player_heal_forbidden", "atk_boost_l", "def_boost_l", "spd_boost_l", "all_boost_m"],
+      "label": "铁律屏障+绝脉封疗+锋刃II+护甲II+迅捷II+灾厄共鸣",
+      "expected_coins": 78
+    }
+  ]
+}
