@@ -33,6 +33,19 @@ const SETUP_MAP = {
   error: { label: '异常', class: 'badge-rejected' },
 };
 
+const SETUP_MAP = {
+  pending: { label: '待Setup', class: 'badge-pending' },
+  creating: { label: '创建中', class: 'badge-pending' },
+  running: { label: '进行中', class: 'badge-approved' },
+  skills: { label: '技能', class: 'badge-approved' },
+  iron_sword: { label: '铁剑', class: 'badge-approved' },
+  technique: { label: '功法', class: 'badge-approved' },
+  map: { label: '地图', class: 'badge-approved' },
+  battle: { label: '战斗', class: 'badge-approved' },
+  done: { label: '已完成', class: 'badge-completed' },
+  error: { label: '异常', class: 'badge-rejected' },
+};
+
 export async function renderAdminAccounts({ container }) {
   if (_pollTimer) { clearInterval(_pollTimer); _pollTimer = null; }
 
@@ -51,6 +64,14 @@ export async function renderAdminAccounts({ container }) {
         <option value="error">异常</option>
         <option value="banned">封禁</option>
         <option value="failed">失败</option>
+      </select>
+      <select class="form-select" id="admin-account-setup">
+        <option value="">全部Setup</option>
+        <option value="pending">待Setup</option>
+        <option value="creating">创建中</option>
+        <option value="running">进行中</option>
+        <option value="done">已完成</option>
+        <option value="error">异常</option>
       </select>
       <select class="form-select" id="admin-account-setup">
         <option value="">全部Setup</option>
