@@ -1,0 +1,26 @@
+{
+  "name": "ider-order-system",
+  "version": "2.0.0",
+  "description": "艾德尔修仙传 - 赛博朋克工单平台（Cloudflare Workers + D1）",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "init-db": "wrangler d1 execute ider-orders --file=./schema.sql",
+    "preview-db": "wrangler d1 execute ider-orders --local --file=./schema.sql",
+    "scan-orders": "node gh-actions/scan_orders.js",
+    "health-check": "node gh-actions/health_check.js",
+    "trial-test": "node gh-actions/trial_tester.js"
+  },
+  "dependencies": {
+    "@octokit/rest": "^22.0.1",
+    "https-proxy-agent": "^9.1.0",
+    "libsodium-wrappers": "^0.8.4",
+    "tweetnacl-util": "^0.15.1"
+  },
+  "devDependencies": {
+    "sodium-native": "^5.1.0",
+    "tweetnacl": "^1.0.3",
+    "wrangler": "^3.0.0"
+  }
+}
