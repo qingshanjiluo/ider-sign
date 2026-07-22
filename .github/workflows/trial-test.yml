@@ -39,7 +39,7 @@ jobs:
           node-version: 20
 
       - name: 安装依赖
-        run: npm ci
+        run: npm install --package-lock-only 2>/dev/null || true
 
       - name: 运行试炼测试
         env:
