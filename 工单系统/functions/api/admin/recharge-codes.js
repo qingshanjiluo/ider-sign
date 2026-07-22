@@ -33,36 +33,42 @@ export async function onRequest(context) {
 
   // POST — 批量生成兑换码
   if (request.method === 'POST') {
-    const body = await request.json().catch(() => ({}));
-    const { count = 1, coins = 0 } = body;
+    try {
+      const body = await request.json().catch(() => ({}));
+      const { count = 1, coins = 0 } = body;
 
-    if (!coins || coins <= 0) return json({ error: '修仙币数量必须大于0' }, 400);
-    if (count < 1 || count > 100) return json({ error: '生成数量范围为1-100' }, 400);
+      if (!coins || coins <= 0) return json({ error: '修仙币数量必须大于0' }, 400);
+      if (count < 1 || count > 100) return json({ error: '生成数量范围为1-100' }, 400);
 
-    const generatedCodes = [];
-    const insertStmt = env.DB.prepare(
-      'INSERT INTO recharge_codes (user_id, code, coins, status, created_by) VALUES (?, ?, ?, ?, ?)'
-    );
+      const generatedCodes = [];
+      const insertStmt = env.DB.prepare(
+        'INSERT INTO recharge_codes (user_id, code, coins, status, created_by) VALUES (?, ?, ?, ?, ?)'
+      );
 
-    for (let i = 0; i < count; i++) {
-      let code = '';
-      let retries = 0;
-      while (retries < 10) {
-        code = generateRechargeCode();
-        const exist = await env.DB.prepare('SELECT id FROM recharge_codes WHERE code = ?').bind(code).first();
-        if (!exist) break;
-        retries++;
+      for (let i = 0; i < count; i++) {
+        let code = '';
+        let retries = 0;
+        while (retries < 10) {
+          code = generateRechargeCode();
+          const exist = await env.DB.prepare('SELECT id FROM recharge_codes WHERE code = ?').bind(code).first();
+          if (!exist) break;
+          retries++;
+        }
+        // 使用 NULL 而非 0，避免 FOREIGN KEY 约束失败（SQLite FK 不检查 NULL）
+        await insertStmt.bind(null, code, coins, 'pending', user.id).run();
+        generatedCodes.push(code);
       }
-      await insertStmt.bind(0, code, coins, 'pending', user.id).run();
-      generatedCodes.push(code);
-    }
 
-    return json({
-      ok: true,
-      message: `成功生成 ${generatedCodes.length} 个兑换码`,
-      codes: generatedCodes,
-      coins,
-    });
+      return json({
+        ok: true,
+        message: `成功生成 ${generatedCodes.length} 个兑换码`,
+        codes: generatedCodes,
+        coins,
+      });
+    } catch (e) {
+      console.error('recharge-codes POST error:', e);
+      return json({ error: '生成兑换码失败: ' + (e.message || '数据库错误') }, 500);
+    }
   }
 
   // DELETE — 删除兑换码

@@ -60,9 +60,6 @@ class ApiClient {
     return this.post('/user/change-password', { old_password, new_password });
   }
 
-  // ── User ──────────────────────────────
-  getUserInfo() { return this.get('/user/info'); }
-
   // ── Orders ────────────────────────────
   getOrders(status) {
     const q = status ? `?status=${status}` : '';
@@ -72,8 +69,6 @@ class ApiClient {
   getOrder(id) { return this.get(`/orders/${id}`); }
 
   createOrder(data) { return this.post('/orders', data); }
-
-  validateCoupon(code) { return this.post('/coupon/validate', { code }); }
 
   getOrderActivities(id) { return this.get(`/orders/${id}/activities`); }
 
@@ -167,6 +162,7 @@ class ApiClient {
   }
   adminGetConfig() { return this.get('/admin/config'); }
   adminSetConfig(key, value) { return this.post('/admin/config', { key, value }); }
+  adminSetConfigBatch(configs) { return this.post('/admin/config', { configs }); }
   adminLockUser(id, locked) { return this.post(`/admin/users/${id}/lock`, { locked }); }
   adminResetPassword(id, new_password) {
     return this.post(`/admin/users/${id}/reset-password`, { new_password });
@@ -219,6 +215,9 @@ class ApiClient {
   adminMarketOrderAction(order_id, action, notes) {
     return this.post('/admin/market-orders', { order_id, action, notes });
   }
+  adminDeleteMarketOrder(order_id) {
+    return this.post('/admin/market-orders', { order_id, action: 'admin-delete' });
+  }
 
   // ── Admin: Recharge ─────────────────────
   adminGetRechargeOrders(status) {
@@ -245,7 +244,7 @@ class ApiClient {
   // ── Admin: AI Config ─────────────────────
   adminGetAiConfig() { return this.get('/admin/ai-config'); }
   adminSetAiConfig(data) { return this.post('/admin/ai-config', data); }
-  adminTestAiConnection() { return this.post('/admin/ai-config/test', {}); }
+  adminTestAiConnection() { return this.post('/admin/ai-test', {}); }
 }
 
 class ApiError extends Error {

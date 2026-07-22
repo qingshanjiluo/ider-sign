@@ -31,8 +31,8 @@ const CLIENT_VERSION = '1.2.4';
 const WORKER_URL = process.env.WORKER_URL || '';
 const API_KEY = process.env.API_KEY || '';
 
-const TEST_USER = 'zzhx';
-const TEST_PASS = 'Pipi20100817';
+const TEST_USER = process.env.TEST_USERNAME || 'zzhx';
+const TEST_PASS = process.env.TEST_PASSWORD || 'Pipi20100817';
 
 const MAX_AFFIXES = 6;
 const MAX_ADVANCE_LOOPS = 60;
@@ -455,6 +455,57 @@ async function main() {
   };
   fs.writeFileSync(REPORT_FILE, JSON.stringify(report, null, 2), 'utf8');
   console.log('\n  报告已保存: ' + REPORT_FILE);
+
+  // 7) 生成可粘贴的每日试炼配置（TXT）
+  const dailyConfigs = mapResults
+    .filter(r => r.best && r.best.coins > 0)
+    .sort((a, b) => (a.dungeonId) - (b.dungeonId))
+    .map(r => ({
+      dungeon_id: r.dungeonId,
+      name: r.dungeonName,
+      multiplier: Number(r.multiplier),
+      affixes: r.best.affixIds,
+      label: r.best.names.join('+'),
+      expected_coins: r.best.coins,
+    }));
+  const txtLines = [];
+  txtLines.push('╔══════════════════════════════════════════════════════╗');
+  txtLines.push('║        艾德尔试炼测试报告 — ' + new Date().toISOString().slice(0, 10) + '        ║');
+  txtLines.push('╚══════════════════════════════════════════════════════╝');
+  txtLines.push('');
+  txtLines.push('账号: ' + TEST_USER);
+  txtLines.push('服务器: ' + API_BASE);
+  txtLines.push('');
+  txtLines.push('──────────────────────────────────────────────');
+  txtLines.push('  可通关地图最优配置');
+  txtLines.push('──────────────────────────────────────────────');
+  dailyConfigs.forEach((c, i) => {
+    txtLines.push('');
+    txtLines.push('  [' + (i + 1) + '] ' + c.name + ' (x' + c.multiplier + ')');
+    txtLines.push('      词条: ' + c.label);
+    txtLines.push('      收益: ' + c.expected_coins + ' 试炼币');
+    txtLines.push('      等级要求: ' + (dungeons.find(d => Number(d.dungeon_id) === c.dungeon_id)?.level_min || '?') + '级');
+  });
+  txtLines.push('');
+  txtLines.push('──────────────────────────────────────────────');
+  txtLines.push('  以下 JSON 可直接复制粘贴到 gh-actions/trial_config.json');
+  txtLines.push('──────────────────────────────────────────────');
+  txtLines.push('');
+  txtLines.push(JSON.stringify({ dungeons: dailyConfigs }, null, 2));
+  txtLines.push('');
+  txtLines.push('──────────────────────────────────────────────');
+  txtLines.push('  无法通关的地图（等级/战力不足）');
+  txtLines.push('──────────────────────────────────────────────');
+  mapResults.filter(r => !r.best).forEach(r => {
+    const dg = dungeons.find(d => Number(d.dungeon_id) === r.dungeonId);
+    txtLines.push('  ❌ ' + r.dungeonName + ' (需求' + (dg?.level_min || '?') + '级)');
+  });
+  txtLines.push('');
+  txtLines.push('--- END ---');
+
+  const txtPath = path.join(__dirname, '..', 'trial_test_report.txt');
+  fs.writeFileSync(txtPath, txtLines.join('\n'), 'utf8');
+  console.log('  报告(TXT)已保存: ' + txtPath);
   console.log('\n═══════════════════════════════════════════');
   console.log('  全部完成 ✓');
   console.log('═══════════════════════════════════════════');

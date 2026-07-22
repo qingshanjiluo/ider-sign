@@ -32,18 +32,38 @@ export async function onRequest(context) {
     if (!user) return json({ error: '未登录' }, 401);
 
     const body = await request.json().catch(() => ({}));
-    const { 
-      order_type, 
-      coupon_code, 
-      note, 
+    const {
+      order_type,
+      coupon_code,
+      note,
       invite_code,
       payment_method,   // 'coin' | 'wechat' | 'spirit_stone'
-      points            // 邀请积分数量（10的倍数）
+      points,            // 邀请积分数量（10的倍数）
+      game_account_name,     // 游戏账号名（仙盟采集/试炼测试/每日试炼）
+      game_account_password, // 游戏账号密码（仙盟采集/每日试炼）
     } = body;
 
+    // ── 0. 输入验证（长度限制）──
+    if (note && note.length > 500) return json({ error: '备注最多500字符' }, 400);
+    if (order_type && order_type.length > 50) return json({ error: '工单类型最多50字符' }, 400);
+    if (game_account_name && game_account_name.length > 100) return json({ error: '账号名最多100字符' }, 400);
+    if (game_account_password && game_account_password.length > 200) return json({ error: '密码最多200字符' }, 400);
+
+    // ── 0.1 新工单类型特殊验证 ──
+    const NEW_ORDER_TYPES = ['仙盟采集', '试炼测试', '每日试炼'];
+    if (NEW_ORDER_TYPES.includes(order_type)) {
+      if (!game_account_name) return json({ error: '请输入游戏账号名' }, 400);
+      if ((order_type === '仙盟采集' || order_type === '每日试炼') && !game_account_password) {
+        return json({ error: '请输入游戏账号密码' }, 400);
+      }
+    }
+
     // ── 1. 验证积分数量 ──
-    if (!points || points < 10 || points % 10 !== 0) {
-      return json({ error: '邀请积分数量必须是10的倍数（最少10）' }, 400);
+    // 新工单类型使用固定价格（points 由前端计算），跳过积分倍数验证
+    if (!NEW_ORDER_TYPES.includes(order_type)) {
+      if (!points || points < 10 || points % 10 !== 0) {
+        return json({ error: '邀请积分数量必须是10的倍数（最少10）' }, 400);
+      }
     }
 
     // ── 2. 验证付款方式 ──
@@ -62,8 +82,12 @@ export async function onRequest(context) {
       price = points / 120;
       priceUnit = '元';
     } else if (payment_method === 'spirit_stone') {
-      // 灵石：100万灵石 = 10积分
-      price = points * 100000;
+      // 灵石：从 config 读取灵石兑换比例（默认 100万灵石 = 10积分）
+      const spiritCfg = await env.DB.prepare("SELECT value FROM config WHERE key='spirit_stone_per_10_points'").first();
+      const spiritPer10 = parseInt(spiritCfg?.value || '1000000');
+      // spiritPer10 = 每10积分对应的灵石数（单位：灵石）
+      // 转换为万灵石显示：spiritPer10 / 10000 = 每10积分对应的万灵石数
+      price = Math.round(points / 10 * spiritPer10 / 10000);
       priceUnit = '万灵石';
     } else if (payment_method === 'coin') {
       // 修仙币：1修仙币 = 1积分
@@ -94,7 +118,7 @@ export async function onRequest(context) {
     let couponFixedAmount = 0;
     if (coupon_code) {
       const coupon = await env.DB.prepare(
-        "SELECT * FROM coupons WHERE code = ? AND (expires_at IS NULL OR expires_at > datetime('now')) AND used_count < max_uses"
+        "SELECT * FROM coupons WHERE code = ? AND (expires_at IS NULL OR expires_at > datetime('now')) AND (max_uses = 0 OR used_count < max_uses)"
       ).bind(coupon_code).first();
       if (coupon) {
         couponType = coupon.coupon_type || 'percent';
@@ -139,23 +163,41 @@ export async function onRequest(context) {
 
     // ── 10. 插入订单 ──
     const finalInviteCode = invite_code || user.invite_code || '';
+    // payment_account: 微信支付需要用户提供账号，其他方式用默认值
+    const paymentAccountLabel = payment_method === 'wechat' ? '微信' : payment_method === 'coin' ? '修仙币' : '灵石';
+    // 新工单类型：计算订阅时间
+    let subscriptionStart = '';
+    let subscriptionEnd = '';
+    if (NEW_ORDER_TYPES.includes(order_type)) {
+      subscriptionStart = new Date().toISOString();
+      if (order_type === '仙盟采集' || order_type === '每日试炼') {
+        // 月度订阅：30天
+        subscriptionEnd = new Date(Date.now() + 30 * 86400000).toISOString();
+      }
+    }
+
     const result = await env.DB.prepare(
-      `INSERT INTO orders (user_id, invite_code, payment_method, amount, price, coupon_code, discount, bonus_points, order_type, quantity, frozen_points, invite_code_used, status, created_at, est_complete_date) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now'), ?)`
+      `INSERT INTO orders (user_id, invite_code, payment_method, payment_account, amount, price, coupon_code, discount, bonus_points, order_type, quantity, frozen_points, invite_code_used, status, created_at, est_complete_date, game_account_name, game_account_password, subscription_start, subscription_end)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now'), ?, ?, ?, ?, ?)`
     ).bind(
-      user.id, 
-      finalInviteCode, 
-      payment_method, 
+      user.id,
+      finalInviteCode,
+      payment_method,
+      paymentAccountLabel,
       points,           // amount: 积分数量
       finalPrice,       // price: 最终价格
-      coupon_code || '', 
-      discount, 
+      coupon_code || '',
+      discount,
       bonusPoints,      // bonus_points: 获得的积分
-      order_type || '代练', 
+      order_type || '代练',
       accCount,         // quantity: 账号数
       frozenPoints,     // frozen_points: 冻结的修仙币
       finalInviteCode,  // invite_code_used
-      estDate
+      estDate,
+      game_account_name || '',
+      game_account_password || '',
+      subscriptionStart,
+      subscriptionEnd
     ).run();
 
     const orderId = result.meta.last_row_id;

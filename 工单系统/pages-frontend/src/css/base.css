@@ -651,6 +651,46 @@ tbody tr:hover {
   font-size: var(--text-sm);
 }
 
+/* ── Tabs 选项卡 ────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: var(--space-1);
+  border-bottom: 1px solid var(--border-default);
+  padding-bottom: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tab {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  line-height: 1.4;
+  margin-bottom: -1px;
+}
+
+.tab:hover {
+  color: var(--text-primary);
+}
+
+.tab.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--text-primary);
+  font-weight: var(--font-semibold);
+}
+
+.tab-content {
+  padding-top: var(--space-4);
+}
+
 /* ── 筛选栏 ──────────────────────────────── */
 .filter-bar {
   display: flex;

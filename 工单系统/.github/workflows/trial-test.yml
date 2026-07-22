@@ -3,8 +3,18 @@ name: 试炼自动测试
 on:
   workflow_dispatch:
     inputs:
+      username:
+        description: '游戏账号（留空使用默认 zzhx）'
+        required: false
+        default: ''
+        type: string
+      password:
+        description: '游戏密码（留空使用默认）'
+        required: false
+        default: ''
+        type: string
       mode:
-        description: '测试模式 (greedy=贪心, exhaustive=全穷举)'
+        description: '测试模式'
         required: true
         default: 'greedy'
         type: choice
@@ -28,9 +38,6 @@ jobs:
         with:
           node-version: 20
 
-      - name: 安装依赖
-        run: npm ci
-
       - name: 运行试炼测试
         env:
           WORKER_URL: ${{ secrets.WORKER_URL }}
@@ -38,19 +45,25 @@ jobs:
           API_BASE: ${{ secrets.API_BASE }}
           SIGN_KEY: ${{ secrets.SIGN_KEY }}
           CLIENT_VERSION: ${{ secrets.CLIENT_VERSION }}
-          TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
-          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+          TEST_USERNAME: ${{ inputs.username || secrets.TEST_USERNAME }}
+          TEST_PASSWORD: ${{ inputs.password || secrets.TEST_PASSWORD }}
         run: node gh-actions/trial_tester.js
 
       - name: 上传测试报告
         uses: actions/upload-artifact@v4
         with:
           name: trial-test-report
-          path: trial_test_report.json
+          path: |
+            trial_test_report.json
+            trial_test_report.txt
           retention-days: 30
 
       - name: 发送通知
         if: always()
         run: |
           echo "试炼自动测试完成"
+          if [ -f trial_test_report.txt ]; then
+            echo "📋 测试结果概览:"
+            grep -E '^\s+\[[0-9]+\]' trial_test_report.txt || true
+          fi
           echo "查看报告: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"

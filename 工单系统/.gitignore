@@ -9,6 +9,22 @@ _redeploy*.js
 _route_*.js
 _verify*.js
 
+# Test & debug scripts (not part of production)
+debug-*.js
+debug-*.mjs
+full-test.mjs
+run_migration_v8.js
+deploy_pages.js
+deploy-wrangler.mjs
+check-*.mjs
+fix-*.mjs
+trial_test_report.json
+trial_test_report.txt
+
+# Test reports
+test-report-*.md
+test-report-full.md
+
 # Dependencies
 node_modules/
 

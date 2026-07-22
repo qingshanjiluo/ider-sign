@@ -265,17 +265,17 @@ function createMarketOrderDialog() {
 function renderOrdersList(orders, user) {
   if (!orders.length) return '<div class="card"><p class="text-muted text-sm" style="text-align:center;padding:24px;">暂无订单</p></div>';
 
+  const isAdmin = user?.is_admin === 1 || user?.role === 'admin' || user?.role === 'super_admin';
+
   return orders.map(o => {
     const isMine = o.user_id === user?.id;
-    const canBuy = o.type === 'sell' && !isMine && o.status === 'pending';
-    const canSell = o.type === 'buy' && !isMine && o.status === 'pending';
     const statusLabel = o.status === 'pending' ? '待处理' : o.status === 'shipped' ? '已发货' : o.status === 'completed' ? '已完成' : '已取消';
     const badgeClass = o.status === 'pending' ? 'badge-pending' : o.status === 'shipped' ? 'badge-approved' : o.status === 'completed' ? '' : 'badge-cancelled';
 
     return `
       <div class="card mb-3" data-order-id="${o.id}">
         <div class="flex justify-between items-start">
-          <div>
+          <div style="flex:1;">
             <span class="badge ${o.type === 'buy' ? 'badge-pending' : 'badge-approved'}" style="font-size:11px;">
               ${o.type === 'buy' ? '求购' : '售卖'}
             </span>
@@ -283,14 +283,18 @@ function renderOrdersList(orders, user) {
             <h4 style="margin:8px 0 4px;">${o.title}</h4>
             <p class="text-sm text-muted">${o.description || ''}</p>
             <p class="text-xs text-muted">
-              数量: ${o.quantity} | 单价: ${o.price_coins}修仙币 
+              数量: ${o.quantity} | 单价: ${o.price_coins}修仙币
               ${o.contact ? '| 联系: ' + o.contact : ''}
               | 发布者: ${o.creator_name || '用户#' + o.user_id}
             </p>
           </div>
-          <div style="text-align:right;">
+          <div style="text-align:right;flex-shrink:0;margin-left:12px;">
             <div style="font-weight:700;color:var(--accent-amber);font-size:1.1em;">${(o.price_coins * o.quantity).toLocaleString()} 币</div>
             ${isMine ? '<span class="text-xs text-muted">我的</span>' : ''}
+            ${isAdmin ? `<div style="margin-top:8px;">
+              <button class="btn btn-sm" style="color:var(--accent-red);border:1px solid var(--accent-red);background:transparent;cursor:pointer;padding:2px 8px;border-radius:var(--radius-sm);font-size:11px;"
+                      data-admin-delete-order="${o.id}">删除</button>
+            </div>` : ''}
           </div>
         </div>
       </div>`;
@@ -350,7 +354,23 @@ function renderMyOrders(orders, user) {
 }
 
 function bindOrderActions(container) {
-  // 已绑定在 renderOrdersList 中
+  // 管理员删除黑市订单
+  container.querySelectorAll('[data-admin-delete-order]').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const oid = parseInt(btn.dataset.adminDeleteOrder);
+      if (!oid) return;
+      if (!confirm('管理员确定删除此黑市订单？')) return;
+      try {
+        await api.adminDeleteMarketOrder(oid);
+        toast.success('订单已删除');
+        const appContent = document.getElementById('app-content');
+        if (appContent) renderMarket({ container: appContent });
+      } catch (err) {
+        toast.error(err.message || '删除失败');
+      }
+    });
+  });
 }
 
 function bindMyOrderActions(container) {

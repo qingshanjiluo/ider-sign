@@ -21,6 +21,9 @@ export async function onRequest(context) {
 
     if (!type || !['buy', 'sell'].includes(type)) return json({ error: '类型为 buy 或 sell' }, 400);
     if (!title) return json({ error: '请输入标题' }, 400);
+    if (title.length > 100) return json({ error: '标题最多100字符' }, 400);
+    if (description && description.length > 500) return json({ error: '描述最多500字符' }, 400);
+    if (contact && contact.length > 200) return json({ error: '联系方式最多200字符' }, 400);
     if (!price_coins || price_coins <= 0) return json({ error: '请输入有效价格' }, 400);
 
     const qty = quantity || 1;

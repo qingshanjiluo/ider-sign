@@ -13,12 +13,15 @@
     "trial-test": "node gh-actions/trial_tester.js"
   },
   "dependencies": {
+    "@octokit/rest": "^22.0.1",
+    "https-proxy-agent": "^9.1.0",
     "libsodium-wrappers": "^0.8.4",
     "node-fetch": "^2.7.0",
-    "tweetnacl": "^1.0.3",
     "tweetnacl-util": "^0.15.1"
   },
   "devDependencies": {
+    "sodium-native": "^5.1.0",
+    "tweetnacl": "^1.0.3",
     "wrangler": "^3.0.0"
   }
 }

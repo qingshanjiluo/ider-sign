@@ -3,6 +3,26 @@ import { api } from '../api.js';
 import { toast } from '../components/toast.js';
 import { modal } from '../components/modal.js';
 
+/** 根据支付方式格式化价格显示 */
+function formatAdminPrice(order) {
+  const price = order.total_price || order.price || 0;
+  const method = order.payment_method;
+  let display = '';
+  if (method === 'coin') {
+    display = `${price} 修仙币`;
+  } else if (method === 'spirit_stone') {
+    display = `${price} 万灵石`;
+  } else {
+    display = `¥${price.toFixed(2)}`;
+  }
+  // 显示折扣信息（如有）— discount 字段存储折扣百分比（如 20 = 优惠20%）
+  const discount = order.discount || 0;
+  if (discount > 0) {
+    display += ` (优惠${discount}%)`;
+  }
+  return display;
+}
+
 const STATUS_MAP = {
   pending: { label: '待审批', class: 'badge-pending' },
   approved: { label: '进行中', class: 'badge-approved' },
@@ -64,7 +84,7 @@ async function loadOrders(status = '') {
                   <td>${o.user_name || o.username || o.user_id || '-'}</td>
                   <td>${o.order_type || '代练'}</td>
                   <td><span class="badge ${st.class}">${st.label}</span></td>
-                  <td class="font-semibold">¥${(o.total_price || o.price || 0).toFixed(2)}</td>
+                  <td class="font-semibold">${formatAdminPrice(o)}</td>
                   <td>${o.account_count || o.quantity || 0}</td>
                   <td class="text-sm text-muted">${new Date(o.created_at).toLocaleDateString('zh-CN')}</td>
                   <td>

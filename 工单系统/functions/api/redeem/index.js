@@ -23,13 +23,32 @@ export async function onRequest(context) {
     ).bind(clean).first();
 
     if (rc) {
-      // 修仙币兑换码处理
+      // 修仙币兑换码处理 — 支持多次使用，但一个账号只能用一次
+      // 检查当前用户是否已使用过此兑换码
+      // 确保 redeem_log 表存在（用于追踪每个用户的兑换记录）
+      try {
+        await env.DB.prepare(
+          "CREATE TABLE IF NOT EXISTS redeem_log (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, code TEXT NOT NULL, xp INTEGER DEFAULT 0, coins INTEGER DEFAULT 0, created_at TEXT DEFAULT (datetime('now')))"
+        ).run();
+      } catch (e) { /* 表已存在 */ }
+      
+      const alreadyUsed = await env.DB.prepare(
+        "SELECT id FROM redeem_log WHERE user_id = ? AND code = ?"
+      ).bind(user.id, clean).first();
+      if (alreadyUsed) {
+        return json({ error: '您已使用过此兑换码' }, 400);
+      }
+      
+      // 给用户加修仙币
       await env.DB.prepare(
         'UPDATE users SET bonus_points = bonus_points + ? WHERE id = ?'
       ).bind(rc.coins, user.id).run();
+      
+      // 记录兑换日志（不修改 recharge_codes 状态，允许多次使用）
       await env.DB.prepare(
-        "UPDATE recharge_codes SET status = 'used', used_by = ?, used_at = datetime('now') WHERE id = ?"
-      ).bind(user.id, rc.id).run();
+        "INSERT INTO redeem_log (user_id, code, coins) VALUES (?, ?, ?)"
+      ).bind(user.id, clean, rc.coins).run();
+      
       // 如果该码有归属 user_id 且不是当前用户，发通知给原主
       if (rc.user_id && rc.user_id !== user.id) {
         await env.DB.prepare(

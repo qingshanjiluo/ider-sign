@@ -471,8 +471,10 @@ async function handleRoute(method, path, request, env, url) {
       price = points / 120;
       priceUnit = '元';
     } else if (payment_method === 'spirit_stone') {
-      // 灵石：100万灵石 = 10积分
-      price = points * 100000;
+      // 灵石：从 config 读取灵石兑换比例（默认 100万灵石 = 10积分）
+      const spiritCfg = await env.DB.prepare("SELECT value FROM config WHERE key='spirit_stone_per_10_points'").first();
+      const spiritPer10 = parseInt(spiritCfg?.value || '1000000');
+      price = Math.round(points / 10 * spiritPer10 / 10000);
       priceUnit = '万灵石';
     } else if (payment_method === 'coin') {
       // 修仙币：1修仙币 = 1积分
@@ -503,7 +505,7 @@ async function handleRoute(method, path, request, env, url) {
     let couponFixedAmount = 0;
     if (coupon_code) {
       const coupon = await env.DB.prepare(
-        "SELECT * FROM coupons WHERE code = ? AND (expires_at IS NULL OR expires_at > datetime('now')) AND used_count < max_uses"
+        "SELECT * FROM coupons WHERE code = ? AND (expires_at IS NULL OR expires_at > datetime('now')) AND (max_uses = 0 OR used_count < max_uses)"
       ).bind(coupon_code).first();
       if (coupon) {
         couponType = coupon.coupon_type || 'percent';
@@ -927,10 +929,217 @@ async function handleRoute(method, path, request, env, url) {
   if (path === '/api/admin/config' && method === 'POST') {
     const user = await authenticate(request, env);
     if (!user || !user.is_admin) return json({ error: '无权限' }, 403);
+    // 支持批量保存：{ configs: [{ key, value }, ...] }
+    if (body.configs && Array.isArray(body.configs)) {
+      const results = [];
+      for (const item of body.configs) {
+        if (item.key && item.value !== undefined) {
+          await env.DB.prepare('INSERT OR REPLACE INTO config (key, value) VALUES (?, ?)').bind(item.key, String(item.value)).run();
+          results.push(item.key);
+        }
+      }
+      return json({ ok: true, saved: results });
+    }
     const { key, value } = body;
     if (!key || value === undefined) return json({ error: '参数不全' }, 400);
     await env.DB.prepare('INSERT OR REPLACE INTO config (key, value) VALUES (?, ?)').bind(key, String(value)).run();
     return json({ ok: true });
+  }
+
+  // ── AI Config Test ────────────────────────────────
+  if (path === '/api/admin/ai-test' && method === 'POST') {
+    const user = await authenticate(request, env);
+    if (!user || !user.is_admin) return json({ error: '无权限' }, 403);
+    const configs = await env.DB.prepare(
+      "SELECT key, value FROM config WHERE key IN ('ai_api_key', 'ai_api_url', 'ai_model')"
+    ).all();
+    const configMap = {};
+    for (const c of (configs.results || [])) configMap[c.key] = c.value;
+    const apiKey = configMap['ai_api_key'];
+    const apiUrl = configMap['ai_api_url'] || 'https://api.openai.com/v1/chat/completions';
+    const model = configMap['ai_model'] || 'gpt-3.5-turbo';
+    if (!apiKey) return json({ ok: false, error: '未设置API Key' }, 400);
+    try {
+      const aiRes = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+        body: JSON.stringify({ model, messages: [{ role: 'user', content: '回复"连接成功"即可' }], max_tokens: 20 }),
+      });
+      if (!aiRes.ok) {
+        const errText = await aiRes.text();
+        return json({ ok: false, error: 'API返回错误: ' + aiRes.status + ' ' + errText.slice(0, 200) }, 400);
+      }
+      return json({ ok: true, message: 'AI连接测试成功' });
+    } catch (e) {
+      return json({ ok: false, error: '连接失败: ' + e.message }, 400);
+    }
+  }
+
+  // ── Admin: AI Config Save ─────────────────────────
+  if (path === '/api/admin/ai-config' && method === 'POST') {
+    const user = await authenticate(request, env);
+    if (!user || !user.is_admin) return json({ error: '无权限' }, 403);
+    const fields = ['ai_api_url', 'ai_model', 'ai_enabled', 'ai_api_key'];
+    for (const f of fields) {
+      if (body[f] !== undefined) {
+        await env.DB.prepare('INSERT OR REPLACE INTO config (key, value) VALUES (?, ?)').bind(f, String(body[f])).run();
+      }
+    }
+    return json({ ok: true });
+  }
+  if (path === '/api/admin/ai-config' && method === 'GET') {
+    const user = await authenticate(request, env);
+    if (!user || !user.is_admin) return json({ error: '无权限' }, 403);
+    const configs = await env.DB.prepare("SELECT key, value FROM config WHERE key LIKE 'ai_%'").all();
+    const configMap = {};
+    for (const c of (configs.results || [])) configMap[c.key] = c.value;
+    return json({ ok: true, config: { ...configMap, ai_api_key_set: !!configMap['ai_api_key'] } });
+  }
+  if (path === '/api/admin/ai-config/test' && method === 'POST') {
+    // 兼容旧路径，转发到 ai-test
+    const user = await authenticate(request, env);
+    if (!user || !user.is_admin) return json({ error: '无权限' }, 403);
+    const configs = await env.DB.prepare(
+      "SELECT key, value FROM config WHERE key IN ('ai_api_key', 'ai_api_url', 'ai_model')"
+    ).all();
+    const configMap = {};
+    for (const c of (configs.results || [])) configMap[c.key] = c.value;
+    const apiKey = configMap['ai_api_key'];
+    const apiUrl = configMap['ai_api_url'] || 'https://api.openai.com/v1/chat/completions';
+    const model = configMap['ai_model'] || 'gpt-3.5-turbo';
+    if (!apiKey) return json({ ok: false, error: '未设置API Key' }, 400);
+    try {
+      const aiRes = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+        body: JSON.stringify({ model, messages: [{ role: 'user', content: '回复"连接成功"即可' }], max_tokens: 20 }),
+      });
+      if (!aiRes.ok) {
+        const errText = await aiRes.text();
+        return json({ ok: false, error: 'API返回错误: ' + aiRes.status + ' ' + errText.slice(0, 200) }, 400);
+      }
+      return json({ ok: true, message: 'AI连接测试成功' });
+    } catch (e) {
+      return json({ ok: false, error: '连接失败: ' + e.message }, 400);
+    }
+  }
+
+  // ── Admin: Market Orders ──────────────────────────
+  if (path === '/api/admin/market-orders' && method === 'GET') {
+    const user = await authenticate(request, env);
+    if (!user || !user.is_admin) return json({ error: '无权限' }, 403);
+    const status = url.searchParams.get('status') || '';
+    let query = 'SELECT mo.*, u.username as user_name FROM market_orders mo JOIN users u ON mo.user_id = u.id';
+    const params = [];
+    if (status) { query += ' WHERE mo.status = ?'; params.push(status); }
+    query += ' ORDER BY mo.created_at DESC LIMIT 100';
+    const orders = await env.DB.prepare(query).bind(...params).all();
+    return json({ ok: true, orders: orders.results });
+  }
+  if (path === '/api/admin/market-orders' && method === 'POST') {
+    const user = await authenticate(request, env);
+    if (!user || !user.is_admin) return json({ error: '无权限' }, 403);
+    const { order_id, action } = body;
+    if (!order_id || !action) return json({ error: '参数不全' }, 400);
+    const order = await env.DB.prepare('SELECT * FROM market_orders WHERE id = ?').bind(order_id).first();
+    if (!order) return json({ error: '订单不存在' }, 404);
+    if (action === 'admin-delete') {
+      if (order.type === 'buy' && order.status === 'pending') {
+        const refund = order.price_coins * order.quantity;
+        await env.DB.prepare('UPDATE users SET bonus_points = bonus_points + ? WHERE id = ?').bind(refund, order.user_id).run();
+      }
+      await env.DB.prepare('DELETE FROM market_orders WHERE id = ?').bind(order_id).run();
+      return json({ ok: true, message: '已删除订单' });
+    }
+    if (action === 'approve' || action === 'reject') {
+      const newStatus = action === 'approve' ? 'approved' : 'rejected';
+      await env.DB.prepare("UPDATE market_orders SET status = ?, updated_at = datetime('now') WHERE id = ?").bind(newStatus, order_id).run();
+      return json({ ok: true });
+    }
+    return json({ error: '未知操作' }, 400);
+  }
+
+  // ── Admin: Market Items ───────────────────────────
+  if (path === '/api/admin/market-items' && method === 'GET') {
+    const user = await authenticate(request, env);
+    if (!user || !user.is_admin) return json({ error: '无权限' }, 403);
+    const items = await env.DB.prepare('SELECT * FROM market_items ORDER BY id ASC').all();
+    return json({ ok: true, items: items.results });
+  }
+  if (path === '/api/admin/market-items' && method === 'POST') {
+    const user = await authenticate(request, env);
+    if (!user || !user.is_admin) return json({ error: '无权限' }, 403);
+    const { id, name, price_coins, stock, description, image_url } = body;
+    if (id) {
+      await env.DB.prepare('UPDATE market_items SET name=?, price_coins=?, stock=?, description=?, image_url=? WHERE id=?')
+        .bind(name, price_coins, stock, description || '', image_url || '', id).run();
+    } else {
+      await env.DB.prepare('INSERT INTO market_items (name, price_coins, stock, description, image_url) VALUES (?, ?, ?, ?, ?)')
+        .bind(name, price_coins, stock || 0, description || '', image_url || '').run();
+    }
+    return json({ ok: true });
+  }
+  if (path === '/api/admin/market-items' && method === 'DELETE') {
+    const user = await authenticate(request, env);
+    if (!user || !user.is_admin) return json({ error: '无权限' }, 403);
+    const { id } = body;
+    if (!id) return json({ error: '缺少id' }, 400);
+    await env.DB.prepare('DELETE FROM market_items WHERE id = ?').bind(id).run();
+    return json({ ok: true });
+  }
+
+  // ── Market: Public Items ──────────────────────────
+  if (path === '/api/market/items' && method === 'GET') {
+    const items = await env.DB.prepare('SELECT * FROM market_items WHERE stock > 0 ORDER BY price_coins ASC').all();
+    return json({ ok: true, items: items.results });
+  }
+
+  // ── Market: User Orders ───────────────────────────
+  if (path === '/api/market/orders' && method === 'GET') {
+    const user = await authenticate(request, env);
+    if (!user) return json({ error: '未登录' }, 401);
+    const orders = await env.DB.prepare('SELECT * FROM market_orders WHERE user_id = ? ORDER BY created_at DESC').bind(user.id).all();
+    return json({ ok: true, orders: orders.results });
+  }
+  if (path === '/api/market/orders' && method === 'POST') {
+    const user = await authenticate(request, env);
+    if (!user) return json({ error: '未登录' }, 401);
+    const { item_id, type, price_coins, quantity, description } = body;
+    if (!item_id || !type) return json({ error: '参数不全' }, 400);
+    if (type === 'buy') {
+      const item = await env.DB.prepare('SELECT * FROM market_items WHERE id = ?').bind(item_id).first();
+      if (!item) return json({ error: '商品不存在' }, 404);
+      const totalCost = item.price_coins * (quantity || 1);
+      const userInfo = await env.DB.prepare('SELECT bonus_points FROM users WHERE id = ?').bind(user.id).first();
+      if ((userInfo?.bonus_points || 0) < totalCost) return json({ error: '修仙币不足' }, 400);
+      await env.DB.prepare('UPDATE users SET bonus_points = bonus_points - ? WHERE id = ?').bind(totalCost, user.id).run();
+      await env.DB.prepare('INSERT INTO market_orders (user_id, item_id, type, price_coins, quantity, description, status) VALUES (?, ?, ?, ?, ?, ?, ?)')
+        .bind(user.id, item_id, type, item.price_coins, quantity || 1, description || '', 'pending').run();
+    } else {
+      await env.DB.prepare('INSERT INTO market_orders (user_id, item_id, type, price_coins, quantity, description, status) VALUES (?, ?, ?, ?, ?, ?, ?)')
+        .bind(user.id, item_id, type, price_coins || 0, quantity || 1, description || '', 'pending').run();
+    }
+    return json({ ok: true });
+  }
+
+  // ── Market: Purchase ──────────────────────────────
+  if (path === '/api/market/purchase' && method === 'POST') {
+    const user = await authenticate(request, env);
+    if (!user) return json({ error: '未登录' }, 401);
+    const { item_id, quantity } = body;
+    if (!item_id) return json({ error: '缺少商品ID' }, 400);
+    const item = await env.DB.prepare('SELECT * FROM market_items WHERE id = ?').bind(item_id).first();
+    if (!item) return json({ error: '商品不存在' }, 404);
+    const qty = quantity || 1;
+    const totalCost = item.price_coins * qty;
+    const userInfo = await env.DB.prepare('SELECT bonus_points FROM users WHERE id = ?').bind(user.id).first();
+    if ((userInfo?.bonus_points || 0) < totalCost) return json({ error: '修仙币不足' }, 400);
+    if (item.stock < qty) return json({ error: '库存不足' }, 400);
+    await env.DB.prepare('UPDATE users SET bonus_points = bonus_points - ? WHERE id = ?').bind(totalCost, user.id).run();
+    await env.DB.prepare('UPDATE market_items SET stock = stock - ? WHERE id = ?').bind(qty, item_id).run();
+    await env.DB.prepare('INSERT INTO market_orders (user_id, item_id, type, price_coins, quantity, status) VALUES (?, ?, ?, ?, ?, ?)')
+      .bind(user.id, item_id, 'buy', item.price_coins, qty, 'completed').run();
+    return json({ ok: true, message: '购买成功' });
   }
 
   // ── Order Activities ────────────────────────────────

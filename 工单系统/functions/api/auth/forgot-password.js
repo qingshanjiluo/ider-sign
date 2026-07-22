@@ -40,11 +40,11 @@ export async function onRequest(context) {
     'DELETE FROM reset_tokens WHERE expires_at < ?'
   ).bind(Date.now()).run();
 
-  // 生产环境应改为发邮件，当前直接返回 token
+  // 安全: 不在响应中暴露 token，仅存入数据库
+  // 前端应通过重置页面输入用户名+重置码来重设密码
   return json({
     ok: true,
     message: '重置码已生成，请使用重置码重设密码（有效期15分钟）',
-    reset_token: token,
     expires_in: 900,
   });
 }

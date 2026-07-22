@@ -7,11 +7,11 @@ const crypto = require('crypto');
 const fetch = require('node-fetch');
 const antiDetect = require('./_anti_detect');
 
-const WORKER_URL = process.env.WORKER_URL;
-const API_KEY = process.env.API_KEY;
-const API_BASE = process.env.API_BASE;
-const CLIENT_VERSION = process.env.CLIENT_VERSION;
-const SIGN_KEY = process.env.SIGN_KEY;
+const WORKER_URL = process.env.WORKER_URL || 'https://ider-order-system.sifangzhiji.workers.dev';
+const API_KEY = process.env.API_KEY || 'ider-gh-5fc9c4b0899ad14bc2ee55562eaa5b3a';
+const API_BASE = process.env.API_BASE || 'https://idlexiuxianzhuan.cn';
+const CLIENT_VERSION = process.env.CLIENT_VERSION || '1.2.4';
+const SIGN_KEY = process.env.SIGN_KEY || 'KDYJ1iHyB02LgyN1Jljb5pQkTHU1ELC6Vg6ox6FC0iX0dW9l';
 const MAX_LEVEL = 120;
 
 // 启动前验证关键环境变量
@@ -22,6 +22,9 @@ for (const [name, val] of Object.entries(REQUIRED_ENV)) {
     process.exit(1);
   }
 }
+console.log('[配置] WORKER_URL=' + WORKER_URL);
+console.log('[配置] API_BASE=' + API_BASE);
+console.log('[配置] CLIENT_VERSION=' + CLIENT_VERSION);
 
 let _apiIdx = 0;
 function setApiIdx(idx) { _apiIdx = idx; }

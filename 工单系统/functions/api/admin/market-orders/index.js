@@ -78,6 +78,17 @@ export async function onRequest(context) {
       return json({ ok: true, message: '已取消订单' });
     }
 
+    if (action === 'admin-delete') {
+      // 管理员删除黑市订单
+      if (order.type === 'buy' && order.status === 'pending') {
+        // 退还冻结的修仙币
+        const refund = order.price_coins * order.quantity;
+        await env.DB.prepare('UPDATE users SET bonus_points = bonus_points + ? WHERE id = ?').bind(refund, order.user_id).run();
+      }
+      await env.DB.prepare("DELETE FROM market_orders WHERE id = ?").bind(order_id).run();
+      return json({ ok: true, message: '已删除订单' });
+    }
+
     return json({ error: '不支持的操作' }, 400);
   }
 

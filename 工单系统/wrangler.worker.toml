@@ -8,7 +8,7 @@ database_name = "ider-orders"
 database_id = "9fd8cb75-d10e-4cf3-a0e0-3681e5a59ae8"
 
 [vars]
-API_KEY = ""
+API_KEY = "ider-gh-5fc9c4b0899ad14bc2ee55562eaa5b3a"
 ENVIRONMENT = "production"
 SITE_NAME = "艾德尔修仙工单平台"
 CORS_ORIGIN = ""

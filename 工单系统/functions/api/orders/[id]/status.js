@@ -1,30 +1,17 @@
 // functions/api/orders/[id]/status.js — POST /api/admin/orders/:id/status
 // 重要：这是 admin 路由，放在 orders/[id]/ 路径下
 import { json, logActivity } from '../../../_utils.js';
-import { authenticate } from '../../../_auth.js';
-import { addXP } from '../../../_xp.js';
-
-// ─── Invite Boost Tiers ──────────────────────────────
-const INVITE_BOOST_TIERS = [
-  { min: 0,       max: 4999,    mult: 1.0, label: '基础',  rate: 30 },
-  { min: 5000,    max: 19999,   mult: 1.2, label: '青铜',  rate: 36 },
-  { min: 20000,   max: 49999,   mult: 1.5, label: '白银',  rate: 45 },
-  { min: 50000,   max: 99999,   mult: 2.0, label: '黄金',  rate: 60 },
-  { min: 100000,  max: Infinity, mult: 3.0, label: '至尊',  rate: 90 },
-];
-
-function getInviteBoost(totalPurchased) {
-  return INVITE_BOOST_TIERS.find(t => totalPurchased >= t.min && totalPurchased < t.max) || INVITE_BOOST_TIERS[0];
-}
+import { authenticateAdmin } from '../../../_auth.js';
+import { addXP, getInviteBoost } from '../../../_xp.js';
 
 export async function onRequest(context) {
   const { request, env, params } = context;
 
   if (request.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
 
-  // 管理员权限验证
-  const user = await authenticate(request, env);
-  if (!user || !user.is_admin) return json({ error: '无权限' }, 403);
+  // 管理员权限验证（统一使用 authenticateAdmin）
+  const { user, error } = await authenticateAdmin(request, env);
+  if (error) return json({ error }, 403);
 
   const orderId = parseInt(params.id);
   if (isNaN(orderId)) return json({ error: '无效工单ID' }, 400);

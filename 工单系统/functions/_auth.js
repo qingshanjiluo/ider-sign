@@ -14,7 +14,7 @@ export async function authenticate(request, env) {
     return null;
   }
   const user = await env.DB.prepare(
-    'SELECT id, username, display_name, level, xp, total_orders, total_spent, invite_code, invited_by, invite_points, total_invited, total_purchased_points, commission_rate, email, avatar_url, bio, is_admin, role, locked, bonus_points FROM users WHERE id = ?'
+    'SELECT id, username, display_name, level, xp, total_orders, total_spent, invite_code, invited_by, invite_points, total_invited, commission_rate, email, avatar_url, bio, is_admin, role, locked, bonus_points FROM users WHERE id = ?'
   ).bind(result.user_id).first();
   return user;
 }

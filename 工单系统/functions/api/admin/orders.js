@@ -1,13 +1,13 @@
 // functions/api/admin/orders.js — GET /api/admin/orders
 import { json } from '../../_utils.js';
-import { authenticate } from '../../_auth.js';
+import { authenticateAdmin } from '../../_auth.js';
 
 export async function onRequest(context) {
   const { request, env } = context;
 
   if (request.method === 'GET') {
-    const user = await authenticate(request, env);
-    if (!user || !user.is_admin) return json({ error: '无权限' }, 403);
+    const { user, error } = await authenticateAdmin(request, env);
+    if (error) return json({ error }, 403);
     const url = new URL(request.url);
     const status = url.searchParams.get('status') || '';
     const page = parseInt(url.searchParams.get('page') || '1');

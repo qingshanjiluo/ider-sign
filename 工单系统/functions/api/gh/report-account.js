@@ -19,7 +19,8 @@ export async function onRequest(context) {
           "INSERT INTO game_accounts (order_id, username, password, server_username, server_password, status, created_at) VALUES (?, ?, ?, ?, ?, 'registering', datetime('now'))"
         ).bind(order_id, username, password, server_username || '', server_password || '').run();
         const ord = await env.DB.prepare('SELECT user_id FROM orders WHERE id = ?').bind(order_id).first();
-        await logActivity(env, order_id, ord?.user_id || 0, 'account_created', '创建账号: ' + username);
+        // 使用 null 而非 0，避免 FOREIGN KEY 约束失败
+        await logActivity(env, order_id, ord?.user_id || null, 'account_created', '创建账号: ' + username);
       }
     } else if (status === 'farming' || status === 'active') {
       await env.DB.prepare(

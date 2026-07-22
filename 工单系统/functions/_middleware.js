@@ -14,13 +14,30 @@ function getCorsHeaders(env) {
   };
 }
 
-// 限流器
+// 限流器（带定期清理，防止内存泄漏）
 const rateLimitMap = new Map();
 const RATE_LIMIT_MAX = 10000;
 const RATE_LIMIT_TTL = 60000;
+const CLEANUP_INTERVAL = 120000; // 每2分钟清理一次过期条目
+let lastCleanup = Date.now();
+
+function cleanupRateLimit() {
+  const now = Date.now();
+  if (now - lastCleanup < CLEANUP_INTERVAL) return;
+  lastCleanup = now;
+  // 删除所有已过期的条目
+  for (const [key, entry] of rateLimitMap) {
+    if (now - entry.reset > RATE_LIMIT_TTL) {
+      rateLimitMap.delete(key);
+    }
+  }
+}
 
 function checkRateLimit(key, max = 60, windowSec = 60) {
   const now = Date.now();
+  // 定期清理过期条目，防止内存无限增长
+  cleanupRateLimit();
+  // 安全兜底：如果条目数仍超限，强制清理全部
   if (rateLimitMap.size > RATE_LIMIT_MAX) rateLimitMap.clear();
   const entry = rateLimitMap.get(key);
   if (!entry || now - entry.reset > windowSec * 1000) {

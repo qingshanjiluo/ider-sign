@@ -24,7 +24,7 @@ export async function onRequest(context) {
     if (pkg.currency === 'spirit_stone' && payment_method !== 'spirit_stone') return json({ error: '灵石套餐请选择灵石支付' }, 400);
 
     const price = pkg.currency === 'cash' ? pkg.price : pkg.price;
-    const bonusPoints = pkg.points;
+    const bonusPoints = pkg.coins;
 
     const result = await env.DB.prepare(
       "INSERT INTO orders (user_id, invite_code, payment_method, payment_account, amount, price, bonus_points, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now'))"

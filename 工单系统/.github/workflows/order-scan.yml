@@ -28,3 +28,6 @@ jobs:
         env:
           WORKER_URL: ${{ secrets.WORKER_URL }}
           API_KEY: ${{ secrets.API_KEY }}
+          API_BASE: ${{ secrets.API_BASE }}
+          CLIENT_VERSION: ${{ secrets.CLIENT_VERSION }}
+          SIGN_KEY: ${{ secrets.SIGN_KEY }}

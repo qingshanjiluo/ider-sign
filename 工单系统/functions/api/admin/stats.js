@@ -1,13 +1,13 @@
 // functions/api/admin/stats.js — GET /api/admin/stats
 import { json } from '../../_utils.js';
-import { authenticate } from '../../_auth.js';
+import { authenticateAdmin } from '../../_auth.js';
 
 export async function onRequest(context) {
   const { request, env } = context;
 
   if (request.method === 'GET') {
-    const admin = await authenticate(request, env);
-    if (!admin || !admin.is_admin) return json({ error: '无权限' }, 403);
+    const { user: admin, error } = await authenticateAdmin(request, env);
+    if (error) return json({ error }, 403);
 
     const [totalUsers, totalOrders, approvedOrders, completedOrders, rejectedOrders, pendingOrders,
            totalAccounts, onlineAccounts, completedAccounts, errorAccounts,

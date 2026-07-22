@@ -11,6 +11,26 @@ const STATUS_MAP = {
   cancelled: { label: '已取消', class: 'badge-pending' },
 };
 
+/** 根据支付方式格式化价格显示 */
+function formatDetailPrice(order) {
+  const price = order.total_price || order.price || 0;
+  const method = order.payment_method;
+  let display = '';
+  if (method === 'coin') {
+    display = `${price} 修仙币`;
+  } else if (method === 'spirit_stone') {
+    display = `${price} 万灵石`;
+  } else {
+    display = `¥${price.toFixed(2)}`;
+  }
+  // discount 字段存储折扣百分比（如 20 = 优惠20%）
+  const discount = order.discount || 0;
+  if (discount > 0) {
+    display += ` (优惠${discount}%)`;
+  }
+  return display;
+}
+
 export async function renderOrderDetail({ container, params }) {
   const orderId = params.id;
   container.innerHTML = `<div class="loading"><div class="spinner"></div></div>`;
@@ -46,7 +66,7 @@ export async function renderOrderDetail({ container, params }) {
         </div>
         <div class="stat-card">
           <div class="stat-label">金额</div>
-          <div class="stat-value">¥${(order.total_price || order.price || 0).toFixed(2)}</div>
+          <div class="stat-value">${formatDetailPrice(order)}</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">账号数</div>

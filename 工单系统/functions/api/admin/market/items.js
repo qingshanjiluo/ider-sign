@@ -1,11 +1,11 @@
 // functions/api/admin/market/items.js — 管理官方市场商品
 import { json } from '../../../_utils.js';
-import { authenticate } from '../../../_auth.js';
+import { authenticateAdmin } from '../../../_auth.js';
 
 export async function onRequest(context) {
   const { request, env } = context;
-  const user = await authenticate(request, env);
-  if (!user || !['admin', 'super_admin'].includes(user.role)) return json({ error: '无权限' }, 403);
+  const { user, error } = await authenticateAdmin(request, env);
+  if (error) return json({ error }, 403);
 
   if (request.method === 'GET') {
     const rows = await env.DB.prepare(

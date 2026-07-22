@@ -12,7 +12,8 @@ export async function onRequest(context) {
       "SELECT * FROM coupons WHERE code = ? AND (expires_at IS NULL OR expires_at > datetime('now'))"
     ).bind(code).first();
     if (!coupon) return json({ error: '优惠码无效或已过期' }, 404);
-    if (coupon.used_count >= coupon.max_uses) return json({ error: '优惠码已用完' }, 400);
+    // max_uses = 0 表示无限次，跳过使用次数检查
+    if (coupon.max_uses > 0 && coupon.used_count >= coupon.max_uses) return json({ error: '优惠码已用完' }, 400);
     return json({
       ok: true,
       coupon_type: coupon.coupon_type || 'percent',

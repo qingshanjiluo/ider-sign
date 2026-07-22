@@ -29,25 +29,7 @@ export async function onRequest(context) {
     return json({ ok: true, config: result });
   }
 
-  // POST /api/admin/ai-config — 保存AI配置
-  if (request.method === 'POST') {
-    const body = await request.json().catch(() => ({}));
-    const { ai_api_key, ai_api_url, ai_model, ai_enabled } = body;
-
-    const updates = [];
-    if (ai_api_key !== undefined) updates.push(['ai_api_key', ai_api_key]);
-    if (ai_api_url !== undefined) updates.push(['ai_api_url', ai_api_url]);
-    if (ai_model !== undefined) updates.push(['ai_model', ai_model]);
-    if (ai_enabled !== undefined) updates.push(['ai_enabled', ai_enabled ? 'true' : 'false']);
-
-    for (const [key, value] of updates) {
-      await env.DB.prepare('INSERT OR REPLACE INTO config (key, value) VALUES (?, ?)').bind(key, String(value)).run();
-    }
-
-    return json({ ok: true, message: 'AI配置已保存' });
-  }
-
-  // POST /api/admin/ai-config/test — 测试AI连接
+  // POST /api/admin/ai-config/test — 测试AI连接（必须在通用 POST 之前检查）
   if (request.method === 'POST' && path.endsWith('/test')) {
     const configs = await env.DB.prepare(
       "SELECT key, value FROM config WHERE key IN ('ai_api_key', 'ai_api_url', 'ai_model')"
@@ -82,6 +64,24 @@ export async function onRequest(context) {
     } catch (e) {
       return json({ ok: false, error: '连接失败: ' + e.message }, 400);
     }
+  }
+
+  // POST /api/admin/ai-config — 保存AI配置
+  if (request.method === 'POST') {
+    const body = await request.json().catch(() => ({}));
+    const { ai_api_key, ai_api_url, ai_model, ai_enabled } = body;
+
+    const updates = [];
+    if (ai_api_key !== undefined) updates.push(['ai_api_key', ai_api_key]);
+    if (ai_api_url !== undefined) updates.push(['ai_api_url', ai_api_url]);
+    if (ai_model !== undefined) updates.push(['ai_model', ai_model]);
+    if (ai_enabled !== undefined) updates.push(['ai_enabled', ai_enabled ? 'true' : 'false']);
+
+    for (const [key, value] of updates) {
+      await env.DB.prepare('INSERT OR REPLACE INTO config (key, value) VALUES (?, ?)').bind(key, String(value)).run();
+    }
+
+    return json({ ok: true, message: 'AI配置已保存' });
   }
 
   return json({ error: 'Method not allowed' }, 405);
