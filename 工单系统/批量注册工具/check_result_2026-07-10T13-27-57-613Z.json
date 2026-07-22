@@ -1,0 +1,918 @@
+{
+  "totalAccounts": 90,
+  "filepath": "./accounts.txt",
+  "mode": "check-and-repair",
+  "timestamp": "2026-07-10T13:09:38.267Z",
+  "accounts": [
+    {
+      "username": "格式: username",
+      "stats": {
+        "hasAllSkills": false,
+        "hasIronSword": false,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": [
+          {
+            "action": "login",
+            "error": "/auth/login 请求失败: 用户名或密码错误"
+          }
+        ]
+      }
+    },
+    {
+      "username": "AmberDolphin12",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "BloodstoneShark26",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "HeliotropeWhale27",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "JasperDolphin28",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "MorganiteOwl31",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "NephriteRaven32",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "RhodonitePigeon34",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "SerpentineSparrow35",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "CelestialFox8",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "BlazingEagle9",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "格式: username",
+      "stats": {
+        "hasAllSkills": false,
+        "hasIronSword": false,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": [
+          {
+            "action": "login",
+            "error": "/auth/login 请求失败: 用户名或密码错误"
+          }
+        ]
+      }
+    },
+    {
+      "username": "User001",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User002",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User004",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User005",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User007",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User008",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User010",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User011",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User013",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User014",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User016",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User017",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User019",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User020",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User022",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User023",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User025",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User026",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User034",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User037",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User040",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User043",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User046",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User049",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "AzureDragon7_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "CrimsonFalcon22_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "EmeraldTiger33_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "GoldenEagle44_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "SilverWolf55_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "BronzeBear66_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "PlatinumFox77_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "DiamondHawk88_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "RubyLion99_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "SapphireShark10_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "TopazWhale11_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "CoralSnake13_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "PearlOwl14_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "OnyxRaven15_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "JadeCrow16_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "OpalPigeon17_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "MalachiteHawk19_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "AzuriteEagle20_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "CitrineWolf21_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "GarnetTiger22_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "ObsidianBear23_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "MoonstoneFox24_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "SunstoneLion25_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "KyaniteSnake29_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "LarimarFalcon30_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "PietersiteCrow33_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "TigersEyeHawk36_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "QuantumViper4_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User003_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User006_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User009_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User012_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User015_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User018_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User021_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User024_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User027_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User028_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User029_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User030_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User031_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User032_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User033_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User035_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User036_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User038_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User039_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User041_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User042_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User044_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User045_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User047_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User048_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    },
+    {
+      "username": "User050_v2",
+      "stats": {
+        "hasAllSkills": true,
+        "hasIronSword": true,
+        "fixedSkills": 0,
+        "fixedIronSword": false,
+        "errors": []
+      }
+    }
+  ]
+}

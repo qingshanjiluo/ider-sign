@@ -72,7 +72,7 @@ async function loadOrders(status = '') {
       <div class="table-wrap">
         <table>
           <thead>
-            <tr><th>ID</th><th>用户</th><th>类型</th><th>状态</th><th>金额</th><th>数量</th><th>创建时间</th><th>操作</th></tr>
+            <tr><th>ID</th><th>用户</th><th>类型</th><th>状态</th><th>金额</th><th>数量</th><th>已创建</th><th>创建时间</th><th>操作</th></tr>
           </thead>
           <tbody>
             ${orders.map(o => {
@@ -86,6 +86,7 @@ async function loadOrders(status = '') {
                   <td><span class="badge ${st.class}">${st.label}</span></td>
                   <td class="font-semibold">${formatAdminPrice(o)}</td>
                   <td>${o.account_count || o.quantity || 0}</td>
+                  <td>${o.total_accounts_created || 0}</td>
                   <td class="text-sm text-muted">${new Date(o.created_at).toLocaleDateString('zh-CN')}</td>
                   <td>
                     <div class="flex gap-1" style="flex-wrap:wrap;">

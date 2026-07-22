@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS orders (
   bind_account_name TEXT DEFAULT '',
   bind_invite_code TEXT DEFAULT '',
   admin_notes TEXT DEFAULT '',
+  total_accounts_created INTEGER DEFAULT 0,
   created_at TEXT DEFAULT (datetime('now')),
   updated_at TEXT DEFAULT (datetime('now')),
   completed_at TEXT,
@@ -82,6 +83,15 @@ CREATE TABLE IF NOT EXISTS game_accounts (
   stop_monitor_at TEXT,
   status TEXT DEFAULT 'pending',
   error_msg TEXT DEFAULT '',
+  character_name TEXT DEFAULT '',
+  spirit_roots TEXT DEFAULT '{"metal":0,"wood":0,"water":0,"fire":0,"earth":0}',
+  operator_id INTEGER DEFAULT 0,
+  operator_name TEXT DEFAULT '',
+  created_result TEXT DEFAULT '',
+  setup_status TEXT DEFAULT 'pending',
+  technique_id INTEGER DEFAULT 0,
+  equipped_skills TEXT DEFAULT '[]',
+  battle_auto_restart INTEGER DEFAULT 0,
   created_at TEXT DEFAULT (datetime('now')),
   FOREIGN KEY (order_id) REFERENCES orders(id)
 );

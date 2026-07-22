@@ -1,0 +1,75 @@
+{
+  "totalAccounts": 1,
+  "accounts": [
+    {
+      "username": "黑楼兰",
+      "stats": {
+        "scanned": 34,
+        "skipped": 0,
+        "soldToSystem": 5,
+        "listedOnMarket": 8,
+        "failed": 21,
+        "systemIncome": 110330,
+        "marketListings": [
+          {
+            "item_name": "清灵草",
+            "item_id": 9,
+            "quantity": 22167,
+            "unit_price": 500,
+            "listing_id": 208417
+          },
+          {
+            "item_name": "滴露",
+            "item_id": 22,
+            "quantity": 5815,
+            "unit_price": 500,
+            "listing_id": 208418
+          },
+          {
+            "item_name": "人参",
+            "item_id": 58,
+            "quantity": 5717,
+            "unit_price": 500,
+            "listing_id": 208419
+          },
+          {
+            "item_name": "首乌",
+            "item_id": 59,
+            "quantity": 5662,
+            "unit_price": 500,
+            "listing_id": 208420
+          },
+          {
+            "item_name": "血精",
+            "item_id": 10,
+            "quantity": 5648,
+            "unit_price": 500,
+            "listing_id": 208421
+          },
+          {
+            "item_name": "黑铁",
+            "item_id": 24,
+            "quantity": 5635,
+            "unit_price": 500,
+            "listing_id": 208422
+          },
+          {
+            "item_name": "沉泥",
+            "item_id": 20,
+            "quantity": 5557,
+            "unit_price": 500,
+            "listing_id": 208423
+          },
+          {
+            "item_name": "黄精",
+            "item_id": 60,
+            "quantity": 5526,
+            "unit_price": 500,
+            "listing_id": 208424
+          }
+        ]
+      }
+    }
+  ],
+  "timestamp": "2026-07-10T13:41:34.432Z"
+}

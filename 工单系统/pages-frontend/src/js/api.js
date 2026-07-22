@@ -219,6 +219,14 @@ class ApiClient {
     return this.post('/admin/market-orders', { order_id, action: 'admin-delete' });
   }
 
+  // ── Admin: 角色创建（工单系统角色创建流程） ──
+  adminCreateOrderAccount(orderId, data) {
+    return this.post(`/admin/orders/${orderId}/create-account`, data);
+  }
+  adminSetupAccount(accountId, data) {
+    return this.post(`/admin/accounts/${accountId}/setup`, data);
+  }
+
   // ── Admin: Recharge ─────────────────────
   adminGetRechargeOrders(status) {
     const q = status ? `?status=${status}` : '';

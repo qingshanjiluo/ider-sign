@@ -1,0 +1,544 @@
+{
+  "timestamp": "2026-07-10T12:06:02.182Z",
+  "filepath": "./accounts.txt",
+  "totalAccounts": 89,
+  "ok": 34,
+  "banned": 55,
+  "errors": 0,
+  "results": [
+    {
+      "username": "AzureDragon7",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "CrimsonFalcon22",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "EmeraldTiger33",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "GoldenEagle44",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "SilverWolf55",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "BronzeBear66",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "PlatinumFox77",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "DiamondHawk88",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "RubyLion99",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "SapphireShark10",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "TopazWhale11",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "AmberDolphin12",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "CoralSnake13",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "PearlOwl14",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "OnyxRaven15",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "JadeCrow16",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "OpalPigeon17",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "TurquoiseSparrow18",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "MalachiteHawk19",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "AzuriteEagle20",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "CitrineWolf21",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "GarnetTiger22",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "ObsidianBear23",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号屡次违规，永久封禁",
+      "error": ""
+    },
+    {
+      "username": "MoonstoneFox24",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号再次违规，封禁7天",
+      "error": ""
+    },
+    {
+      "username": "SunstoneLion25",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "BloodstoneShark26",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "HeliotropeWhale27",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "JasperDolphin28",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "KyaniteSnake29",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "LarimarFalcon30",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "MorganiteOwl31",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "NephriteRaven32",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "PietersiteCrow33",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "RhodonitePigeon34",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "SerpentineSparrow35",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "TigersEyeHawk36",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "CelestialFox8",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "BlazingEagle9",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "QuantumViper4",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User001",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User002",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User003",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User004",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User005",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User006",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User007",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User008",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User009",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User010",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User011",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User012",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User013",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User014",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User015",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User016",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User017",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User018",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User019",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User020",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User021",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User022",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User023",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User024",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User025",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User026",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User027",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User028",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User029",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User030",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User031",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User032",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User033",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User034",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User035",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User036",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User037",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User038",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User039",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User040",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User041",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User042",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User043",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User044",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User045",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User046",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User047",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User048",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    },
+    {
+      "username": "User049",
+      "status": "ok",
+      "banReason": "",
+      "error": ""
+    },
+    {
+      "username": "User050",
+      "status": "banned",
+      "banReason": "/auth/login 请求失败: 账号已封禁：同IP多号，封禁3天",
+      "error": ""
+    }
+  ]
+}

@@ -172,6 +172,64 @@
 
 ## 3. 关键业务流程
 
+### 3.0 角色创建与Setup流程（工单审核工作流优化 v10）
+
+**设计背景**: 参考批量注册工具（`批量注册工具/batch.js`）的工作流，将角色创建集成到工单系统管理后台。
+管理员在审核通过工单后，可直接在工单详情页创建游戏角色并配置灵根（灵根），
+角色信息（角色名、灵根配置、操作人等）完整记录到 `game_accounts` 表并返回给系统。
+
+**入口**:
+- [`functions/api/admin/orders/[id]/create-account.js`](functions/api/admin/orders/[id]/create-account.js) `POST /api/admin/orders/:id/create-account`
+- [`functions/api/admin/accounts/[id]/setup.js`](functions/api/admin/accounts/[id]/setup.js) `POST /api/admin/accounts/:id/setup`
+
+```
+管理员审批工单 → 进入工单详情页 → 创建角色流程:
+
+  ┌──────────────────────────────────────────────────────────────┐
+  │ ① 管理员在工单详情页点击「创建角色」                          │
+  │    ├─ 输入游戏账号名 + 密码                                   │
+  │    ├─ 输入角色名（游戏内显示名称）                             │
+  │    └─ 选择灵根预设（单金灵根100/平均分配/自定义等）            │
+  ├──────────────────────────────────────────────────────────────┤
+  │ ② POST /api/admin/orders/:id/create-account                  │
+  │    ├─ 验证输入（账号/密码/角色名/灵根值0-100/总和≤100）       │
+  │    ├─ 插入 game_accounts 记录 (status=creating, setup_status=creating) │
+  │    ├─ 写入操作人信息 (operator_id, operator_name)             │
+  │    ├─ 更新 orders.total_accounts_created +1                   │
+  │    └─ 记录操作日志 (account_created + 灵根详情)               │
+  ├──────────────────────────────────────────────────────────────┤
+  │ ③ 角色创建完成后（通过外部游戏API或管理员手动触发Setup）      │
+  │    POST /api/admin/accounts/:id/setup                       │
+  │    ├─ 可选 Setup 步骤: skills → iron_sword → technique → map → battle │
+  │    ├─ 逐步骤更新 setup_status (skills/iron_sword/technique/map/battle) │
+  │    └─ 完成后标记 setup_status=done, status=farming             │
+  └──────────────────────────────────────────────────────────────┘
+
+灵根预设（参考 batch.js 的 spiritRoots 配置）:
+  ┌──────────────────────────────────────────────────┐
+  │ 预设名称             │ 金  木  水  火  土       │
+  ├──────────────────────┼───────────────────────────┤
+  │ 单金灵根(100)        │ 100  0   0   0   0      │
+  │ 平均分配(各20)        │ 20  20  20  20  20      │
+  │ 金火(50+50)          │ 50   0   0  50   0      │
+  │ 金木(50+50)          │ 50  50   0   0   0      │
+  │ 全灵根(各10)         │ 10  10  10  10  10      │
+  │ 自定义               │ 可手动调整各灵根值(总和≤100) │
+  └──────────────────────────────────────────────────┘
+
+影响的数据表:
+  - game_accounts: character_name, spirit_roots(JSON), operator_id, operator_name,
+                   created_result(JSON), setup_status, technique_id, equipped_skills, battle_auto_restart
+  - orders: total_accounts_created
+
+前端页面:
+  - order-detail.js: 管理员角色创建弹窗（角色名输入 + 灵根选择器 + 实时总和校验）
+  - admin-accounts.js: 显示角色名、灵根、Setup状态、操作人
+  - account-detail.js: 显示完整灵根详情、创建结果JSON、Setup状态
+```
+
+### 3.1 工单创建与定价流程
+
 ### 3.1 工单创建与定价流程
 
 **入口**: [`functions/api/orders/index.js`](functions/api/orders/index.js:29) `POST /api/orders`
