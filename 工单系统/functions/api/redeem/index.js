@@ -1,7 +1,7 @@
 // functions/api/redeem/index.js — POST /api/redeem
 // 支持两种兑换码：
-//   1. redeem_codes 表（经验值兑换码，原逻辑）
-//   2. recharge_codes 表（修仙币兑换码，新逻辑）
+//   1. recharge_codes 表（修仙币兑换码，支持多次使用）
+//   2. redeem_codes 表（经验值兑换码，原逻辑）
 import { json } from '../../_utils.js';
 import { authenticate } from '../../_auth.js';
 import { addXP } from '../../_xp.js';
@@ -24,7 +24,7 @@ export async function onRequest(context) {
 
     if (rc) {
       // 修仙币兑换码处理 — 支持多次使用，但一个账号只能用一次
-      // 检查当前用户是否已使用过此兑换码
+      
       // 确保 redeem_log 表存在（用于追踪每个用户的兑换记录）
       try {
         await env.DB.prepare(
@@ -32,6 +32,7 @@ export async function onRequest(context) {
         ).run();
       } catch (e) { /* 表已存在 */ }
       
+      // 检查当前用户是否已使用过此兑换码
       const alreadyUsed = await env.DB.prepare(
         "SELECT id FROM redeem_log WHERE user_id = ? AND code = ?"
       ).bind(user.id, clean).first();
@@ -39,12 +40,31 @@ export async function onRequest(context) {
         return json({ error: '您已使用过此兑换码' }, 400);
       }
       
+      // 检查使用次数限制（max_uses: 0=无限次, 1=一次性, >1=指定次数）
+      const maxUses = rc.max_uses || 0;
+      const usedCount = rc.used_count || 0;
+      if (maxUses > 0 && usedCount >= maxUses) {
+        return json({ error: '该兑换码已达到最大使用次数' }, 400);
+      }
+      
       // 给用户加修仙币
       await env.DB.prepare(
         'UPDATE users SET bonus_points = bonus_points + ? WHERE id = ?'
       ).bind(rc.coins, user.id).run();
       
-      // 记录兑换日志（不修改 recharge_codes 状态，允许多次使用）
+      // 增加已使用次数
+      await env.DB.prepare(
+        'UPDATE recharge_codes SET used_count = used_count + 1 WHERE id = ?'
+      ).bind(rc.id).run();
+      
+      // 如果达到最大使用次数，自动标记为已使用
+      if (maxUses > 0 && usedCount + 1 >= maxUses) {
+        await env.DB.prepare(
+          "UPDATE recharge_codes SET status = 'used' WHERE id = ?"
+        ).bind(rc.id).run();
+      }
+      
+      // 记录兑换日志
       await env.DB.prepare(
         "INSERT INTO redeem_log (user_id, code, coins) VALUES (?, ?, ?)"
       ).bind(user.id, clean, rc.coins).run();
@@ -55,7 +75,17 @@ export async function onRequest(context) {
           "INSERT INTO notifications (user_id, title, content, type) VALUES (?, '兑换码已使用', '您的兑换码 ' || ? || ' 已被使用', 'order')"
         ).bind(rc.user_id, clean).run();
       }
-      return json({ ok: true, message: '兑换成功，获得 ' + rc.coins + ' 修仙币', coins: rc.coins, type: 'recharge' });
+      
+      // 构建剩余次数信息
+      let extra = '';
+      if (maxUses === 0) {
+        extra = '（无限次码）';
+      } else if (maxUses > 1) {
+        const remaining = maxUses - usedCount - 1;
+        extra = `（剩余 ${remaining} 次）`;
+      }
+      
+      return json({ ok: true, message: '兑换成功，获得 ' + rc.coins + ' 修仙币' + extra, coins: rc.coins, type: 'recharge', remaining_uses: maxUses === 0 ? -1 : Math.max(0, maxUses - usedCount - 1) });
     }
 
     // 2. 再查 redeem_codes（经验值兑换码，原逻辑）

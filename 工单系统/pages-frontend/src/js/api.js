@@ -239,6 +239,7 @@ class ApiClient {
     return this.get(`/admin/recharge-codes${q}`);
   }
   adminCreateRechargeCodes(data) { return this.post('/admin/recharge-codes', data); }
+  adminUpdateRechargeCode(id, data) { return this.put('/admin/recharge-codes', { id, ...data }); }
   adminDeleteRechargeCode(id) { return this.del('/admin/recharge-codes', { id }); }
 
   // ── Admin: AI Config ─────────────────────
