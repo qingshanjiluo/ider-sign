@@ -9,7 +9,7 @@
  *   - 随机延迟（1-5s）+ 每3个账号暂停20-40s
  */
 const crypto = require('crypto');
-const fetch = require('node-fetch');
+// Node.js 20+ 内置 fetch，无需 node-fetch
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
@@ -154,7 +154,7 @@ async function apiRequest(method, path, token, body) {
   };
   if (token) headers['Authorization'] = 'Bearer ' + token;
   const url = API_BASE + path;
-  const opts = { method, headers, timeout: 30000 };
+  const opts = { method, headers, signal: AbortSignal.timeout(30000) };
   if (bodyStr) opts.body = bodyStr;
   try {
     const r = await fetch(url, opts);

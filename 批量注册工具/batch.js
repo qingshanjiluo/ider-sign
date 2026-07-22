@@ -17,7 +17,7 @@
  *   编辑 accounts.txt 填入账号信息，然后运行 start.bat
  */
 const crypto = require('crypto');
-const fetch = require('node-fetch');
+// Node.js 20+ 内置 fetch，无需 node-fetch
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
@@ -70,7 +70,7 @@ async function apiRequest(method, path, token, body, extraHeaders) {
   Object.assign(headers, extraHeaders);
 
   const url = API_BASE + path;
-  const opts = { method, headers, timeout: 30000 };
+  const opts = { method, headers, signal: AbortSignal.timeout(30000) };
   if (bodyStr) opts.body = bodyStr;
   try {
     const r = await fetch(url, opts);

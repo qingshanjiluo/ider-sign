@@ -2,17 +2,53 @@ name: 工单扫描 - 自动注册刷怪
 
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    # 每4小时运行一次（0, 4, 8, 12, 16, 20点）
+    - cron: '0 */4 * * *'
   workflow_dispatch:
     inputs:
+      force:
+        description: '强制扫描所有工单（忽略防重复）'
+        required: false
+        default: false
+        type: boolean
       reason:
         description: '触发原因'
         required: false
         default: '手动触发'
 
 jobs:
+  pre-check:
+    name: 预检查 - API 可用性
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      api_ok: ${{ steps.check.outputs.api_ok }}
+      worker_ok: ${{ steps.check.outputs.worker_ok }}
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 检查 API 可用性
+        id: check
+        working-directory: 工单系统
+        env:
+          WORKER_URL: ${{ secrets.WORKER_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+          API_BASE: ${{ secrets.API_BASE }}
+          SIGN_KEY: ${{ secrets.SIGN_KEY }}
+          CLIENT_VERSION: ${{ secrets.CLIENT_VERSION }}
+        run: node gh-actions/pre_check.js
+
   scan:
     name: 扫描已审核工单并自动注册
+    needs: pre-check
+    if: needs.pre-check.outputs.worker_ok == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
@@ -37,4 +73,14 @@ jobs:
           API_BASE: ${{ secrets.API_BASE }}
           SIGN_KEY: ${{ secrets.SIGN_KEY }}
           CLIENT_VERSION: ${{ secrets.CLIENT_VERSION }}
+          FORCE_SCAN: ${{ inputs.force || 'false' }}
         run: node gh-actions/scan_orders.js
+
+      - name: 上传扫描日志
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: order-scan-log-${{ github.run_id }}
+          path: |
+            工单系统/gh-actions/scan_report.json
+          retention-days: 7
