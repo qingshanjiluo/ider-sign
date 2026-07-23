@@ -58,7 +58,7 @@ function renderUserRow(u) {
       <td class="font-semibold">${u.username}</td>
       <td>Lv.${u.level || 1}</td>
       <td>${roleLabel}</td>
-      <td class="font-semibold" style="color:var(--accent-amber)">${(u.bonus_points || 0).toLocaleString()} <span class="text-xs text-muted">分</span></td>
+      <td class="font-semibold" style="color:var(--accent-amber)">¥${((u.bonus_points || 0) / 400).toFixed(2)}</td>
       <td>${statusLabel}</td>
       <td class="text-sm text-muted">${new Date(u.created_at).toLocaleDateString('zh-CN')}</td>
       <td>
@@ -145,8 +145,8 @@ function showGrantPointsModal(userId, username) {
   body.innerHTML = `
     <p>用户：<strong>${username}</strong></p>
     <div class="form-group" style="margin-top:12px;">
-      <label class="form-label">修仙分数量</label>
-      <input type="number" class="form-input" id="grant-points-amount" placeholder="正数=增加，负数=扣除" value="100">
+      <label class="form-label">金额（元，1元=400修仙币）</label>
+      <input type="number" class="form-input" id="grant-points-amount" placeholder="正数=增加，负数=扣除" value="10" step="0.01">
     </div>
     <div class="form-group" style="margin-top:8px;">
       <label class="form-label">原因</label>
@@ -158,12 +158,15 @@ function showGrantPointsModal(userId, username) {
     body,
     confirmText: '确认发放',
     onConfirm: async () => {
-      const points = parseInt(document.getElementById('grant-points-amount').value, 10);
+      const yuan = parseFloat(document.getElementById('grant-points-amount').value, 10);
       const reason = document.getElementById('grant-points-reason').value || '';
-      if (isNaN(points) || points === 0) { toast.error('请输入有效的积分数量（非零）'); return; }
+      if (isNaN(yuan) || yuan === 0) { toast.error('请输入有效的金额（非零）'); return; }
+      const points = Math.round(yuan * 400);
       try {
         const res = await api.adminGrantPoints({ user_id: userId, points, reason });
-        toast.success(`${username} 修仙分: ${res.old_balance} → ${res.new_balance} (${points > 0 ? '+' : ''}${points})`);
+        const oldYuan = (res.old_balance / 400).toFixed(2);
+        const newYuan = (res.new_balance / 400).toFixed(2);
+        toast.success(`${username} 余额: ¥${oldYuan} → ¥${newYuan} (${yuan > 0 ? '+' : ''}¥${yuan.toFixed(2)})`);
         modal.close();
         renderAdminUsers({ container: document.getElementById('app-content') });
       } catch (err) { toast.error(err.message); }

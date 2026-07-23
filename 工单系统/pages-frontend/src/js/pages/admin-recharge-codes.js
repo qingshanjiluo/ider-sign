@@ -26,8 +26,8 @@ export async function renderAdminRechargeCodes({ container }) {
         </div>
         <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
           <div class="form-group" style="flex:1;min-width:120px;">
-            <label class="form-label">修仙币数量</label>
-            <input type="number" class="form-input" id="gen-coins" value="100" min="1" style="max-width:140px;">
+            <label class="form-label">价值（元）</label>
+            <input type="number" class="form-input" id="gen-coins" value="0.25" min="0.01" step="0.01" style="max-width:140px;">
           </div>
           <div class="form-group" style="flex:1;min-width:100px;">
             <label class="form-label">生成数量（1-100）</label>
@@ -63,15 +63,16 @@ export async function renderAdminRechargeCodes({ container }) {
 
     // 批量生成
     document.getElementById('gen-codes-btn')?.addEventListener('click', async () => {
-      const coins = parseInt(document.getElementById('gen-coins').value);
+      const yuan = parseFloat(document.getElementById('gen-coins').value);
       const count = parseInt(document.getElementById('gen-count').value);
       const max_uses = parseInt(document.getElementById('gen-max-uses').value) || 1;
-      if (!coins || coins <= 0) return toast.error('修仙币数量必须大于0');
+      if (!yuan || yuan <= 0) return toast.error('价值必须大于0');
+      const coins = Math.round(yuan * 400);
       if (!count || count < 1 || count > 100) return toast.error('生成数量范围1-100');
       if (max_uses < 0) return toast.error('使用次数不能为负数');
       
       const useDesc = max_uses === 0 ? '无限次' : max_uses + '次';
-      if (!confirm(`确认生成 ${count} 个 ${coins} 修仙币的兑换码（每个码可用 ${useDesc}）？`)) return;
+      if (!confirm(`确认生成 ${count} 个 ¥${yuan.toFixed(2)}（${coins}修仙币）的兑换码（每个码可用 ${useDesc}）？`)) return;
       try {
         const res = await api.adminCreateRechargeCodes({ count, coins, max_uses });
         toast.success(res.message);
@@ -121,7 +122,7 @@ function renderCodesTable(codes) {
         <table class="table" style="width:100%;">
           <thead><tr>
             <th>兑换码</th>
-            <th>修仙币</th>
+            <th>价值</th>
             <th>使用次数</th>
             <th>状态</th>
             <th>归属用户</th>
@@ -148,7 +149,7 @@ function renderCodesTable(codes) {
               return `
                 <tr>
                   <td><code style="background:var(--bg-base);padding:2px 8px;border-radius:4px;font-size:13px;letter-spacing:1.5px;font-weight:600;">${c.code}</code></td>
-                  <td style="color:var(--accent-amber);font-weight:600;">${c.coins} <span class="text-xs text-muted">修仙币</span></td>
+                  <td style="color:var(--accent-amber);font-weight:600;">¥${(c.coins / 400).toFixed(2)}</td>
                   <td>
                     ${usesDisplay}
                     ${c.status === 'pending' && maxUses > 1 ? `<button class="btn btn-xs btn-ghost" style="font-size:11px;margin-left:4px;" data-edit-max-uses="${c.id}" data-current-max="${maxUses}">编辑</button>` : ''}
