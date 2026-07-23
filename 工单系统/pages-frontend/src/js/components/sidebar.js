@@ -41,6 +41,7 @@ export function getAdminItems() {
       { id: 'admin-coupons', label: '优惠券', icon: 'square', hash: '#/admin/coupons' },
       { id: 'admin-market', label: '商品管理', icon: 'star', hash: '#/admin/market' },
       { id: 'admin-market-orders', label: '黑市订单', icon: 'diamondOutline', hash: '#/admin/market-orders' },
+      { id: 'admin-market-purchases', label: '商城审核', icon: 'star', hash: '#/admin/market-purchases' },
       { id: 'admin-recharge', label: '充值审核', icon: 'diamondSolid', hash: '#/admin/recharge' },
       { id: 'admin-recharge-codes', label: '兑换码管理', icon: 'star', hash: '#/admin/recharge-codes' },
       { id: 'admin-ai-config', label: 'AI 设置', icon: 'robot', hash: '#/admin/ai-config' },

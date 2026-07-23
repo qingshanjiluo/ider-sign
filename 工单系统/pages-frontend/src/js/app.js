@@ -43,6 +43,7 @@ import { renderAdminRecharge } from './pages/admin-recharge.js';
 import { renderAdminRechargeCodes } from './pages/admin-recharge-codes.js';
 import { renderAdminAiConfig } from './pages/admin-ai-config.js';
 import { renderAdminMarketOrders } from './pages/admin-market-orders.js';
+import { renderAdminMarketPurchases } from './pages/admin-market-purchases.js';
 
 // ── 全局 DOM ──────────────────────────
 const appEl = document.getElementById('app');
@@ -155,6 +156,7 @@ router.register('/admin/recharge-codes', (ctx) => renderLayout('/admin/recharge-
 router.register('/admin/ai-config', (ctx) => renderLayout('/admin/ai-config', renderAdminAiConfig));
 router.register('/admin/ads', (ctx) => renderLayout('/admin/ads', renderAdminAds));
 router.register('/admin/market-orders', (ctx) => renderLayout('/admin/market-orders', renderAdminMarketOrders));
+router.register('/admin/market-purchases', (ctx) => renderLayout('/admin/market-purchases', renderAdminMarketPurchases));
 
 // ── 初始化 ──────────────────────────
 // 尝试从 localStorage 恢复登录状态

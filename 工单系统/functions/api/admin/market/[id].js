@@ -7,7 +7,6 @@ export async function onRequest(context) {
   const user = await authenticate(request, env);
   if (!user || !['admin', 'super_admin'].includes(user.role)) return json({ error: '无权限' }, 403);
 
-  // Parse id from URL: /api/admin/market/{id}
   const url = new URL(request.url);
   const segments = url.pathname.split('/').filter(Boolean);
   const id = parseInt(segments[segments.length - 1]);
@@ -15,7 +14,11 @@ export async function onRequest(context) {
 
   if (request.method === 'PUT') {
     const body = await request.json().catch(() => ({}));
-    const { name, category, description, image_url, price_coins, stock, enabled } = body;
+    const {
+      name, category, description, image_url, price_coins, stock, enabled,
+      payment_methods, need_review,
+      complete_panel_enabled, complete_panel_title, complete_panel_desc,
+    } = body;
     const updates = [];
     const params = [];
     if (name !== undefined) { updates.push('name = ?'); params.push(name); }
@@ -25,6 +28,11 @@ export async function onRequest(context) {
     if (price_coins !== undefined) { updates.push('price_coins = ?'); params.push(price_coins); }
     if (stock !== undefined) { updates.push('stock = ?'); params.push(stock); }
     if (enabled !== undefined) { updates.push('enabled = ?'); params.push(enabled ? 1 : 0); }
+    if (payment_methods !== undefined) { updates.push('payment_methods = ?'); params.push(payment_methods); }
+    if (need_review !== undefined) { updates.push('need_review = ?'); params.push(need_review ? 1 : 0); }
+    if (complete_panel_enabled !== undefined) { updates.push('complete_panel_enabled = ?'); params.push(complete_panel_enabled ? 1 : 0); }
+    if (complete_panel_title !== undefined) { updates.push('complete_panel_title = ?'); params.push(complete_panel_title); }
+    if (complete_panel_desc !== undefined) { updates.push('complete_panel_desc = ?'); params.push(complete_panel_desc); }
     if (updates.length === 0) return json({ error: '没有要更新的字段' }, 400);
 
     updates.push("updated_at = datetime('now')");

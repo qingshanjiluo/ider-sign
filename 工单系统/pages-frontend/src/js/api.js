@@ -186,8 +186,12 @@ class ApiClient {
 
   // ── Market (Official) ───────────────────
   getMarketItems() { return this.get('/market/items'); }
-  purchaseMarketItem(item_id, quantity) {
-    return this.post('/market/purchase', { item_id, quantity });
+  purchaseMarketItem(data) {
+    return this.post('/market/purchase', data);
+  }
+  getMyPurchases() { return this.get('/market/purchases'); }
+  markPurchasePanelRead(purchase_id) {
+    return this.post('/market/purchases', { purchase_id });
   }
 
   // ── Market (Black Market Orders) ────────
@@ -203,6 +207,15 @@ class ApiClient {
   adminCreateMarketItem(data) { return this.post('/admin/market/items', data); }
   adminUpdateMarketItem(id, data) { return this.put(`/admin/market/${id}`, data); }
   adminDeleteMarketItem(id) { return this.del(`/admin/market/${id}`); }
+
+  // ── Admin: Market Purchases (Review) ──────
+  adminGetMarketPurchases(status) {
+    const q = status ? `?status=${status}` : '';
+    return this.get(`/admin/market-purchases${q}`);
+  }
+  adminReviewPurchase(purchase_id, action, admin_notes) {
+    return this.post('/admin/market-purchases', { purchase_id, action, admin_notes });
+  }
 
   // ── Admin: Market Orders ──────────────────
   adminGetMarketOrders(status, page) {

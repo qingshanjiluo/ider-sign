@@ -427,6 +427,12 @@ async function dispatchOrder(order, orderIdx) {
     case '代打':
     case '托管':
     default: {
+      // 检查是否已有账号（防止重复注册）
+      const existingAccounts = order.total_accounts_created || 0;
+      if (existingAccounts > 0) {
+        console.log('  已有 ' + existingAccounts + ' 个账号，跳过注册');
+        return true;
+      }
       // 原有逻辑：注册新账号
       const accountsToCreate = order.quantity || (order.bonus_points ? Math.max(1, Math.ceil(order.bonus_points / 120)) : 1);
       const maxAccounts = Math.min(accountsToCreate, 10);

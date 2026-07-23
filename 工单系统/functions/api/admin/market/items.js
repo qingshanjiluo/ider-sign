@@ -16,12 +16,22 @@ export async function onRequest(context) {
 
   if (request.method === 'POST') {
     const body = await request.json().catch(() => ({}));
-    const { name, category, description, image_url, price_coins, stock, enabled } = body;
+    const {
+      name, category, description, image_url, price_coins, stock, enabled,
+      payment_methods, need_review,
+      complete_panel_enabled, complete_panel_title, complete_panel_desc,
+    } = body;
     if (!name || price_coins === undefined) return json({ error: '缺少必要信息' }, 400);
 
     const result = await env.DB.prepare(
-      "INSERT INTO market_items (name, category, description, image_url, price_coins, stock, enabled, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))"
-    ).bind(name, category || 'other', description || '', image_url || '', price_coins, stock || 0, enabled !== undefined ? (enabled ? 1 : 0) : 1, user.id).run();
+      "INSERT INTO market_items (name, category, description, image_url, price_coins, stock, enabled, payment_methods, need_review, complete_panel_enabled, complete_panel_title, complete_panel_desc, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))"
+    ).bind(
+      name, category || 'other', description || '', image_url || '',
+      price_coins, stock || 0, enabled !== undefined ? (enabled ? 1 : 0) : 1,
+      payment_methods || 'coin', need_review ? 1 : 0,
+      complete_panel_enabled ? 1 : 0, complete_panel_title || '', complete_panel_desc || '',
+      user.id,
+    ).run();
 
     return json({ ok: true, message: '商品已创建', id: result.meta?.last_row_id });
   }

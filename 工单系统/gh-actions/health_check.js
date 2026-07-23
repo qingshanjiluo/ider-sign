@@ -304,6 +304,7 @@ async function main() {
   let completed = 0;
   let failed = 0;
   let total = accounts.length;
+  const processedOrders = new Set();
 
   for (let i = 0; i < accounts.length; i++) {
     const account = accounts[i];
@@ -312,9 +313,29 @@ async function main() {
     const result = await checkAndLevelUp(account, i);
     if (result.ok && result.completed) completed++;
     if (!result.ok) failed++;
+    processedOrders.add(account.order_id);
 
     await antiDetect.smartPause(i, 5, 20);
     await antiDetect.randomDelay(3000);
+  }
+
+  // 推进已处理工单的状态（账号满级后自动完成工单）
+  if (processedOrders.size > 0) {
+    console.log('\n[推进] 检查 ' + processedOrders.size + ' 个工单完成状态...');
+    for (const oid of processedOrders) {
+      try {
+        const res = await workerApi('/api/gh/complete-order', 'POST', { order_id: oid });
+        if (res.ok && res.status === 'completed') {
+          console.log('  ✅ 工单 #' + oid + ' 已完成');
+        } else if (res.ok && res.status === 'processing') {
+          console.log('  ▶️ 工单 #' + oid + ' 已进入挂机阶段');
+        } else {
+          console.log('  ⏳ 工单 #' + oid + ': ' + (res.message || '等待中'));
+        }
+      } catch (e) {
+        console.log('  ⚠️ 工单 #' + oid + ' 推进失败: ' + e.message);
+      }
+    }
   }
 
   console.log('\n═══════════════════════════════════════');
