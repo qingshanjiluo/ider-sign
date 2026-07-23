@@ -107,6 +107,15 @@ async function registerAndSetup(workerOrder, orderIdx) {
       spirit_roots: { metal: 100, wood: 0, water: 0, fire: 0, earth: 0 },
     });
     console.log('[' + username + '] ✅ 角色创建成功: ' + (createData.player?.name || playerName) + ' (金灵根100)');
+    const characterName = createData.player?.name || playerName;
+    const spiritRoots = createData.player?.spirit_roots || JSON.stringify({ metal: 100, wood: 0, water: 0, fire: 0, earth: 0 });
+    // 上报 Worker：角色名/灵根
+    await workerApi('/api/gh/report-account', 'POST', {
+      order_id: workerOrder.id, username, password,
+      status: 'character_created',
+      character_name: characterName,
+      spirit_roots: typeof spiritRoots === 'string' ? spiritRoots : JSON.stringify(spiritRoots),
+    });
     await stepDelay();
 
     // ── 3) 绑定邀请码 ──
@@ -206,15 +215,18 @@ async function registerAndSetup(workerOrder, orderIdx) {
       console.log('[' + username + '] ⚠️ 自动刷怪跳过: ' + e.message);
     }
 
-    // 上报 Worker：配置完成
+    // 上报 Worker：配置完成（含角色名/灵根）
     await workerApi('/api/gh/report-account', 'POST', {
       order_id: workerOrder.id, username, password,
       server_username: username, server_password: password,
       status: 'farming', level: 1,
       map_id: 1, map_name: '荒石村',
+      character_name: characterName,
+      spirit_roots: typeof spiritRoots === 'string' ? spiritRoots : JSON.stringify(spiritRoots),
       skills: starterSkills.map(s => ({ id: s.id, name: s.name })),
       techniques: [{ id: 1, name: '吐纳法' }],
       equipment: [{ name: '铁剑' }],
+      setup_status: 'farming',
     });
 
     return { username, password, ok: true };
