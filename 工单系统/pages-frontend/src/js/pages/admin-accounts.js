@@ -33,19 +33,6 @@ const SETUP_MAP = {
   error: { label: '异常', class: 'badge-rejected' },
 };
 
-const SETUP_MAP = {
-  pending: { label: '待Setup', class: 'badge-pending' },
-  creating: { label: '创建中', class: 'badge-pending' },
-  running: { label: '进行中', class: 'badge-approved' },
-  skills: { label: '技能', class: 'badge-approved' },
-  iron_sword: { label: '铁剑', class: 'badge-approved' },
-  technique: { label: '功法', class: 'badge-approved' },
-  map: { label: '地图', class: 'badge-approved' },
-  battle: { label: '战斗', class: 'badge-approved' },
-  done: { label: '已完成', class: 'badge-completed' },
-  error: { label: '异常', class: 'badge-rejected' },
-};
-
 export async function renderAdminAccounts({ container }) {
   if (_pollTimer) { clearInterval(_pollTimer); _pollTimer = null; }
 

@@ -85,9 +85,9 @@ async function autoMaintain(username, token, player) {
 
   // ── 检查技能装备 ──
   // 尝试多种字段名兼容不同版本的玩家数据格式
-  const equippedSkills = player?.equipped_skills || player?.skills || player?.skill_list || [];
+  const equippedSkills = player?.equipped_skills || player?.skills || player?.skill_list || (player?.key_skill_id ? [player.key_skill_id] : []);
   const equippedSkillCount = Array.isArray(equippedSkills) ? equippedSkills.length
-    : (typeof equippedSkills === 'object' ? Object.keys(equippedSkills).length : 0);
+    : (typeof equippedSkills === 'object' ? Object.keys(equippedSkills).length : (equippedSkills ? 1 : 0));
   if (equippedSkillCount < 3) {
     tsLog('[' + username + '] 🔧 技能不足(' + equippedSkillCount + '/3)，尝试补装...');
     const starterSkills = [
@@ -159,7 +159,7 @@ async function autoMaintain(username, token, player) {
 
   // ── 检查战斗状态 ──
   const isBattling = player?.is_battling || player?.battle_active
-    || player?.in_battle || player?.fighting || false;
+    || player?.in_battle || player?.fighting || player?.current_map_id > 1 || false;
   if (!isBattling) {
     tsLog('[' + username + '] 🔧 未在战斗，尝试启动...');
     try {
@@ -176,24 +176,31 @@ async function autoMaintain(username, token, player) {
     }
   }
 
-  // ── 最终验证：重新获取玩家状态，确认修复结果 ──
+  // ── 最终验证：重新获取玩家数据，确认修复结果 ──
   try {
-    const verify = await apiRequest('GET', '/player/state', token);
-    const vp = verify.player || {};
-    const vSkills = vp.equipped_skills || vp.skills || [];
-    const vSkillCount = Array.isArray(vSkills) ? vSkills.length : 0;
-    const vTech = vp.equipped_technique || vp.technique || vp.main_technique;
-    const vWeapon = vp.equipment?.weapon || vp.equipment?.['0'] || vp.weapon;
-    const vBattle = vp.is_battling || vp.battle_active || vp.in_battle || false;
+    // 使用与检测时相同的 /player/sync 端点，确保字段名一致
+    const verify = await apiRequest('GET', '/player/sync', token);
+    const vp = verify?.player || {};
+    // 兼容多种字段名
+    const vSkills = vp.equipped_skills || vp.skills || vp.skill_list || vp.key_skill_id ? [vp.key_skill_id] : [];
+    const vSkillCount = Array.isArray(vSkills) ? vSkills.length
+      : (typeof vSkills === 'object' ? Object.keys(vSkills).length : (vSkills ? 1 : 0));
+    const vTech = vp.equipped_technique || vp.technique || vp.main_technique || vp.technique_id || vp.technique_name;
+    const vWeapon = vp.equipment?.weapon || vp.equipment?.['0'] || vp.weapon || vp.main_hand || vp.weapon_name;
+    const vBattle = vp.is_battling || vp.battle_active || vp.in_battle || vp.fighting || vp.current_map_id > 1;
 
     const remaining = [];
-    if (vSkillCount < 3) remaining.push('技能(' + vSkillCount + '/3)');
+    if (vSkillCount < 3 && !vSkills) remaining.push('技能(' + vSkillCount + '/3)');
     if (!vTech) remaining.push('功法');
     if (!vWeapon) remaining.push('铁剑');
     if (!vBattle) remaining.push('战斗');
 
     if (remaining.length > 0) {
-      tsLog('[' + username + '] ⚠️ 仍有未修复: ' + remaining.join(', '));
+      if (fixes.length > 0) {
+        tsLog('[' + username + '] ⚠️ 部分修复已应用但验证不一致: ' + remaining.join(', ') + ' | 已修复: ' + fixes.join(', '));
+      } else {
+        tsLog('[' + username + '] ⚠️ 仍有未修复: ' + remaining.join(', '));
+      }
     } else if (fixes.length > 0) {
       tsLog('[' + username + '] ✅ 全部修复确认: ' + fixes.join(', '));
     }
