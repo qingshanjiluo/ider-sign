@@ -1,4 +1,5 @@
 compatibility_date = "2025-01-01"
+pages_build_output_dir = "pages-frontend"
 
 [[d1_databases]]
 binding = "DB"
@@ -6,8 +7,6 @@ database_name = "ider-orders"
 database_id = "9fd8cb75-d10e-4cf3-a0e0-3681e5a59ae8"
 
 [vars]
-API_KEY = ""
 ENVIRONMENT = "production"
 SITE_NAME = "艾德尔修仙工单平台"
-# CORS 安全：设置允许的前端域名（多个用逗号分隔），留空则允许所有来源
 CORS_ORIGIN = ""
