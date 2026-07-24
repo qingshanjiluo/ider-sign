@@ -21,16 +21,25 @@ jobs:
       - name: Install wrangler
         run: npm install -g wrangler@4.114.0
 
+      - name: Debug env
+        run: |
+          echo "Account ID: ${CLOUDFLARE_ACCOUNT_ID:0:5}..."
+          echo "Token length: ${#CLOUDFLARE_API_TOKEN}"
+          ls -la "$PWD/工单系统/pages-frontend/"
+          ls -la "$PWD/工单系统/"
+
       - name: Deploy to Cloudflare Pages (with Functions)
-        run: wrangler pages deploy pages-frontend --project-name=ider-order-system
+        run: wrangler pages deploy pages-frontend --project-name=ider-order-system 2>&1
         working-directory: 工单系统
+        shell: bash
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Deploy Worker
-        run: wrangler deploy --config wrangler.worker.toml
+        run: wrangler deploy --config wrangler.worker.toml 2>&1
         working-directory: 工单系统
+        shell: bash
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
