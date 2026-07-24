@@ -31,8 +31,8 @@ export async function onRequest(context) {
     } else if (status === 'farming' || status === 'active') {
       const ss = setup_status || 'farming';
       await env.DB.prepare(
-        "UPDATE game_accounts SET status = ?, level = ?, map_id = ?, map_name = ?, skills = ?, techniques = ?, equipment = ?, is_farming = 1, last_check_at = datetime('now'), health_status = 'ok', setup_status = ?, character_name = ?, spirit_roots = ?, created_result = ? WHERE username = ? AND order_id = ?"
-      ).bind(status, level || 0, map_id || 0, map_name || '', JSON.stringify(skills || []), JSON.stringify(techniques || []), JSON.stringify(equipment || []), ss, character_name || '', spirit_roots || '{}', created_result || '', username, order_id).run();
+        "UPDATE game_accounts SET status = ?, level = COALESCE(NULLIF(?, 0), level), map_id = ?, map_name = ?, skills = ?, techniques = ?, equipment = ?, is_farming = 1, last_check_at = datetime('now'), health_status = 'ok', setup_status = ?, character_name = COALESCE(NULLIF(?, ''), character_name), spirit_roots = COALESCE(?, spirit_roots), created_result = COALESCE(NULLIF(?, ''), created_result) WHERE username = ? AND order_id = ?"
+      ).bind(status, level || 0, map_id || 0, map_name || '', JSON.stringify(skills || []), JSON.stringify(techniques || []), JSON.stringify(equipment || []), ss, character_name || '', spirit_roots || null, created_result || '', username, order_id).run();
     } else if (status === 'completed') {
       await env.DB.prepare(
         "UPDATE game_accounts SET status = ?, level = ?, character_name = ?, spirit_roots = ?, reached_120_at = datetime('now'), stop_monitor_at = datetime('now', '+2 days'), last_check_at = datetime('now'), health_status = 'completed' WHERE username = ? AND order_id = ?"

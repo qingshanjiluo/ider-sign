@@ -32,7 +32,7 @@ export async function onRequest(context) {
       WHERE username = ? AND order_id = ?`
     ).bind(
       reportStatus, level || 0, map_id || 0, map_name || '',
-      character_name || '', spirit_roots || '{}',
+      character_name || '', spirit_roots || null,
       JSON.stringify(skills || []), JSON.stringify(techniques || []), JSON.stringify(equipment || []),
       error_msg || '', health_status || 'ok', setup_status || 'farming',
       level || 0, level || 0, username, order_id

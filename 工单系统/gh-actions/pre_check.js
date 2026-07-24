@@ -42,7 +42,11 @@ async function check() {
       signal: AbortSignal.timeout(10000),
     });
     const d = await r.json();
-    workerOk = d.ok === true || d.error === '无效API密钥';
+    workerOk = d.ok === true;
+    if (!workerOk && d.error === '无效API密钥') {
+      console.error('[Worker] ❌ API密钥不匹配 — GitHub Secret API_KEY 与 Worker 环境变量不一致');
+      console.error('[Worker] 请在 https://github.com/qingshanjiluo/ider-sign/settings/secrets/actions 更新 API_KEY');
+    }
     console.log('[Worker] ' + (workerOk ? '✅ 可用' : '❌ 不可用: ' + JSON.stringify(d)));
   } catch (e) {
     console.log('[Worker] ❌ 连接失败: ' + e.message);

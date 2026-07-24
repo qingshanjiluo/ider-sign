@@ -359,7 +359,7 @@ async function checkAndLevelUp(account, idx) {
     const equipList = equippedWeapon ? [{ name: equippedWeapon.name || '铁剑' }] : [];
 
     const charName = playerName || account.character_name || server_username;
-    const roots = Object.keys(playerRoots).length ? playerRoots : {};
+    const rootsStr = Object.keys(playerRoots).length ? JSON.stringify(playerRoots) : null;
 
     await workerApi('/api/gh/report-health', 'POST', {
       order_id, username,
@@ -368,7 +368,7 @@ async function checkAndLevelUp(account, idx) {
       map_id: player.map_id || finalPlayer.map_id || 0,
       map_name: player.map_name || finalPlayer.map_name || '荒石村',
       character_name: charName,
-      spirit_roots: JSON.stringify(roots),
+      spirit_roots: rootsStr,
       skills: skillList,
       techniques: techList,
       equipment: equipList,
