@@ -143,16 +143,16 @@ export async function renderRecharge({ container }) {
     // 现金套餐购买 → 3步弹窗
     container.querySelectorAll('[data-buy-cash-pkg]').forEach(el => {
       el.addEventListener('click', () => {
-        const pkg = JSON.parse(el.dataset.pkg);
-        showRechargeWizard(pkg, 'cash');
+        try { showRechargeWizard(JSON.parse(el.dataset.pkg), 'cash'); }
+        catch { toast.error('套餐数据异常'); }
       });
     });
 
     // 灵石套餐购买 → 3步弹窗
     container.querySelectorAll('[data-buy-spirit-pkg]').forEach(el => {
       el.addEventListener('click', () => {
-        const pkg = JSON.parse(el.dataset.pkg);
-        showRechargeWizard(pkg, 'spirit_stone');
+        try { showRechargeWizard(JSON.parse(el.dataset.pkg), 'spirit_stone'); }
+        catch { toast.error('套餐数据异常'); }
       });
     });
 

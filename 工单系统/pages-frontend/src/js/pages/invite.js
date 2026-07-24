@@ -151,8 +151,8 @@ export async function renderInvite({ container }) {
     // 购买套餐
     document.querySelectorAll('[data-buy-pkg]').forEach(el => {
       el.addEventListener('click', () => {
-        const pkg = JSON.parse(el.dataset.pkg);
-        buyPackage(pkg);
+        try { buyPackage(JSON.parse(el.dataset.pkg)); }
+        catch { toast.error('套餐数据异常'); }
       });
     });
 

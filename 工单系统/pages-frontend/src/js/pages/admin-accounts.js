@@ -60,14 +60,6 @@ export async function renderAdminAccounts({ container }) {
         <option value="done">已完成</option>
         <option value="error">异常</option>
       </select>
-      <select class="form-select" id="admin-account-setup">
-        <option value="">全部Setup</option>
-        <option value="pending">待Setup</option>
-        <option value="creating">创建中</option>
-        <option value="running">进行中</option>
-        <option value="done">已完成</option>
-        <option value="error">异常</option>
-      </select>
     </div>
     <div id="admin-accounts-list">
       <div class="loading"><div class="spinner"></div></div>

@@ -326,7 +326,7 @@ function renderAccountsTable(el, accounts, isAdmin) {
             const roots = parseSpiritRoots(a.spirit_roots);
             const rootDesc = roots ? Object.entries(roots)
               .filter(([, v]) => v > 0)
-              .map(([k, v]) => `${'金木水火土'['metalwoodwaterfireearth'.indexOf(k) >= 0 ? 'metalwoodwaterfireearth'.indexOf(k) / 5 : 0]}${v}`)
+              .map(([k, v]) => `${({metal:'金',wood:'木',water:'水',fire:'火',earth:'土'})[k] || k}${v}`)
               .join(' ') : '-';
             const setupLabel = getSetupLabel(a.setup_status);
             return `
