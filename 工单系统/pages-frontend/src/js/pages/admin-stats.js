@@ -81,4 +81,3 @@ export async function renderAdminStats({ container }) {
     container.innerHTML = `<div class="empty-state"><p>加载失败: ${err.message}</p></div>`;
   }
 }
-}
