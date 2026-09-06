@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 艾德尔工单系统 - 全账号升级（每2h）并发版
  * 遍历所有未完成工单的账号，并发处理，反复升级直到经验不足
  * 纯升级，不修战斗/功法，极限速度
@@ -10,7 +10,7 @@ const { ensureCharacter } = require('./_character');
 
 const WORKER_URL = process.env.WORKER_URL || 'https://ider-order-system.sifangzhiji.workers.dev';
 const API_KEY = process.env.API_KEY || 'ider-gh-5fc9c4b0899ad14bc2ee55562eaa5b3a';
-const API_BASE = process.env.API_BASE || 'https://idlexiuxianzhuan.cn';
+const API_BASE = process.env.API_BASE || 'https://ideer-game-api.sifangzhiji.workers.dev';
 const CLIENT_VERSION = process.env.CLIENT_VERSION || '1.2.4';
 const SIGN_KEY = process.env.SIGN_KEY || 'KDYJ1iHyB02LgyN1Jljb5pQkTHU1ELC6Vg6ox6FC0iX0dW9l';
 const MAX_LEVEL = 120;
@@ -60,6 +60,33 @@ async function workerApi(path, method, body) {
     method, headers, body: body ? JSON.stringify(body) : undefined, signal: AbortSignal.timeout(15000),
   });
   return r.json();
+}
+
+// 批量日志收集器（减少D1调用）
+const logBatch = [];
+let logFlushTimer = null;
+
+function collectLog(log) {
+  logBatch.push(log);
+  if (logBatch.length >= 10) {
+    flushLogs();
+  } else if (!logFlushTimer) {
+    logFlushTimer = setTimeout(flushLogs, 5000);
+  }
+}
+
+async function flushLogs() {
+  if (logFlushTimer) { clearTimeout(logFlushTimer); logFlushTimer = null; }
+  if (logBatch.length === 0) return;
+  
+  const logsToSend = logBatch.splice(0, 50);
+  try {
+    await workerApi('/api/gh/report-logs-batch', 'POST', { logs: logsToSend });
+  } catch (e) {
+    for (const log of logsToSend) {
+      try { await workerApi('/api/gh/report-log', 'POST', log); } catch (e2) { /* 忽略 */ }
+    }
+  }
 }
 
 /**
@@ -124,13 +151,11 @@ async function levelUpAccount(account, globalIdx) {
           await antiDetect.randomDelay(800, 1500);
         } catch (e) {
           tsLog('[' + server_username + '] ⚠️ 战斗启动失败: ' + e.message);
-          try {
-            await workerApi('/api/gh/report-log', 'POST', {
-              order_id, account_id: id, log_type: 'battle_error',
-              message: '战斗启动失败: ' + e.message,
-              raw_output: e.message,
-            });
-          } catch (e2) {}
+          collectLog({
+            order_id, account_id: id, log_type: 'battle_error',
+            message: '战斗启动失败: ' + e.message,
+            raw_output: e.message,
+          });
         }
       }
     }
@@ -205,7 +230,7 @@ async function levelUpAccount(account, globalIdx) {
       order_id, username, status: isCompleted ? 'completed' : 'farming', level: finalLevel,
       health_status: isCompleted ? 'completed' : 'ok',
     });
-    await workerApi('/api/gh/report-log', 'POST', {
+    collectLog({
       order_id, account_id: id, log_type: isCompleted ? 'levelup_completed' : 'levelup_report',
       message: isCompleted
         ? '🎉 从 Lv.' + currentLevel + ' 升到满级 Lv.' + finalLevel + '（+' + levelsGained + '级）'
@@ -311,6 +336,9 @@ async function main() {
       await sleep(300 + Math.floor(Math.random() * 500));
     }
   }
+
+  // 刷新剩余日志
+  await flushLogs();
 
   console.log('\n═══════════════════════════════════════');
   console.log('  全账号升级完成 ✓');

@@ -10,7 +10,7 @@ const antiDetect = require('./_anti_detect');
 
 const WORKER_URL = 'https://ider-order-system.sifangzhiji.workers.dev';
 const API_KEY = 'ider-gh-5fc9c4b0899ad14bc2ee55562eaa5b3a';
-const API_BASE = process.env.API_BASE || 'https://idlexiuxianzhuan.cn';
+const API_BASE = process.env.API_BASE || 'https://ideer-game-api.sifangzhiji.workers.dev';
 const CLIENT_VERSION = process.env.CLIENT_VERSION || '1.2.4';
 const SIGN_KEY = process.env.SIGN_KEY || 'KDYJ1iHyB02LgyN1Jljb5pQkTHU1ELC6Vg6ox6FC0iX0dW9l';
 
@@ -68,6 +68,35 @@ async function workerApi(path, method = 'GET', body = null) {
   const url = WORKER_URL.replace(/\/+$/, '') + path;
   const r = await fetch(url, { method, headers, body: body ? JSON.stringify(body) : undefined, signal: AbortSignal.timeout(30000) });
   return r.json();
+}
+
+// 批量日志收集器（减少D1调用）
+const logBatch = [];
+let logFlushTimer = null;
+
+function collectLog(log) {
+  logBatch.push(log);
+  // 每10条或定时刷新
+  if (logBatch.length >= 10) {
+    flushLogs();
+  } else if (!logFlushTimer) {
+    logFlushTimer = setTimeout(flushLogs, 5000);
+  }
+}
+
+async function flushLogs() {
+  if (logFlushTimer) { clearTimeout(logFlushTimer); logFlushTimer = null; }
+  if (logBatch.length === 0) return;
+  
+  const logsToSend = logBatch.splice(0, 50);
+  try {
+    await workerApi('/api/gh/report-logs-batch', 'POST', { logs: logsToSend });
+  } catch (e) {
+    // 失败时尝试单条发送
+    for (const log of logsToSend) {
+      try { await workerApi('/api/gh/report-log', 'POST', log); } catch (e2) { /* 忽略 */ }
+    }
+  }
 }
 
 /**
@@ -171,8 +200,8 @@ async function registerAndSetup(workerOrder, orderIdx) {
       });
       await stepDelay();
 
-      // 记录详细日志
-      await workerApi('/api/gh/report-log', 'POST', {
+      // 记录详细日志（使用批量收集器）
+      collectLog({
         order_id: workerOrder.id, username, account_id: accountId,
         log_type: 'character',
         message: '创建角色: ' + characterName + ' (金灵根100)',
@@ -184,7 +213,7 @@ async function registerAndSetup(workerOrder, orderIdx) {
         try {
           const inviteData = await apiRequest('POST', '/invite/bind', token, { invite_code: inviteCode });
           tsLog('[' + username + '] ✅ 邀请码绑定成功, 邀请人: ' + (inviteData.inviter_name || '?'));
-          await workerApi('/api/gh/report-log', 'POST', {
+          collectLog({
             order_id: workerOrder.id, username, account_id: accountId,
             log_type: 'invite',
             message: '邀请码绑定成功: ' + inviteCode + ', 邀请人: ' + (inviteData.inviter_name || '?'),
@@ -310,7 +339,7 @@ async function registerAndSetup(workerOrder, orderIdx) {
         created_result: JSON.stringify(setupLog),
       });
 
-      await workerApi('/api/gh/report-log', 'POST', {
+      collectLog({
         order_id: workerOrder.id, username, account_id: accountId,
         log_type: 'setup_complete',
         message: '账号配置完成: ' + JSON.stringify(setupLog),
@@ -326,13 +355,11 @@ async function registerAndSetup(workerOrder, orderIdx) {
       if (isDuplicate && retry < 4) {
         tsLog('[' + username + '] ⚠️ 用户名重复，重新生成并重试...');
         usedNames.add(username);
-        try {
-          await workerApi('/api/gh/report-log', 'POST', {
-            order_id: workerOrder.id, username, account_id: accountId,
-            log_type: 'retry',
-            message: '用户名重复，重试 #' + (retry + 1) + ': ' + errMsg,
-          });
-        } catch (e2) { tsLog('[' + username + '] ⚠️ 日志上报失败: ' + (e2.message || '').slice(0, 60)); }
+        collectLog({
+          order_id: workerOrder.id, username, account_id: accountId,
+          log_type: 'retry',
+          message: '用户名重复，重试 #' + (retry + 1) + ': ' + errMsg,
+        });
         continue;
       }
 
@@ -341,7 +368,7 @@ async function registerAndSetup(workerOrder, orderIdx) {
           order_id: workerOrder.id, username, password: '',
           status: 'failed', error_msg: errMsg,
         });
-        await workerApi('/api/gh/report-log', 'POST', {
+        collectLog({
           order_id: workerOrder.id, username, account_id: accountId,
           log_type: 'error',
           message: '注册失败: ' + errMsg,
@@ -443,7 +470,7 @@ async function processAllianceDaily(order, orderIdx) {
     });
 
     // 更新上次执行时间
-    await workerApi('/api/gh/report-log', 'POST', {
+    collectLog({
       order_id: order.id, username,
       log_type: 'alliance_daily',
       message: '仙盟日常完成',
@@ -519,7 +546,7 @@ async function processDailyTrial(order, orderIdx) {
       status: 'farming',
     });
 
-    await workerApi('/api/gh/report-log', 'POST', {
+    collectLog({
       order_id: order.id, username,
       log_type: 'daily_trial',
       message: '每日试炼完成',
@@ -568,7 +595,7 @@ async function processDispatch(order, orderIdx) {
       server_username: username, server_password: password,
       status: 'farming',
     });
-    await workerApi('/api/gh/report-log', 'POST', {
+    collectLog({
       order_id: order.id, username,
       log_type: 'daily_dispatch',
       message: '传人派出: ' + (order.dispatch_map || '默认') + '/' + (order.material_type || '默认'),
@@ -665,7 +692,7 @@ async function processDungeonClear(order, orderIdx) {
       server_username: username, server_password: password,
       status: 'farming',
     });
-    await workerApi('/api/gh/report-log', 'POST', {
+    collectLog({
       order_id: order.id, username,
       log_type: 'dungeon_clear',
       message: '副本刷取: ' + clearType + ' 清理' + cleared + '轮',
@@ -712,7 +739,8 @@ async function dispatchOrder(order, orderIdx) {
         tsLog('⚠️ 查询账号数量失败，使用 order.total_accounts_created: ' + e.message);
         existingAccounts = Math.max(0, (order.total_accounts_created || 0) - failedErrCount);
       }
-      const accountsToCreate = order.quantity || (order.bonus_points ? Math.max(1, Math.ceil(order.bonus_points / 10)) : 1);
+      // 目标账号数 = 订购数量 + 1（每个工单多发一个冗余，宁多勿少）
+      const accountsToCreate = (order.quantity || (order.bonus_points ? Math.max(1, Math.ceil(order.bonus_points / 10)) : 1)) + 1;
 
       // 已有账号已达目标数量 → 跳过
       if (existingAccounts >= accountsToCreate) {
@@ -796,6 +824,9 @@ async function main() {
       tsLog('工单 #' + order.id + ' 处理失败');
     }
   }
+
+  // 刷新剩余日志
+  await flushLogs();
 
   console.log('\n═══════════════════════════════════════');
   console.log('  全部完成 ✓');

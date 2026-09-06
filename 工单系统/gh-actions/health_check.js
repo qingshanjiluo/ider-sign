@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 艾德尔工单系统 - 账号健康检测 + 自动维护 v3
  * 扫描所有进行中的账号：
  *   - 自动升级到最高级(120)
@@ -11,7 +11,7 @@ const { ensureCharacter } = require('./_character');
 
 const WORKER_URL = 'https://ider-order-system.sifangzhiji.workers.dev';
 const API_KEY = 'ider-gh-5fc9c4b0899ad14bc2ee55562eaa5b3a';
-const API_BASE = process.env.API_BASE || 'https://idlexiuxianzhuan.cn';
+const API_BASE = process.env.API_BASE || 'https://ideer-game-api.sifangzhiji.workers.dev';
 const CLIENT_VERSION = process.env.CLIENT_VERSION || '1.2.4';
 const SIGN_KEY = process.env.SIGN_KEY || 'KDYJ1iHyB02LgyN1Jljb5pQkTHU1ELC6Vg6ox6FC0iX0dW9l';
 const MAX_LEVEL = 120;
@@ -62,6 +62,33 @@ async function workerApi(path, method, body) {
     method, headers, body: body ? JSON.stringify(body) : undefined, signal: AbortSignal.timeout(15000),
   });
   return r.json();
+}
+
+// 批量日志收集器（减少D1调用）
+const logBatch = [];
+let logFlushTimer = null;
+
+function collectLog(log) {
+  logBatch.push(log);
+  if (logBatch.length >= 10) {
+    flushLogs();
+  } else if (!logFlushTimer) {
+    logFlushTimer = setTimeout(flushLogs, 5000);
+  }
+}
+
+async function flushLogs() {
+  if (logFlushTimer) { clearTimeout(logFlushTimer); logFlushTimer = null; }
+  if (logBatch.length === 0) return;
+  
+  const logsToSend = logBatch.splice(0, 50);
+  try {
+    await workerApi('/api/gh/report-logs-batch', 'POST', { logs: logsToSend });
+  } catch (e) {
+    for (const log of logsToSend) {
+      try { await workerApi('/api/gh/report-log', 'POST', log); } catch (e2) { /* 忽略 */ }
+    }
+  }
 }
 
 /**
@@ -295,7 +322,7 @@ async function checkAndLevelUp(account, idx) {
       setup_status: account.setup_status && account.setup_status !== 'pending' ? account.setup_status : '',
     });
 
-    await workerApi('/api/gh/report-log', 'POST', {
+    collectLog({
       order_id, account_id: id,
       log_type: isCompleted ? 'health_completed' : 'health_report',
       message: isCompleted
@@ -364,6 +391,9 @@ async function main() {
       }
     }
   }
+
+  // 刷新剩余日志
+  await flushLogs();
 
   console.log('\n═══════════════════════════════════════');
   console.log('  健康检测完成 ✓');

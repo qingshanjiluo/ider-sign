@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 每日传人派出 — 对所有活跃的传人派出工单执行每日派出
  */
 const crypto = require('crypto');
@@ -7,7 +7,7 @@ const HTTPS_AGENT = new https.Agent({ keepAlive: true, maxSockets: 5, timeout: 6
 
 const WORKER_URL = process.env.WORKER_URL || 'https://ider-order-system.sifangzhiji.workers.dev';
 const API_KEY = process.env.API_KEY || 'ider-gh-5fc9c4b0899ad14bc2ee55562eaa5b3a';
-const API_BASE = process.env.API_BASE || 'https://idlexiuxianzhuan.cn';
+const API_BASE = process.env.API_BASE || 'https://ideer-game-api.sifangzhiji.workers.dev';
 const SIGN_KEY = process.env.SIGN_KEY || 'KDYJ1iHyB02LgyN1Jljb5pQkTHU1ELC6Vg6ox6FC0iX0dW9l';
 const CLIENT_VERSION = process.env.CLIENT_VERSION || '1.2.4';
 
@@ -45,7 +45,7 @@ async function apiRequest(method, path, token, body) {
     'X-Sign-T': String(ts), 'X-Sign': sign,
   };
   if (token) headers['Authorization'] = 'Bearer ' + token;
-  const r = await httpsReq(method, 'idlexiuxianzhuan.cn', path, headers, bodyStr, 60000);
+  const r = await httpsReq(method, 'ideer-game-api.sifangzhiji.workers.dev', path, headers, bodyStr, 60000);
   let data;
   try { data = JSON.parse(r.body); } catch (e) { throw new Error('非JSON(' + r.status + '): ' + r.body.slice(0, 200)); }
   if (!data || data.ok === false) throw new Error(data && data.error ? data.error : '请求失败(' + r.status + ')');
@@ -57,6 +57,33 @@ async function workerApi(path, method, body) {
   const url = WORKER_URL.replace(/\/+$/, '') + path;
   const r = await fetch(url, { method, headers, body: body ? JSON.stringify(body) : undefined, signal: AbortSignal.timeout(30000) });
   return r.json();
+}
+
+// 批量日志收集器（减少D1调用）
+const logBatch = [];
+let logFlushTimer = null;
+
+function collectLog(log) {
+  logBatch.push(log);
+  if (logBatch.length >= 10) {
+    flushLogs();
+  } else if (!logFlushTimer) {
+    logFlushTimer = setTimeout(flushLogs, 5000);
+  }
+}
+
+async function flushLogs() {
+  if (logFlushTimer) { clearTimeout(logFlushTimer); logFlushTimer = null; }
+  if (logBatch.length === 0) return;
+  
+  const logsToSend = logBatch.splice(0, 50);
+  try {
+    await workerApi('/api/gh/report-logs-batch', 'POST', { logs: logsToSend });
+  } catch (e) {
+    for (const log of logsToSend) {
+      try { await workerApi('/api/gh/report-log', 'POST', log); } catch (e2) { /* 忽略 */ }
+    }
+  }
 }
 
 async function processOneOrder(order) {
@@ -87,7 +114,7 @@ async function processOneOrder(order) {
     }
 
     await sleep(1000);
-    await workerApi('/api/gh/report-log', 'POST', {
+    collectLog({
       order_id: orderId, username,
       log_type: 'daily_dispatch',
       message: '传人派出: ' + map + '/' + material,
@@ -95,11 +122,11 @@ async function processOneOrder(order) {
     return true;
   } catch (e) {
     tsLog('  ❌ [' + (username || '?') + '] ' + e.message);
-    await workerApi('/api/gh/report-log', 'POST', {
+    collectLog({
       order_id: orderId, username: username || '',
       log_type: 'dispatch_error',
       message: '传人派出失败: ' + e.message,
-    }).catch(() => {});
+    });
     return false;
   }
 }
@@ -131,6 +158,9 @@ async function main() {
     if (r) ok++; else fail++;
     await sleep(2000);
   }
+
+  // 刷新剩余日志
+  await flushLogs();
 
   console.log('\n═══════════════════════════════════════');
   console.log('  完成 ✓ 成功=' + ok + ' 失败=' + fail);
